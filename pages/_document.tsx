@@ -5,6 +5,8 @@ import createEmotionServer from '@emotion/server/create-instance';
 import createEmotionCache from '../utility/createEmotionCache';
 
 export default class MyDocument extends Document {
+
+  
   render() {
     return (
       <Html lang="en">

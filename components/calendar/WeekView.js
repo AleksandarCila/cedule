@@ -1,35 +1,60 @@
 
 import { useEffect, useState } from 'react';
-import { FormControl, InputLabel, Select, MenuItem, SelectChangeEvent, Grid } from '@mui/material'
+import { List, ListItem } from '@mui/material'
 
-import { isToday } from 'date-fns';
+import { startOfWeek, startOfMonth, endOfMonth, endOfWeek, eachDayOfInterval, isToday } from 'date-fns'
 
-const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+import { CalendarState } from "../../context/CalendarContext";
+import CalendarLayout from './CalendarLayout';
 
-const hours = ["1am", "1am", "1am", "1am", "1am", "1am", "1am", "1am", "1am", "1am", "1am", "1am", "1am",]
+import { days, hours } from "../../utility/constants"
+
+
+
+const getWeekDays = (date) => {
+  const start = startOfWeek(date)
+  const end = endOfWeek(date)
+  return eachDayOfInterval({
+    start: start,
+    end: end
+  });
+}
 
 const WeekView = (props) => {
+  const {
+    state: { calendarState },
+    dispatch,
+  } = CalendarState();
+  const [weekDays, setWeekDays] = useState(getWeekDays(calendarState.selectedDate));
+  const [selectedDate, setSelectedDate] = useState(calendarState.selectedDate);
 
+
+  useEffect(() => {
+    const oldDate = selectedDate;
+    const newDate = calendarState.selectedDate;
+
+    setWeekDays(getWeekDays(newDate));
+  }, [calendarState])
 
   return (
-    <div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(8, 1fr)" }}>
-        {props.weekDays.map((day, ind) => {
+    <CalendarLayout style={props.style}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(8, 1fr)", gridAutoColumns: "auto", width: "100%" }}>
+        {weekDays.map((day, ind) => {
           return (
-            <div style={{ width: 120, gridColumnStart: ind + 2, backgroundColor: isToday(day) ? "red" : "" }}>
+            <div style={{ gridColumnStart: ind + 2, backgroundColor: isToday(day) ? "red" : "" }}>
               {day.getDate()} {days[day.getDay()]}
             </div>)
         })}
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(8, 1fr)" }}>
+      <div style={{ flex:1,display: "grid", gridTemplateColumns: "repeat(8, 1fr)", gridAutoColumns: "auto", width: "100%", overflowY: "scroll" }}>
         {hours.map((hour, ind) => (
           <>
-            <div key={hour + ind} style={{ width: '100%', height: 80 }} >
+            <div key={hour + ind} style={{ height: 80 }} >
               {hour}
             </div>
-            {props.weekDays.map((day, ind) => {
+            {weekDays.map((day, ind) => {
               return (
-                <div style={{ width: 120, border: "1px solid black" }} >
+                <div style={{ border: "1px solid black" }} >
                   Blok
                 </div>)
             })}
@@ -49,7 +74,7 @@ const WeekView = (props) => {
         <Grid item xs={9}>
         </Grid>
       </Grid> */}
-    </div>
+    </CalendarLayout>
   )
 }
 
