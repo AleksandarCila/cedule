@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import CalendarLayout from './CalendarLayout'
-import { Box, Drawer } from '@mui/material'
+import { Box, Drawer, Fab } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close';
 
 const ResponsiveDrawer = props => {
     const { children, anchor } = props;
@@ -15,14 +16,15 @@ const ResponsiveDrawer = props => {
 
     useEffect(() => {
         setMobileOpen(props.mobileOpenCalendarList)
+        console.log(anchor);
     }, [props.mobileOpenCalendarList])
 
     return (<CalendarLayout>
         <Box
             component="nav"
-            sx={{ width: { md: "100%" }, flexShrink: { md: 0 } }}
+            sx={{ width: { lg: "100%" }, flexShrink: { lg: 0 } }}
             aria-label="Calendar Options"
-            
+
         >
             {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
             <Drawer
@@ -34,25 +36,32 @@ const ResponsiveDrawer = props => {
                     keepMounted: true, // Better open performance on mobile.
                 }}
                 sx={{
-                    display: { xs: 'block', md: 'none' },
-                    '& .MuiDrawer-paper': { boxSizing: 'border-box', width: "80%" },
+                    display: { xs: 'block', lg: 'none' },
+                    '& .MuiDrawer-paper': { boxSizing: 'border-box', width: "90%" },
                 }}
             >
+                <Box sx={{ position: "absolute", top: 10, right: 10 }}>
+                    <Fab variant="extended" color="primary" size="small" sx={{ width: 25, mx: 0.5 }}
+                        onClick={handleDrawerToggle}
+                    ><CloseIcon /></Fab>
+
+                </Box>
+
                 {children}
             </Drawer>
             <Drawer
                 variant="permanent"
                 anchor={anchor}
                 sx={{
-                    display: { xs: 'none', md: 'block' },
-                    '& .MuiDrawer-paper': { boxSizing: 'border-box',border:0, maxWidth:240,width: "20%" },
+                    display: { xs: 'none', lg: 'block' },
+                    '& .MuiDrawer-paper': { boxSizing: 'border-box', border: 0, maxWidth: 240, width: "20%" },
                 }}
                 open
             >
                 {children}
             </Drawer>
-        </Box>
-    </CalendarLayout>)
+        </Box >
+    </CalendarLayout >)
 }
 
 export default ResponsiveDrawer;

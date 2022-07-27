@@ -9,7 +9,7 @@ import CalendarList from './CalendarList'
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 
-const drawerStyle = { width: { xs: "0%", md: "20%" }, maxWidth: { xs: 0, md: 240 } }
+const drawerStyle = { width: { xs: "0%", lg: "20%" }, maxWidth: { xs: 0, lg: 240 } }
 
 const daysFull = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -31,7 +31,7 @@ const MyCalendar = props => {
                     </ResponsiveDrawer>
                 </Box>
                 <Box sx={{ flex: 1, height: "100vh",border:"1px solid #e2e2e2", display: 'flex', justifyContent: 'space-between', flexDirection: 'column', overflowY: "hidden" }}>
-                    <Box sx={{ pt:1,px:1,display: { xs: "flex", md: "none" }, justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ pt:1,px:1,display: { xs: "flex", lg: "none" }, justifyContent: 'space-between', alignItems: 'center' }}>
                         <Button size="small" variant="outlined" endIcon={<CalendarMonthIcon />} onClick={() => setOpenOptions(prev => !prev)}>
                             Calendars
                         </Button>

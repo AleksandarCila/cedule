@@ -20,8 +20,8 @@ const DayGridElement = props => {
             cursor:"pointer",
             bgcolor: selected ? addAlphaToColor(theme.palette.primary.light, 0.3) : 
             (isThisMonth && !isWeekendDay) ? "" : theme.palette.grey['200'],
-            borderRight: ((ind + 1) % 7) != 0 ? "1px solid #e2e2e2" : "",
-            borderBottom: "1px solid #e2e2e2",
+            borderRight: ((ind + 1) % 7) != 0 ? `1px solid ${theme.palette.grey['300']}` : "",
+            borderBottom: `1px solid ${theme.palette.grey['300']}`,
             borderTop: isToday(day) ? `5px solid ${theme.palette.primary.light}` : "5px solid transparent"
         }}
             onClick={() => {

@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { Box, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent, Grid, Divider } from '@mui/material'
+import { useTheme } from '@mui/material';
 
 import { startOfWeek, startOfMonth, endOfMonth, endOfWeek, eachDayOfInterval, isToday } from 'date-fns'
 
@@ -23,6 +24,7 @@ const MonthView = (props) => {
         state: { calendarState },
         dispatch,
     } = CalendarState();
+    const theme = useTheme();
 
     const [monthDays, setMonthDays] = useState(getMonthDays(calendarState.selectedDate));
     const [selectedDate, setSelectedDate] = useState(calendarState.selectedDate);
@@ -50,12 +52,12 @@ const MonthView = (props) => {
             
             <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gridAutoColumns: "auto", width: "100%" }}>
                 {days.map((day,ind) => (
-                    <div style={{ padding:8, borderRight: ((ind+1) % 7) != 0 ? "1px solid #e2e2e2" : "", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <div style={{ padding:8, borderRight: ((ind+1) % 7) != 0 ? `1px solid ${theme.palette.grey['300']}` : "", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         {day}
                     </div>
                 ))}
             </div>
-            <div style={{ flex: 1, display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gridAutoColumns: "auto", gridAutoRows: "auto", width: "100%", borderTop: "1px solid #e2e2e2"}}>
+            <div style={{ flex: 1, display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gridAutoColumns: "auto", gridAutoRows: "auto", width: "100%", borderTop: `1px solid ${theme.palette.grey['300']}`}}>
                 {monthDays.map((day,ind) => {
                     return (
                         <DayGridElement key={day.toString(36)} day={day} ind={ind}/>

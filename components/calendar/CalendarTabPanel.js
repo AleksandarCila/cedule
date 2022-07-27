@@ -5,14 +5,15 @@ import WestIcon from '@mui/icons-material/West';
 import EastIcon from '@mui/icons-material/East';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
-import { addDays, addMonths, addWeeks, getWeek, setDate } from "date-fns"
+import { addDays, addMonths, addWeeks, endOfWeek, getWeek, setDate, startOfWeek } from "date-fns"
 
 import { CalendarState } from "../../context/CalendarContext";
 
 import MonthView from './MonthView'
 import WeekView from "./WeekView"
+import DayView from './DayView'
 
-import { months } from "../../utility/constants"
+import { daysLong,months } from "../../utility/constants"
 import CalendarLayout from "./CalendarLayout"
 
 const tabNames = [{
@@ -26,7 +27,7 @@ const tabNames = [{
 }, {
     href: 'day',
     title: 'Day',
-    content: <>Day</>
+    content: <DayView />
 }, {
     href: 'agenda',
     title: 'Agenda',
@@ -123,19 +124,23 @@ const CalendarTabPanel = ({ router }) => {
 
     const getTimeLabel = () => {
         const date = calendarState.selectedDate;
+
         let timeLabel = "";
         switch (tabValue) {
             case 0:
                 timeLabel = months[date.getMonth()] + ", " + date.getFullYear();
                 break;
             case 1:
+                const startOfWeekDay = startOfWeek(date);
+                const endOfWeekDay = endOfWeek(date);
+
                 timeLabel = "Week " + getWeek(date, {
                     weekStartsOn: 1,
                     firstWeekContainsDate: 4
-                })
+                }) + ", " + months[startOfWeekDay.getMonth()] + " " + startOfWeekDay.getDate() + " - " + months[endOfWeekDay.getMonth()] + " " + endOfWeekDay.getDate();
                 break;
             case 2:
-                timeLabel = months[date.getMonth()] + ", " + date.getDate();
+                timeLabel = months[date.getMonth()] + ", " + daysLong[date.getDay()] + " "+ date.getDate();
                 break;
             case 3:
                 timeLabel = months[date.getMonth()] + ", " + date.getDate();
@@ -162,11 +167,11 @@ const CalendarTabPanel = ({ router }) => {
                         <EastIcon />
                     </IconButton>
                 </Box>
-                <Box sx={{ flex: 1, display: "flex", justifyContent: 'center', alignItems: 'center' }}>
-                    <Typography variant="h5">{getTimeLabel()}</Typography>
+                <Box sx={{ flex: 1, display: { xs: "none", sm: "flex" }, justifyContent: 'center', alignItems: 'center' }}>
+                    <Typography variant="h6">{getTimeLabel()}</Typography>
 
                 </Box>
-                <Box sx={{ display: { xs: 'none', md: "flex" }, justifyContent: 'flex-end', alignItems: 'center', p: 1 }}>
+                <Box sx={{ display: { xs: 'none', lg: "flex" }, justifyContent: 'flex-end', alignItems: 'center', p: 1 }}>
                     <ToggleButtonGroup color="primary" size="small" value={tabValue} onChange={handleTabChange} exclusive={true}>
                         {tabNames.map((tab, ind) => (
                             <ToggleButton value={ind} key={ind}>
@@ -176,7 +181,7 @@ const CalendarTabPanel = ({ router }) => {
                         ))}
                     </ToggleButtonGroup>
                 </Box>
-                <Box sx={{ display: { xs: "block", md: "none" } }}>
+                <Box sx={{ display: { xs: "block", lg: "none" } }}>
                     <Button
                         onClick={handleClick}
                         endIcon={<KeyboardArrowDownIcon />}
@@ -195,6 +200,10 @@ const CalendarTabPanel = ({ router }) => {
                         ))}
                     </Menu>
                 </Box>
+            </Box>
+            <Box sx={{ mb: 1, display: { xs: "flex", sm: "none" }, justifyContent: 'center', alignItems: 'center' }}>
+                <Typography variant="h5">{getTimeLabel()}</Typography>
+
             </Box>
             <Box sx={{ flex: 1, maxHeight: "100%", overflowY: "hidden" }}>
                 {tabNames.map((tab, ind) => {
