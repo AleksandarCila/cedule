@@ -2,6 +2,7 @@ import { CalendarState } from "../../context/CalendarContext";
 import Image from 'next/image'
 import { useTheme } from '@mui/material';
 import { addAlphaToColor } from "../../utility/addAlphaToColor";
+import { isSameDay } from "date-fns";
 
 
 const EventList = props => {
@@ -11,7 +12,7 @@ const EventList = props => {
     } = CalendarState();
     const theme = useTheme();
     return (<div>
-        <div style={{ width: "100%", height:113, position: 'relative' }}>
+        <div style={{ width: "100%", height: 113, position: 'relative' }}>
             <Image
                 src="/assets/tasks_header_image.jpg"
                 alt="To Do list on the computer cartoon"
@@ -30,6 +31,11 @@ const EventList = props => {
 
         </div>
         {calendarState.selectedDate.getDate()}
+        {calendarState.events.map((event) => {
+            const isThisDay = isSameDay(event.eventDate, calendarState.selectedDate);
+            if (isThisDay) return <div>{event.username}</div>
+            else return;
+        })}
     </div>)
 }
 

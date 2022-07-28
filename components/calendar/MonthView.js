@@ -3,13 +3,12 @@ import { useEffect, useState } from 'react';
 import { Box, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent, Grid, Divider } from '@mui/material'
 import { useTheme } from '@mui/material';
 
-import { startOfWeek, startOfMonth, endOfMonth, endOfWeek, eachDayOfInterval, isToday } from 'date-fns'
+import { startOfWeek, startOfMonth, endOfMonth, endOfWeek, eachDayOfInterval, isToday, isSameDay } from 'date-fns'
 
 import { CalendarState } from "../../context/CalendarContext";
 import DayGridElement from './DayGridElement'
 
-import { days } from '../../utility/constants';
-
+import { days, USERS } from '../../utility/constants';
 const getMonthDays = (date) => {
     const start = startOfWeek(startOfMonth(date))
     const end = endOfWeek(endOfMonth(date))
@@ -52,15 +51,19 @@ const MonthView = (props) => {
             
             <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gridAutoColumns: "auto", width: "100%" }}>
                 {days.map((day,ind) => (
-                    <div style={{ padding:8, borderRight: ((ind+1) % 7) != 0 ? `1px solid ${theme.palette.grey['300']}` : "", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <div style={{padding:8, borderRight: ((ind+1) % 7) != 0 ? `1px solid ${theme.palette.grey['300']}` : "", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         {day}
                     </div>
                 ))}
             </div>
             <div style={{ flex: 1, display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gridAutoColumns: "auto", gridAutoRows: "auto", width: "100%", borderTop: `1px solid ${theme.palette.grey['300']}`}}>
                 {monthDays.map((day,ind) => {
+                    let events=USERS.filter((event)=>{
+                        if(isSameDay(day, event.eventDate)) return event;
+                        
+                    });
                     return (
-                        <DayGridElement key={day.toString(36)} day={day} ind={ind}/>
+                        <DayGridElement key={day.toString(36)} day={day} ind={ind} events={events}/>
                     )
                 })}
             </div>

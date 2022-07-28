@@ -54,7 +54,7 @@ const ResponsiveDrawer = props => {
                 anchor={anchor}
                 sx={{
                     display: { xs: 'none', lg: 'block' },
-                    '& .MuiDrawer-paper': { boxSizing: 'border-box', border: 0, maxWidth: 240, width: "20%" },
+                    '& .MuiDrawer-paper': { boxSizing: 'border-box', boxShadow:5,border: 0, maxWidth: 240, width: "20%" },
                 }}
                 open
             >

@@ -5,7 +5,7 @@ import { useTheme } from '@mui/material';
 import { addAlphaToColor } from "../../utility/addAlphaToColor";
 
 const DayGridElement = props => {
-    const { day, ind } = props;
+    const { day, ind, events } = props;
     const {
         state: { calendarState },
         dispatch,
@@ -13,16 +13,17 @@ const DayGridElement = props => {
     const theme = useTheme();
     const selected = isSameDay(day, calendarState.selectedDate);
     const isThisMonth = isSameMonth(day, calendarState.selectedDate);
-    const isWeekendDay=isWeekend(day);
+    const isWeekendDay = isWeekend(day);
+    console.log(events.length);
     return (
         <Box sx={{
             p: 1,
-            cursor:"pointer",
-            bgcolor: selected ? addAlphaToColor(theme.palette.primary.light, 0.3) : 
-            (isThisMonth && !isWeekendDay) ? "" : theme.palette.grey['200'],
+            cursor: "pointer",
+            bgcolor: selected ? addAlphaToColor(theme.palette.primary.light, 0.3) :
+                (isThisMonth && !isWeekendDay) ? "" : theme.palette.grey['200'],
             borderRight: ((ind + 1) % 7) != 0 ? `1px solid ${theme.palette.grey['300']}` : "",
             borderBottom: `1px solid ${theme.palette.grey['300']}`,
-            borderTop: isToday(day) ? `5px solid ${theme.palette.primary.light}` : "5px solid transparent"
+            borderTop: isToday(day) ? `5px solid ${theme.palette.primary.light}` : "5px solid transparent",
         }}
             onClick={() => {
                 dispatch({
@@ -33,6 +34,7 @@ const DayGridElement = props => {
                 });
             }}>
             {day.getDate()}
+            {events.length > 0 ? "EVENT" : ""}
         </Box>
     )
 }

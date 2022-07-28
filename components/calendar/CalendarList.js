@@ -17,6 +17,7 @@ const CalendarList = props => {
         state: { calendarState },
         dispatch,
     } = CalendarState();
+    
     const [openAddEventModal, setOpenAddEventModal] = useState(false);
     const handleOpenAddEventModal = () => {
         setOpenAddEventModal(prev => !prev)

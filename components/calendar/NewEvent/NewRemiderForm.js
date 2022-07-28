@@ -26,14 +26,13 @@ const SectionDivider = props => {
     )
 }
 
-const NewTaskForm = props => {
+const NewReminderForm = props => {
     const { day, time } = props;
     const [formState, setFormState] = useState({
         name: "",
         dateValue: day ? day : new Date(),
         timeValue: time ? new Date().setTime(time) : 0,
         allDay: false,
-        taskDescription: "",
         calendar: "Kalendar1",
         formErrors: { name: '', dateValue: '', timeValue: '' },
         nameValid: false,
@@ -98,8 +97,8 @@ const NewTaskForm = props => {
         setFormValid(formState.nameValid && formState.dateValid && formState.timeValid);
     }, [formState.nameValid, formState.dateValid, formState.timeValid])
 
-    const handleAddTask = () => {
-        console.log("add task")
+    const handleAddReminder = () => {
+        console.log("add reminder")
     }
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -110,7 +109,6 @@ const NewTaskForm = props => {
                     // minHeight: 400,
                     height: "100%",
                     width: "100%",
-
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -120,21 +118,20 @@ const NewTaskForm = props => {
             >
                 <Box sx={{
                     width: "100%",
-
                 }}>
-                    <SectionDivider title="Task Name"><BorderColorIcon color="primary" /></SectionDivider>
+                    <SectionDivider title="Reminder Name"><BorderColorIcon color="primary" /></SectionDivider>
 
                     <TextField required onChange={(e) => handleUserInput(e)} id="name" name="name" label=""
-                        value={formState.name} placeholder="Add a Task name" variant="outlined" size="small"
+                        value={formState.name} placeholder="Add a Reminder name" variant="outlined" size="small"
                         fullWidth sx={{ mb: 2 }}
-                        helperText={formState.nameValid ? "" : "Task must have a name"}
+                        helperText={formState.nameValid ? "" : "Reminder must have a name"}
                         error={!formState.nameValid} />
-                    <SectionDivider title="Task Time & Date"><AccessTimeIcon color="primary" /></SectionDivider>
+                    <SectionDivider title="Reminder Time & Date"><AccessTimeIcon color="primary" /></SectionDivider>
 
                     <Grid container sx={{ width: '100%' }} rowSpacing={2}>
                         <Grid item xs={12}>
                             <MobileDatePicker
-                                label="Task Date"
+                                label="Reminder Date"
                                 inputFormat="MM/dd/yyyy"
                                 value={formState.dateValue}
                                 onChange={(newValue) => {
@@ -165,24 +162,7 @@ const NewTaskForm = props => {
                                 disabled={formState.allDay}
                             />
                         </Grid>
-                        <Grid item xs={12}>
-                            <SectionDivider title="Task Description"><TocIcon color="primary" /></SectionDivider>
 
-                            <TextField
-                                id="task-description-input"
-                                label=""
-                                name="taskDescription"
-                                placeholder="Add a short description"
-                                size="small"
-                                multiline
-                                rows={3}
-                                fullWidth
-                                value={formState.taskDescription}
-                                onChange={(event) => {
-                                    handleUserInput(event);
-                                }}
-                            />
-                        </Grid>
                     </Grid>
                     <Box sx={{ width: "100%", my: 2, }}>
                         <SectionDivider title="My Calendars"><ListAltIcon color="primary" /></SectionDivider>
@@ -209,8 +189,8 @@ const NewTaskForm = props => {
                 </Box>
 
                 <div style={{ width: "100%", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <Button onClick={handleAddTask} size="large" variant="contained" disabled={!formValid}>
-                        Add Task
+                    <Button onClick={handleAddReminder} size="large" variant="contained" disabled={!formValid}>
+                        Add Reminder
                     </Button>
                 </div>
             </Box>
@@ -218,4 +198,4 @@ const NewTaskForm = props => {
     )
 }
 
-export default NewTaskForm;
+export default NewReminderForm;

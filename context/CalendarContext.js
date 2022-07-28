@@ -1,10 +1,12 @@
 import React, { createContext, useContext, useReducer } from "react";
+import { USERS } from "../utility/constants";
 import { calendarReducer } from "./Reducers";
 
 const CalendarContext = createContext();
 
 const initialState = {
-  selectedDate:new Date()
+  selectedDate:new Date(),
+  events:USERS,
 };
 
 const Context = ({ children }) => {

@@ -6,6 +6,8 @@ import { addAlphaToColor } from "../../../utility/addAlphaToColor";
 
 import CircleIcon from '@mui/icons-material/Circle';
 import NewTaskForm from './NewTaskForm'
+import NewReminderForm from './NewRemiderForm'
+import NewEventForm from './NewEventForm'
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -17,10 +19,11 @@ function TabPanel(props) {
             id={`event-tabpanel-${index}`}
             aria-labelledby={`event-tab-${index}`}
             {...other}
+            style={{ height: 'calc(100% - 60px)', overflowY: 'scroll' }}
         >
             {value === index && (
                 <Box sx={{ p: 1 }}>
-                    <Typography>{children}</Typography>
+                    {children}
                 </Box>
             )}
         </div>
@@ -56,8 +59,9 @@ const NewEventModal = props => {
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
 
-                    maxWidth: "80vw",
-
+                    width: { sx: "80vw", md: "50vw" },
+                    height: "70vh",
+                    overflow: 'hidden',
                     bgcolor: "#fff",
                     borderRadius: 5,
                     boxShadow: 24,
@@ -67,22 +71,22 @@ const NewEventModal = props => {
                     alignItems: 'center',
                     flexDirection: 'column',
                 }}>
-                    <Box sx={{ width: '100%' }}>
+                    <Box sx={{ width: '100%', height: "100%" }}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                             <Tabs value={value} onChange={handleChange} aria-label="event tabs">
                                 <Tab icon={<CircleIcon color="primary" fontSize="small" />} iconPosition="start" label="Event" {...a11yProps(0)} />
-                                <Tab icon={<CircleIcon sx={{ color:"#f00"}} fontSize="small" />} iconPosition="start" label="Task" {...a11yProps(1)} />
-                                <Tab icon={<CircleIcon sx={{ color:"#0f0"}} fontSize="small" />} iconPosition="start" label="Reminder" {...a11yProps(2)} />
+                                <Tab icon={<CircleIcon sx={{ color: "#f00" }} fontSize="small" />} iconPosition="start" label="Task" {...a11yProps(1)} />
+                                <Tab icon={<CircleIcon sx={{ color: "#0f0" }} fontSize="small" />} iconPosition="start" label="Reminder" {...a11yProps(2)} />
                             </Tabs>
                         </Box>
                         <TabPanel value={value} index={0}>
-                            Event
+                            <NewEventForm time={time} day={day} />
                         </TabPanel>
                         <TabPanel value={value} index={1}>
-                            <NewTaskForm time={time} day={day}/>
+                            <NewTaskForm time={time} day={day} />
                         </TabPanel>
                         <TabPanel value={value} index={2}>
-                            Reminder
+                            <NewReminderForm time={time} day={day} />
                         </TabPanel>
                     </Box>
                 </Box>

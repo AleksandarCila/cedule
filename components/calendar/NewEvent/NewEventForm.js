@@ -12,6 +12,7 @@ import BorderColorIcon from '@mui/icons-material/BorderColor';
 import TimePickerComboBox from './TimePickerComboBox'
 import { timeStamps } from '../../../utility/constants'
 
+
 const SectionDivider = props => {
     const { children, title } = props;
     return (
@@ -20,26 +21,29 @@ const SectionDivider = props => {
                 {children}
                 <Typography sx={{ px: 2, }} variant="span">{title}</Typography>
             </Box>
-            <Divider sx={{ width: "100%", flex: 1 }} />
+            <Divider sx={{ flex: 1 }} />
 
         </Box>
     )
 }
 
-const NewTaskForm = props => {
+const NewEventForm = props => {
     const { day, time } = props;
     const [formState, setFormState] = useState({
         name: "",
         dateValue: day ? day : new Date(),
-        timeValue: time ? new Date().setTime(time) : 0,
+        timeValueStart: time ? new Date().setTime(time) : 0,
+        timeValueEnd: time ? new Date().setTime(time) : 0,
         allDay: false,
         taskDescription: "",
         calendar: "Kalendar1",
-        formErrors: { name: '', dateValue: '', timeValue: '' },
+        formErrors: { name: '', dateValue: '', timeValueStart: '', timeValueEnd: '' },
         nameValid: false,
         dateValid: true,
-        timeValid: true,
+        timeStartValid: true,
+        timeEndValid: true,
     })
+
     const [formValid, setFormValid] = useState(false);
 
     const handleUserInput = (e, inputName = "", inpuValue = "") => {
@@ -52,8 +56,11 @@ const NewTaskForm = props => {
         let fieldValidationErrors = formState.formErrors;
         let nameValid = formState.nameValid;
         let dateValid = formState.dateValid;
-        let timeValid = formState.timeValid;
+        let timeStartValid = formState.timeStartValid;
+        let timeEndValid = formState.timeEndValid;
 
+        let timeValueEnd = formState.timeValueEnd;
+        console.log(formState)
         switch (fieldName) {
             case 'name':
                 nameValid = value.length > 0 ? true : false;
@@ -61,24 +68,43 @@ const NewTaskForm = props => {
                 break;
             case 'allDay':
                 if (!formState.allDay) {
-                    timeValid = true;
+                    timeEndValid = true;
+                    timeStartValid = true;
                 }
                 else {
-                    if (formState.timeValue.length === 0) {
-                        timeValid = false
-                    }
-                    else { timeValid = true; }
+                    if (formState.timeValueStart.length === 0) {
 
+                        console.log(formState.timeValueStart.length)
+
+                        timeStartValid = false
+                    }
+                    else { timeStartValid = true; }
+                    if (formState.timeValueEnd === "")
+                        timeEndValid = false;
+                    else timeEndValid = true;
                 }
                 break;
             case 'dateValue':
                 fieldValidationErrors.dateValue = dateValid ? '' : ' is invalid';
                 break;
-            case 'timeValue':
-                if (value == "") timeValid = false;
+            case 'timeValueStart':
+                if (value > timeValueEnd) {
+                    timeValueEnd = value;
+                    timeEndValid = true;
+                }
 
-                else timeValid = true;
-                fieldValidationErrors.timeValue = timeValid ? '' : ' is invalid';
+                if (value == "") timeStartValid = false;
+
+                else timeStartValid = true;
+
+                fieldValidationErrors.timeValueStart = timeStartValid ? '' : ' is invalid';
+                break;
+            case 'timeValueEnd':
+                timeValueEnd = value;
+                if (value == "") timeEndValid = false;
+                else timeEndValid = true;
+
+                fieldValidationErrors.timeValueEnd = timeEndValid ? '' : ' is invalid';
                 break;
             default:
                 break;
@@ -86,20 +112,22 @@ const NewTaskForm = props => {
         setFormState({
             ...formState,
             [fieldName]: value,
+            timeValueEnd: timeValueEnd,
             formErrors: fieldValidationErrors,
             nameValid: nameValid,
             dateValid: dateValid,
-            timeValid: timeValid,
+            timeStartValid: timeStartValid,
+            timeEndValid: timeEndValid,
 
         });
 
     }
     useEffect(() => {
-        setFormValid(formState.nameValid && formState.dateValid && formState.timeValid);
-    }, [formState.nameValid, formState.dateValid, formState.timeValid])
+        setFormValid(formState.nameValid && formState.dateValid && formState.timeStartValid && formState.timeEndValid);
+    }, [formState.nameValid, formState.dateValid, formState.timeStartValid, formState.timeEndValid])
 
-    const handleAddTask = () => {
-        console.log("add task")
+    const handleAddEvent = () => {
+        console.log("add Event")
     }
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -110,7 +138,6 @@ const NewTaskForm = props => {
                     // minHeight: 400,
                     height: "100%",
                     width: "100%",
-
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -118,23 +145,20 @@ const NewTaskForm = props => {
                 }}
                 autoComplete="off"
             >
-                <Box sx={{
-                    width: "100%",
-
-                }}>
-                    <SectionDivider title="Task Name"><BorderColorIcon color="primary" /></SectionDivider>
+                <Box sx={{ width: "100%" }}>
+                    <SectionDivider title="Event Name"><BorderColorIcon color="primary" /></SectionDivider>
 
                     <TextField required onChange={(e) => handleUserInput(e)} id="name" name="name" label=""
-                        value={formState.name} placeholder="Add a Task name" variant="outlined" size="small"
+                        value={formState.name} placeholder="Add an Event name" variant="outlined" size="small"
                         fullWidth sx={{ mb: 2 }}
-                        helperText={formState.nameValid ? "" : "Task must have a name"}
-                        error={!formState.nameValid} />
-                    <SectionDivider title="Task Time & Date"><AccessTimeIcon color="primary" /></SectionDivider>
+                        helperText={formState.nameValid ? "" : "Event must have a name"}
+                        error={formState.nameValid} />
+                    <SectionDivider title="Event Time & Date"><AccessTimeIcon color="primary" /></SectionDivider>
 
-                    <Grid container sx={{ width: '100%' }} rowSpacing={2}>
-                        <Grid item xs={12}>
+                    <Grid container sx={{ width: '100%' }} spacing={2}>
+                        <Grid item xs={6}>
                             <MobileDatePicker
-                                label="Task Date"
+                                label="Event Date"
                                 inputFormat="MM/dd/yyyy"
                                 value={formState.dateValue}
                                 onChange={(newValue) => {
@@ -149,24 +173,40 @@ const NewTaskForm = props => {
                             />
                         </Grid>
                         <Grid item xs={6} >
+                            
+                            <TimePickerComboBox
+                                label="Start Time"
+                                onChange={(newValue) => {
+                                    handleUserInput(null, 'timeValueStart', newValue);
+                                    // if (newValue > formState.timeValueEnd) handleUserInput(null, 'timeValueEnd', newValue)
+                                }}
+                                value={timeStamps[formState.timeValueStart]}
+                                error={formState.timeStartValid}
+                                disabled={formState.allDay}
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TimePickerComboBox
+                                label="End Time"
+                                onChange={(newValue) => {
+                                    handleUserInput(null, 'timeValueEnd', newValue);
+                                }}
+                                value={timeStamps[formState.timeValueEnd]}
+                                minTime={timeStamps[formState.timeValueStart]}
+                                error={formState.timeEndValid}
+                                disabled={formState.allDay}
+
+                            />
+                        </Grid>
+                        <Grid item xs={6} >
                             <FormControlLabel sx={{}} control={<Switch checked={formState.allDay}
                                 onChange={(event) => {
                                     handleUserInput(null, 'allDay', event.target.checked);
                                 }} />} label="All day" />
                         </Grid>
-                        <Grid item xs={6} >
-                            <TimePickerComboBox
-                                label="Start Time"
-                                onChange={(newValue) => {
-                                    handleUserInput(null, 'timeValue', newValue);
-                                }}
-                                value={timeStamps[formState.timeValue]}
-                                error={formState.timeValid}
-                                disabled={formState.allDay}
-                            />
-                        </Grid>
+                        
                         <Grid item xs={12}>
-                            <SectionDivider title="Task Description"><TocIcon color="primary" /></SectionDivider>
+                            <SectionDivider title="Event Description"><TocIcon color="primary" /></SectionDivider>
 
                             <TextField
                                 id="task-description-input"
@@ -209,8 +249,8 @@ const NewTaskForm = props => {
                 </Box>
 
                 <div style={{ width: "100%", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <Button onClick={handleAddTask} size="large" variant="contained" disabled={!formValid}>
-                        Add Task
+                    <Button onClick={handleAddEvent} size="large" variant="contained" disabled={!formValid}>
+                        Add Event
                     </Button>
                 </div>
             </Box>
@@ -218,4 +258,4 @@ const NewTaskForm = props => {
     )
 }
 
-export default NewTaskForm;
+export default NewEventForm;

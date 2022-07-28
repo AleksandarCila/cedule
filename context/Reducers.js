@@ -3,9 +3,10 @@ export const calendarReducer = (state, action) => {
       case "SET_SELECTED_DATE":
         const newState = {
           ...state,
-          calendarState: {selectedDate:action.payload.day},
+          calendarState: {...state.calendarState,selectedDate:action.payload.day},
           
         };
+        console.log(state);
         // if (typeof window !== "undefined") {
         //   localStorage.setItem("cart", JSON.stringify(newState.cart));
         // }
