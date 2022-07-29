@@ -130,7 +130,7 @@ const WeekView = (props) => {
         <div style={{
           width: "100%",
           height: "100%",
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          display: "grid", gridTemplateColumns: "repeat(8, 1fr)", gridAutoColumns: "auto", gridAutoRows: "auto",
         }}>
           <div style={{
             borderRight: `1px solid ${theme.palette.grey['300']}`,
@@ -151,47 +151,64 @@ const WeekView = (props) => {
           }
         </div>
       </div>
-      <div style={{ borderTop: `1px solid ${theme.palette.grey['300']}`, overflowY: "scroll" }}>{
-        timeStamps.map((hour, hourInd) => {
-          if (true) {
-            return (
-              <div key={hour + hourInd} style={{ height: 20, width: "100%" }}>
-                <div style={{
-                  height: "100%", display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(8, 1fr)", gridAutoColumns: "auto", gridAutoRows: "auto", overflowY: "scroll", }}>
 
-                }}>
-                  <div style={{
-                    width: "100%", height: "100%", overflow: "hidden", textOverflow: "ellipsis",
-                    borderRight: `1px solid ${theme.palette.grey['300']}`,
-                    borderBottom: `1px solid ${theme.palette.grey['300']}`,
-                    backgroundColor: hourInd < 12 ? addAlphaToColor(theme.palette.primary.light, 0.15) : addAlphaToColor(theme.palette.primary.light, 0.2)
-                  }}>
-                    <Typography variant="span" fontSize="small">
-                      {hour.label}
-                    </Typography>
+
+        <div style={{
+          borderTop: `1px solid ${theme.palette.grey['300']}`,
+          display: "grid", gridTemplateColumns: "repeat(1, 1fr)", gridAutoColumns: "auto", gridAutoRows: "auto"
+        }}>{
+            timeStamps.map((hour, hourInd) => {
+              if (true) {
+                return (
+                  <div key={hour.label + hourInd} style={{ height: 20, width: "100%" }}>
+                    <div style={{
+                      height: "100%", display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+
+                    }}>
+                      <div style={{
+                        width: "100%", height: "100%", overflow: "hidden", textOverflow: "ellipsis",
+                        borderRight: `1px solid ${theme.palette.grey['300']}`,
+                        borderBottom: `1px solid ${theme.palette.grey['300']}`,
+                        backgroundColor: hourInd < 12 ? addAlphaToColor(theme.palette.primary.light, 0.15) : addAlphaToColor(theme.palette.primary.light, 0.2)
+                      }}>
+                        <Typography variant="span" fontSize="small">
+                          {hour.label}
+                        </Typography>
+                      </div>
+                    </div>
                   </div>
+                )
+              }
+            })}
 
-                  {weekDays.map((day, ind) => {
-                    const time = new Date(day.getFullYear(), day.getMonth(), day.getDate(), hourInd + 1);
-                    let events = USERS.filter((event) => {
-                      if (isSameDay(day, event.eventDate)) return event;
+        </div>
 
-                    });
-                    return (
-                        <WeekEventSlotElement key={hour + ind} ind={ind} day={day}
-                          events={events}
-                          time={time}
-                          handleOpenAddEventModal={() => handleOpenAddEventModal(time, day)}
-                        />
-                      )
-                  })}
-                </div>
-              </div>
-            )
-          }
+        {weekDays.map((day, ind) => {
+          const time = new Date(day.getFullYear(), day.getMonth(), day.getDate(), ind + 1);
+          let events = USERS.filter((event) => {
+            if (isSameDay(day, event.eventDate)) return event;
+
+          });
+          return (<div style={{
+            borderTop: `1px solid ${theme.palette.grey['300']}`,
+            position: 'relative',
+            display: "grid", gridTemplateColumns: "repeat(1, 1fr)", gridAutoColumns: "auto", gridAutoRows: "auto"
+          }}>
+            {events.map((event) => { return (<div style={{ position: 'absolute', top: `${event.eventStartTime/timeStamps.length*100}%`, left: 0, zIndex: 999, }}>{timeStamps[event.eventStartTime].label}</div>) })}
+            {timeStamps.map((hour, hourInd) => {
+              return (
+                <WeekEventSlotElement key={day.getDate().toString() + hourInd} ind={ind} day={day}
+                  events={events}
+                  time={time}
+                  handleOpenAddEventModal={() => handleOpenAddEventModal(time, day)}
+                />
+              )
+            })}
+          </div>)
         })}
-      </div>
 
+      </div>
     </CalendarLayout >
   )
 }

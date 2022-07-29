@@ -40,10 +40,13 @@ export function createRandomUser(){
   return {
     userId: faker.datatype.uuid(),
     username: faker.internet.userName(),
-    eventDate: faker.date.soon(10), // '2022-02-11T05:14:39.138Z',
+    eventDate: faker.date.soon(20), // '2022-02-11T05:14:39.138Z',
+    eventType:faker.datatype.number({ min: 0, max: 2, precision: 1 }),
+    eventStartTime: faker.datatype.number({ min: 0, max: 20, precision: 1 }),
+    eventLength: faker.datatype.number({ min: 0, max: 20, precision: 1 })
   };
 }
 
-Array.from({ length: 10 }).forEach(() => {
+Array.from({ length: 100 }).forEach(() => {
   USERS.push(createRandomUser());
 });

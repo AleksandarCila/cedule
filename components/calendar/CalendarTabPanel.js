@@ -10,7 +10,7 @@ import { addDays, addMonths, addWeeks, endOfWeek, getWeek, setDate, startOfWeek 
 import { CalendarState } from "../../context/CalendarContext";
 
 import MonthView from './MonthView'
-import WeekView from "./WeekView"
+import WeekView from "./WeekView_TEST"
 import DayView from './DayView'
 
 import { daysLong,months } from "../../utility/constants"

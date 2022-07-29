@@ -47,23 +47,30 @@ const MonthView = (props) => {
     return (
         // <CalendarLayout>
         <div style={{ width: "100%", height: "100%", display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'column' }}>
-            <Divider sx={{width:"100%",}}/>
-            
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gridAutoColumns: "auto", width: "100%" }}>
-                {days.map((day,ind) => (
-                    <div style={{padding:8, borderRight: ((ind+1) % 7) != 0 ? `1px solid ${theme.palette.grey['300']}` : "", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Divider sx={{ width: "100%", }} />
+
+            <div style={{
+                minHeight: 0,
+                minWidth: 0, display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gridAutoColumns: "auto", width: "100%"
+            }}>
+                {days.map((day, ind) => (
+                    <div style={{ padding: 8, borderRight: ((ind + 1) % 7) != 0 ? `1px solid ${theme.palette.grey['300']}` : "", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         {day}
                     </div>
                 ))}
             </div>
-            <div style={{ flex: 1, display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gridAutoColumns: "auto", gridAutoRows: "auto", width: "100%", borderTop: `1px solid ${theme.palette.grey['300']}`}}>
-                {monthDays.map((day,ind) => {
-                    let events=USERS.filter((event)=>{
-                        if(isSameDay(day, event.eventDate)) return event;
-                        
+            <div style={{
+                minHeight: 0,
+                minWidth: 0,
+                flex: 1, display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gridAutoColumns: "auto", gridAutoRows: "1fr", width: "100%", borderTop: `1px solid ${theme.palette.grey['300']}`
+            }}>
+                {monthDays.map((day, ind) => {
+                    let events = USERS.filter((event) => {
+                        if (isSameDay(day, event.eventDate)) return event;
+
                     });
                     return (
-                        <DayGridElement key={day.toString(36)} day={day} ind={ind} events={events}/>
+                        <DayGridElement key={day.toString(36)} day={day} ind={ind} events={events} />
                     )
                 })}
             </div>
