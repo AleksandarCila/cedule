@@ -10,16 +10,15 @@ import { addDays, addMonths, addWeeks, endOfWeek, getWeek, setDate, startOfWeek 
 import { CalendarState } from "../../context/CalendarContext";
 
 import MonthView from './MonthView'
-import WeekView from "./WeekView_TEST"
+import WeekView from "./WeekView"
 import DayView from './DayView'
 
-import { daysLong,months } from "../../utility/constants"
-import CalendarLayout from "./CalendarLayout"
+import { daysLong, months } from "../../utility/constants"
 
 const tabNames = [{
     href: 'month',
     title: 'Month',
-    content: <MonthView />
+    content: <MonthView/>
 }, {
     href: 'week',
     title: 'Week',
@@ -27,7 +26,7 @@ const tabNames = [{
 }, {
     href: 'day',
     title: 'Day',
-    content: <DayView />
+    content: <DayView/>
 }, {
     href: 'agenda',
     title: 'Agenda',
@@ -140,7 +139,7 @@ const CalendarTabPanel = ({ router }) => {
                 }) + ", " + months[startOfWeekDay.getMonth()] + " " + startOfWeekDay.getDate() + " - " + months[endOfWeekDay.getMonth()] + " " + endOfWeekDay.getDate();
                 break;
             case 2:
-                timeLabel = months[date.getMonth()] + ", " + daysLong[date.getDay()] + " "+ date.getDate();
+                timeLabel = months[date.getMonth()] + ", " + daysLong[date.getDay()] + " " + date.getDate();
                 break;
             case 3:
                 timeLabel = months[date.getMonth()] + ", " + date.getDate();
@@ -207,7 +206,17 @@ const CalendarTabPanel = ({ router }) => {
             </Box>
             <Box sx={{ flex: 1, maxHeight: "100%", overflowY: "hidden" }}>
                 {tabNames.map((tab, ind) => {
-                    if (tabValue == ind) return <CalendarLayout key={ind}>{tab.content}</CalendarLayout>;
+                    return (
+                        <Typography component="div"
+                            role="tabpanel"
+                            hidden={tabValue !== ind}
+                            key={ind}
+                            sx={{display: tabValue !== ind ? "none":"flex", justifyContent: 'space-between', flexDirection: 'column'
+                            , width: "100%", maxHeight: 1080, height: "100%", minHeight: 460, bgcolor: "#fff",}}
+                        >
+                                {tab.content}
+                        </Typography>
+                    )
                 })}
             </Box>
         </Box>

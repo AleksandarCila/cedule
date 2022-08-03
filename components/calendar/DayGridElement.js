@@ -4,6 +4,7 @@ import { Box, Divider, Typography, Stack, Chip } from "@mui/material";
 import { useTheme } from '@mui/material';
 import { addAlphaToColor } from "../../utility/addAlphaToColor";
 import { calendarTheme } from '../../styles/theme/calendarTheme'
+import { useEffect, useState } from "react";
 
 const DayGridElement = props => {
     const { day, ind, events } = props;
@@ -11,6 +12,9 @@ const DayGridElement = props => {
         state: { calendarState },
         dispatch,
     } = CalendarState();
+
+    const [loading, setLoading] = useState(true);
+
     const theme = useTheme();
     const selected = isSameDay(day, calendarState.selectedDate);
     const isThisMonth = isSameMonth(day, calendarState.selectedDate);
@@ -36,6 +40,8 @@ const DayGridElement = props => {
         }
     })
 
+    useEffect(() => (setLoading(false)), []);
+
     return (
         <Box sx={{
             p: 0.75,
@@ -45,9 +51,9 @@ const DayGridElement = props => {
             borderRight: ((ind + 1) % 7) != 0 ? `1px solid ${theme.palette.grey['300']}` : "",
             borderBottom: `1px solid ${theme.palette.grey['300']}`,
             borderTop: isToday(day) ? `5px solid ${theme.palette.primary.light}` : "5px solid transparent",
-            minWidth:0,
-            minHeight:0,
-            overflow:'hidden',
+            minWidth: 0,
+            minHeight: 0,
+            overflow: 'hidden',
         }}
             onClick={() => {
                 dispatch({
@@ -63,7 +69,7 @@ const DayGridElement = props => {
                 alignItems: 'center',
                 flexDirection: 'column',
                 // height:"100%",
-                
+
             }}>
                 <Box sx={{ width: "100%", }}>
                     <Typography variant="span" sx={{ fontSize: { xs: "small", lg: "medium" } }}>{day.getDate()} </Typography>
@@ -73,25 +79,27 @@ const DayGridElement = props => {
 
                     <Stack direction='row'
                         spacing={{ xs: 1, sm: 1 }}>
-
-                        {numberOfTasks > 0 && <Typography sx={{ fontSize: { xs: 8, lg: 12 }, textAlign: 'center', }} ><Chip size="small" sx={{ bgcolor: calendarTheme.events.task, width: 10, height: 10 }} /> {numberOfTasks} </Typography>}
-                        {numberOfReminders > 0 && <Typography sx={{ fontSize: { xs: 8, lg: 12 }, textAlign: 'center', }} ><Chip size="small" sx={{ bgcolor: calendarTheme.events.reminder, width: 10, height: 10 }} /> {numberOfReminders} </Typography>}
-                        {numberOfEvents > 0 && <Typography sx={{ display: { xs: 'block', lg: 'none' }, fontSize: { xs: 8, lg: 12 }, textAlign: 'center', }} ><Chip size="small" sx={{ bgcolor: theme.palette.primary.main, width: 10, height: 10 }} /> {numberOfEvents} </Typography>}
+                           
+                        {!loading && numberOfTasks > 0 && <Typography component="div" sx={{ fontSize: { xs: 8, lg: 12 }, textAlign: 'center', }} ><Chip size="small" sx={{ bgcolor: calendarTheme.events.task, width: 10, height: 10 }} /> {numberOfTasks} </Typography>}
+                        {!loading && numberOfReminders > 0 && <Typography component="div" sx={{ fontSize: { xs: 8, lg: 12 }, textAlign: 'center', }} ><Chip size="small" sx={{ bgcolor: calendarTheme.events.reminder, width: 10, height: 10 }} /> {numberOfReminders} </Typography>}
+                        {!loading && numberOfEvents > 0 && <Typography component="div" sx={{ display: { xs: 'block', lg: 'none' }, fontSize: { xs: 8, lg: 12 }, textAlign: 'center', }} ><Chip size="small" sx={{ bgcolor: theme.palette.primary.main, width: 10, height: 10 }} /> {numberOfEvents} </Typography>}
 
                     </Stack>
                     <Box sx={{
-                        pb:1,
+                        pb: 1,
                         my: 0, display: 'flex', justifyContent: 'flex-start', alignItems: 'center', flexWrap: 'wrap',
                     }}>
 
-                        {events.map((event) => {
+                        {!loading && events && events.map((event, ind) => {
                             if (event.eventType == 0) return (
-                                <Typography sx={{
-                                    display: { xs: 'none', lg: 'block' }, borderRadius: 5, bgcolor: theme.palette.primary.main,
-                                    color: 'white', textAlign: 'center',
+                                <Typography
+                                    key={ind}
+                                    sx={{
+                                        display: { xs: 'none', lg: 'block' }, borderRadius: 5, bgcolor: theme.palette.primary.main,
+                                        color: 'white', textAlign: 'center',
 
-                                    fontSize: 12, mr: 0.3, my: 0.3, py: 0.4, px: 0.8
-                                }}>
+                                        fontSize: 12, mr: 0.3, my: 0.3, py: 0.4, px: 0.8
+                                    }}>
                                     12:15pm
                                 </Typography>
 

@@ -1,12 +1,24 @@
 import React, { createContext, useContext, useReducer } from "react";
 import { USERS } from "../utility/constants";
 import { calendarReducer } from "./Reducers";
+import { startOfWeek, endOfWeek, eachDayOfInterval,  } from 'date-fns'
+
 
 const CalendarContext = createContext();
 
+const getWeekDays = (date) => {
+  const start = startOfWeek(date)
+  const end = endOfWeek(date)
+  return eachDayOfInterval({
+    start: start,
+    end: end
+  });
+}
+
 const initialState = {
-  selectedDate:new Date(),
-  events:USERS,
+  selectedDate: new Date(),
+  weekDays: getWeekDays(new Date()),
+  events: USERS,
 };
 
 const Context = ({ children }) => {

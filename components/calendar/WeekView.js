@@ -1,103 +1,87 @@
 
-import { useEffect, useState } from 'react';
-import { Box, ListItem, Typography, Divider, Fab, IconButton } from '@mui/material'
+import { useState, useRef } from 'react';
+import { Box, Typography, Divider, Fab } from '@mui/material'
 import { useTheme } from '@mui/material';
 import { addAlphaToColor } from "../../utility/addAlphaToColor";
 import AddIcon from '@mui/icons-material/Add';
 
-import { startOfWeek, startOfMonth, endOfMonth, endOfWeek, eachDayOfInterval, isToday, isWeekend, isSameDay } from 'date-fns'
-
-import { CalendarState } from "../../context/CalendarContext";
 import CalendarLayout from './CalendarLayout';
 import NewEventModal from './NewEvent/NewEventModal';
+import WeekViewDayHeaders from './WeekViewComponents/WeekViewDayHeaders'
+import WeekViewDayEvents from './WeekViewComponents/WeekViewDayEvents'
+import TimeStamp from './WeekViewComponents/TimeStamp'
 
-import { days, hours, timeStamps, USERS } from "../../utility/constants"
-
-
-
-const getWeekDays = (date) => {
-  const start = startOfWeek(date)
-  const end = endOfWeek(date)
-  return eachDayOfInterval({
-    start: start,
-    end: end
-  });
-}
-
-const WeekDayHeaderElement = props => {
-  const {
-    state: { calendarState },
-    dispatch,
-  } = CalendarState();
-  const { ind, day } = props;
-
-  const theme = useTheme();
-  const selected = isSameDay(day, calendarState.selectedDate);
-  const handleSelectDate = (e, day) => {
-    dispatch({
-      type: "SET_SELECTED_DATE",
-      payload: {
-        day
-      },
-    });
-  }
-
-  return (
-    <div style={{
-      cursor: 'pointer',
-      width: "100%",
-      height: "100%",
-      padding: 2,
-      display: 'flex', justifyContent: 'center', alignItems: 'center',
-      backgroundColor: selected ? addAlphaToColor(theme.palette.primary.light, 0.3) : "#fff",
-      borderBottom: isToday(day) ? `5px solid ${theme.palette.primary.light}` : (selected ? addAlphaToColor(theme.palette.primary.main, 1) : `5px solid ${theme.palette.grey['200']}`),
-      borderRight: ((ind + 1) % 7) != 0 ? `1px solid ${theme.palette.grey['300']}` : "",
-    }}
-      onClick={(e) => handleSelectDate(e, day)}>
-      <Typography fontSize="small" variant="span">{day.getDate()} {days[day.getDay()]}</Typography>
-    </div>
-  )
-}
+import { days, timeStamps } from "../../utility/constants"
 
 const WeekEventSlotElement = props => {
   const { ind, day, events, handleOpenAddEventModal } = props;
   const [hover, setHover] = useState(false);
 
-  const theme = useTheme();
-  const isWeekendDay = isWeekend(day);
+  const dragOverItem = useRef();
 
-  // const [openAddEventModal, setOpenAddEventModal] = useState(false);
-  // const handleOpenAddEventModal = () => {
-  //   setOpenAddEventModal(prev => !prev)
-  // }
+  const dragEnter = (event, position) => {
+    dragOverItem.current = position;
+    setHover(true);
+    event.stopPropagation();
+    event.preventDefault();
+    // console.log(e.target.innerHTML);
+  };
+
+  const dragExit = (event, position) => {
+    setHover(false);
+    event.stopPropagation();
+    event.preventDefault();
+    // console.log("aca");
+  };
+
+  const onDragOver = (event) => {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+
+  const handleDrop = event => {
+    event.stopPropagation()
+    event.preventDefault()
+    setHover(false);
+
+    let data;
+
+    try {
+      data = JSON.parse(event.dataTransfer.getData('data'));
+    } catch (e) {
+      // If the text data isn't parsable we'll just ignore it.
+      return;
+    }
+
+    // Do something with the data
+    console.log(data);
+  };
+
+  const theme = useTheme();
+  const isWeekendDay = (ind == 0 || ind == 6) ? true : false;
+
   return (
     <div style={{
       padding: 2,
       borderRight: ((ind + 1) % 7) != 0 ? `1px solid ${theme.palette.grey['300']}` : "",
       borderBottom: `1px solid ${theme.palette.grey['300']}`,
       width: "100%", height: "100%",
-      backgroundColor: isWeekendDay ? theme.palette.grey['200'] : "000",
-      position: 'relative'
+      backgroundColor: (hover ? theme.palette.primary.main : isWeekendDay ? theme.palette.grey['200'] : "#fff"),
     }}
+      onDragEnter={dragEnter}
+      onDragStart={(e) => { e.preventDefault() }}
+      onDragLeave={dragExit}
+      onDragOver={onDragOver}
+      onDrop={handleDrop}
+    // draggable
     >
-      {/* <NewEventModal time={time} day={day} openAddEventModal={openAddEventModal} handleOpenAddEventModal={handleOpenAddEventModal} /> */}
-
-      <Box onClick={handleOpenAddEventModal} onMouseOver={() => { setHover(true) }} onMouseOut={() => { setHover(false) }} sx={{ width: "100%", height: "100%" }
-      }>
-        {/* Blok */}
-        <Fab variant="extended" color="primary" size="small" sx={{ position: 'absolute', bottom: 3, right: 3, display: hover ? "" : "none" }}><AddIcon /></Fab>
-      </Box>
     </div >)
 
 }
 
 const WeekView = (props) => {
-  const {
-    state: { calendarState },
-    dispatch,
-  } = CalendarState();
-  const [weekDays, setWeekDays] = useState(getWeekDays(calendarState.selectedDate));
-  const [selectedDate, setSelectedDate] = useState(calendarState.selectedDate);
+
+
   const theme = useTheme();
 
   const [addEventModalState, setAddEvenModalState] = useState({
@@ -114,84 +98,49 @@ const WeekView = (props) => {
     setOpenAddEventModal(prev => !prev)
   }
 
-  useEffect(() => {
-    const oldDate = selectedDate;
-    const newDate = calendarState.selectedDate;
-
-    setWeekDays(getWeekDays(newDate));
-  }, [calendarState])
-
   return (
     <CalendarLayout style={props.style}>
       <NewEventModal time={addEventModalState.time} day={addEventModalState.day} openAddEventModal={openAddEventModal} handleOpenAddEventModal={handleOpenAddEventModal} />
 
       <Divider />
-      <div style={{ width: "100%", height: 40, minHeight: 40, paddingRight: 18 }}>
+      <WeekViewDayHeaders />
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(8, 1fr)", gridAutoColumns: "auto", gridAutoRows: "auto", overflowY: "scroll", }}>
         <div style={{
-          width: "100%",
-          height: "100%",
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        }}>
-          <div style={{
-            borderRight: `1px solid ${theme.palette.grey['300']}`,
-            height: "100%",
-            width: "100%", overflow: "hidden", textOverflow: "ellipsis",
-          }}>
-            <Typography variant="span" fontSize="small">
-              1am
-            </Typography>
-          </div>
+          borderTop: `1px solid ${theme.palette.grey['300']}`,
+          display: "grid", gridTemplateColumns: "repeat(1, 1fr)", gridAutoColumns: "auto", gridAutoRows: "auto"
+        }}>{
+            timeStamps.map((hour, hourInd) => {
+              return (
+                <TimeStamp key={hourInd} hour={hour} hourInd={hourInd} />
+              )
+            })}
 
-          {weekDays.map((day, ind) => {
-            return (
-              <WeekDayHeaderElement key={day + ind} ind={ind} day={day} />
-            )
-          })
-
-          }
         </div>
-      </div>
-      <div style={{ borderTop: `1px solid ${theme.palette.grey['300']}`, overflowY: "scroll" }}>{
-        timeStamps.map((hour, hourInd) => {
-          if (true) {
-            return (
-              <div key={hour + hourInd} style={{ height: 20, width: "100%" }}>
-                <div style={{
-                  height: "100%", display: 'flex', justifyContent: 'space-between', alignItems: 'center',
 
-                }}>
-                  <div style={{
-                    width: "100%", height: "100%", overflow: "hidden", textOverflow: "ellipsis",
-                    borderRight: `1px solid ${theme.palette.grey['300']}`,
-                    borderBottom: `1px solid ${theme.palette.grey['300']}`,
-                    backgroundColor: hourInd < 12 ? addAlphaToColor(theme.palette.primary.light, 0.15) : addAlphaToColor(theme.palette.primary.light, 0.2)
-                  }}>
-                    <Typography variant="span" fontSize="small">
-                      {hour.label}
-                    </Typography>
-                  </div>
+        {days.map((day, ind) => {
 
-                  {weekDays.map((day, ind) => {
-                    const time = new Date(day.getFullYear(), day.getMonth(), day.getDate(), hourInd + 1);
-                    let events = USERS.filter((event) => {
-                      if (isSameDay(day, event.eventDate)) return event;
+          return (<div key={ind} style={{
+            borderTop: `1px solid ${theme.palette.grey['300']}`,
+            position: 'relative',
+            display: "grid", gridTemplateColumns: "repeat(1, 1fr)", gridAutoColumns: "auto", gridAutoRows: "auto"
+          }}>
+            <WeekViewDayEvents weekDayIndex={ind} />
+            {timeStamps && timeStamps.map((hour, hourInd) => {
+              return (
+                <WeekEventSlotElement key={hourInd} ind={ind}
+                  // time={time}
+                  // handleOpenAddEventModal={() => (handleOpenAddEventModal(time, day))
+                  handleOpenAddEventModal={() => { }}
+                  draggable
+                  onDragEnter={(e) => dragEnter(e, ind)}
 
-                    });
-                    return (
-                        <WeekEventSlotElement key={hour + ind} ind={ind} day={day}
-                          events={events}
-                          time={time}
-                          handleOpenAddEventModal={() => handleOpenAddEventModal(time, day)}
-                        />
-                      )
-                  })}
-                </div>
-              </div>
-            )
-          }
+                />
+              )
+            })}
+          </div>)
         })}
-      </div>
 
+      </div>
     </CalendarLayout >
   )
 }

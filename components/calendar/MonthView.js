@@ -23,10 +23,15 @@ const MonthView = (props) => {
         state: { calendarState },
         dispatch,
     } = CalendarState();
+
+    const [loading, setLoading] = useState(true);
+
     const theme = useTheme();
 
     const [monthDays, setMonthDays] = useState(getMonthDays(calendarState.selectedDate));
     const [selectedDate, setSelectedDate] = useState(calendarState.selectedDate);
+
+    useEffect(() => (setLoading(false)), []);
 
     useEffect(() => {
         const oldDate = selectedDate;
@@ -44,6 +49,7 @@ const MonthView = (props) => {
         }
     }, [calendarState])
 
+
     return (
         // <CalendarLayout>
         <div style={{ width: "100%", height: "100%", display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'column' }}>
@@ -53,8 +59,8 @@ const MonthView = (props) => {
                 minHeight: 0,
                 minWidth: 0, display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gridAutoColumns: "auto", width: "100%"
             }}>
-                {days.map((day, ind) => (
-                    <div style={{ padding: 8, borderRight: ((ind + 1) % 7) != 0 ? `1px solid ${theme.palette.grey['300']}` : "", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                {!loading && days && days.map((day, ind) => (
+                    <div key={day.toString(36)} style={{ padding: 8, borderRight: ((ind + 1) % 7) != 0 ? `1px solid ${theme.palette.grey['300']}` : "", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         {day}
                     </div>
                 ))}
@@ -64,7 +70,7 @@ const MonthView = (props) => {
                 minWidth: 0,
                 flex: 1, display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gridAutoColumns: "auto", gridAutoRows: "1fr", width: "100%", borderTop: `1px solid ${theme.palette.grey['300']}`
             }}>
-                {monthDays.map((day, ind) => {
+                {!loading && monthDays && monthDays.map((day, ind) => {
                     let events = USERS.filter((event) => {
                         if (isSameDay(day, event.eventDate)) return event;
 

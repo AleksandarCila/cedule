@@ -1,13 +1,13 @@
-import { Box } from "@mui/material";
+import { Typography } from "@mui/material";
 
 const CalendarLayout = props => {
     const { children } = props;
 
     return (
-        <Box sx={{ display: "flex", justifyContent: 'space-between', flexDirection: 'column'
-        , width: "100%", maxHeight: 1080, height: "100%", minHeight: 460, bgcolor: "#fff", ...props.style }}>
+        <Typography component="div"
+        >
             {children}
-        </Box>
+        </Typography>
     )
 }
 

@@ -43,7 +43,7 @@ export function createRandomUser(){
     eventDate: faker.date.soon(20), // '2022-02-11T05:14:39.138Z',
     eventType:faker.datatype.number({ min: 0, max: 2, precision: 1 }),
     eventStartTime: faker.datatype.number({ min: 0, max: 20, precision: 1 }),
-    eventLength: faker.datatype.number({ min: 0, max: 20, precision: 1 })
+    eventLength: faker.datatype.number({ min: 0, max: 10, precision: 1 })
   };
 }
 
