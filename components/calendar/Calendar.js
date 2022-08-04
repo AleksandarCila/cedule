@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Button, Box, Divider } from '@mui/material'
 
-import EventList from './EventList'
+import EventList from './EventListComponents/EventList'
 import CalendarTabPanel from './CalendarTabPanel.js'
 import ResponsiveDrawer from './ResponsiveDrawer'
-import CalendarList from './CalendarList'
+import CalendarList from './CalendarListComponents/CalendarList'
 
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ScheduleIcon from '@mui/icons-material/Schedule';

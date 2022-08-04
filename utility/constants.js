@@ -50,3 +50,101 @@ export function createRandomUser(){
 Array.from({ length: 100 }).forEach(() => {
   USERS.push(createRandomUser());
 });
+
+
+
+
+
+export function createRandomTask(){
+  return {
+    id: faker.datatype.uuid(),
+    calendar_id: 'my_tasks',
+    type:'task',
+    name: faker.internet.userName(),
+    color:'#ffca3a',
+
+    eventDate: faker.date.soon(20), // '2022-02-11T05:14:39.138Z',
+    eventType:faker.datatype.number({ min: 0, max: 2, precision: 1 }),
+    eventStartTime: faker.datatype.number({ min: 0, max: 20, precision: 1 }),
+    eventLength: faker.datatype.number({ min: 0, max: 10, precision: 1 })
+  };
+}
+
+export function createRandomEvent(){
+  return {
+    id: faker.datatype.uuid(),
+    calendar_id: 'my_events',
+    type:'event',
+    name: faker.internet.userName(),
+    color:'#1982c4',
+
+    eventDate: faker.date.soon(20), // '2022-02-11T05:14:39.138Z',
+    eventType:faker.datatype.number({ min: 0, max: 2, precision: 1 }),
+    eventStartTime: faker.datatype.number({ min: 0, max: 20, precision: 1 }),
+    eventLength: faker.datatype.number({ min: 0, max: 10, precision: 1 })
+  };
+}
+
+export function createRandomReminder(){
+  return {
+    id: faker.datatype.uuid(),
+    calendar_id: 'my_reminders',
+    type:'reminder',
+    name: faker.internet.userName(),
+    color:'#ff595e',
+
+    eventDate: faker.date.soon(20), // '2022-02-11T05:14:39.138Z',
+    eventType:faker.datatype.number({ min: 0, max: 2, precision: 1 }),
+    eventStartTime: faker.datatype.number({ min: 0, max: 20, precision: 1 }),
+    eventLength: faker.datatype.number({ min: 0, max: 10, precision: 1 })
+  };
+}
+
+export const events=[];
+
+Array.from({ length: 10 }).forEach(() => {
+  events.push(createRandomTask());
+  events.push(createRandomEvent());
+  events.push(createRandomReminder());
+});
+
+const calendarEvents=[]
+Array.from({ length: 10 }).forEach(() => {
+  calendarEvents.push(createRandomEvent());
+})
+
+const calendarTasks=[]
+Array.from({ length: 10 }).forEach(() => {
+  calendarTasks.push(createRandomTask());
+})
+const calendarReminders=[]
+Array.from({ length: 10 }).forEach(() => {
+  calendarReminders.push(createRandomReminder());
+})
+
+export const calendars = [
+  {
+    id:'my_events',
+    name:'Events',
+    user_id:'User',
+    color:'#1982c4',
+    visible:true,
+    events:calendarEvents
+  },
+  {
+    id:'my_tasks',
+    name:'Tasks',
+    user_id:'User',
+    color:'#ffca3a',
+    visible:true,
+    events:calendarTasks
+  },
+  {
+    id:'my_reminders',
+    name:'Reminders',
+    user_id:'User',
+    color:'#ff595e',
+    visible:true,
+    events:calendarReminders
+  },
+];

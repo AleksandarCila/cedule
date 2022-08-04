@@ -2,16 +2,16 @@
 import { useState, useRef } from 'react';
 import { Box, Typography, Divider, Fab } from '@mui/material'
 import { useTheme } from '@mui/material';
-import { addAlphaToColor } from "../../utility/addAlphaToColor";
+import { addAlphaToColor } from "../../../utility/addAlphaToColor";
 import AddIcon from '@mui/icons-material/Add';
 
-import CalendarLayout from './CalendarLayout';
-import NewEventModal from './NewEvent/NewEventModal';
-import WeekViewDayHeaders from './WeekViewComponents/WeekViewDayHeaders'
-import WeekViewDayEvents from './WeekViewComponents/WeekViewDayEvents'
-import TimeStamp from './WeekViewComponents/TimeStamp'
+import CalendarLayout from '../CalendarLayout';
+import NewEventModal from '../NewEvent/NewEventModal';
+import WeekViewDayHeaders from './WeekViewDayHeaders'
+import WeekViewDayEvents from './WeekViewDayEvents'
+import TimeStamp from './TimeStamp'
 
-import { days, timeStamps } from "../../utility/constants"
+import { days, timeStamps } from "../../../utility/constants"
 
 const WeekEventSlotElement = props => {
   const { ind, day, events, handleOpenAddEventModal } = props;
@@ -99,7 +99,7 @@ const WeekView = (props) => {
   }
 
   return (
-    <CalendarLayout style={props.style}>
+    <>
       <NewEventModal time={addEventModalState.time} day={addEventModalState.day} openAddEventModal={openAddEventModal} handleOpenAddEventModal={handleOpenAddEventModal} />
 
       <Divider />
@@ -141,7 +141,7 @@ const WeekView = (props) => {
         })}
 
       </div>
-    </CalendarLayout >
+    </ >
   )
 }
 

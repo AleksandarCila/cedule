@@ -1,6 +1,6 @@
 
-import { useEffect, useState } from 'react';
-import { Box, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent, Grid, Divider } from '@mui/material'
+import { useEffect, useState, useMemo } from 'react';
+import { Divider } from '@mui/material'
 import { useTheme } from '@mui/material';
 
 import { startOfWeek, startOfMonth, endOfMonth, endOfWeek, eachDayOfInterval, isToday, isSameDay } from 'date-fns'
@@ -30,6 +30,13 @@ const MonthView = (props) => {
 
     const [monthDays, setMonthDays] = useState(getMonthDays(calendarState.selectedDate));
     const [selectedDate, setSelectedDate] = useState(calendarState.selectedDate);
+
+    let events = [];
+    calendarState.calendars.forEach((calendar) => {
+        if (calendar.visible)
+            events = events.concat(calendar.events)
+    })
+
 
     useEffect(() => (setLoading(false)), []);
 
@@ -71,12 +78,12 @@ const MonthView = (props) => {
                 flex: 1, display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gridAutoColumns: "auto", gridAutoRows: "1fr", width: "100%", borderTop: `1px solid ${theme.palette.grey['300']}`
             }}>
                 {!loading && monthDays && monthDays.map((day, ind) => {
-                    let events = USERS.filter((event) => {
+                    let dayEvents = events.filter((event) => {
                         if (isSameDay(day, event.eventDate)) return event;
 
                     });
                     return (
-                        <DayGridElement key={day.toString(36)} day={day} ind={ind} events={events} />
+                        <DayGridElement key={day.toString(36)} day={day} ind={ind} events={dayEvents} />
                     )
                 })}
             </div>

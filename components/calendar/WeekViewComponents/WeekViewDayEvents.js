@@ -21,7 +21,14 @@ const WeekViewDayEvents = (props) => {
 
     const day = calendarState.weekDays[weekDayIndex];
 
-    let events = calendarState.events.filter((event) => {
+    let events = [];
+    calendarState.calendars.forEach((calendar) => {
+        if (calendar.visible)
+            events = events.concat(calendar.events)
+    })
+
+
+    events = events.filter((event) => {
         if (isSameDay(day, event.eventDate)) return event;
 
     });
@@ -57,6 +64,7 @@ const WeekViewDayEvents = (props) => {
     return (
         <>
             {!loading && events && events.map((event, ind) => {
+                console.log(event);
                 return (
                     <Box
                         key={ind}
@@ -66,9 +74,9 @@ const WeekViewDayEvents = (props) => {
                             left: `${ind * 2}%`,
                             width: `${100 - 2 * ind}%`,
                             height: `${event.eventLength * (1 / timeStamps.length * 100)}%`,
-                            backgroundColor: '#00f',
+                            backgroundColor: event.color,
                             borderRadius: 2,
-                            border: "1px solid black",
+                            // border: "1px solid black",
                             zIndex: 999 + ind,
                             boxShadow: 3,
                             py: 0.1,

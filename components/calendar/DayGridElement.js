@@ -25,14 +25,14 @@ const DayGridElement = props => {
     let numberOfReminders = 0
 
     events.filter((event) => {
-        switch (event.eventType) {
-            case 0:
+        switch (event.type) {
+            case 'event':
                 numberOfEvents++;
                 break;
-            case 1:
+            case 'task':
                 numberOfTasks++;
                 break;
-            case 2:
+            case 'reminder':
                 numberOfReminders++;
                 break;
             default:
@@ -75,14 +75,29 @@ const DayGridElement = props => {
                     <Typography variant="span" sx={{ fontSize: { xs: "small", lg: "medium" } }}>{day.getDate()} </Typography>
                     {events.length > 0 && <Divider sx={{ width: "100%" }} />}
                 </Box>
-                <Box sx={{ width: "100%" }}>
+                <Box sx={{ width: "100%", py:0.5 }}>
 
                     <Stack direction='row'
                         spacing={{ xs: 1, sm: 1 }}>
-                           
-                        {!loading && numberOfTasks > 0 && <Typography component="div" sx={{ fontSize: { xs: 8, lg: 12 }, textAlign: 'center', }} ><Chip size="small" sx={{ bgcolor: calendarTheme.events.task, width: 10, height: 10 }} /> {numberOfTasks} </Typography>}
-                        {!loading && numberOfReminders > 0 && <Typography component="div" sx={{ fontSize: { xs: 8, lg: 12 }, textAlign: 'center', }} ><Chip size="small" sx={{ bgcolor: calendarTheme.events.reminder, width: 10, height: 10 }} /> {numberOfReminders} </Typography>}
-                        {!loading && numberOfEvents > 0 && <Typography component="div" sx={{ display: { xs: 'block', lg: 'none' }, fontSize: { xs: 8, lg: 12 }, textAlign: 'center', }} ><Chip size="small" sx={{ bgcolor: theme.palette.primary.main, width: 10, height: 10 }} /> {numberOfEvents} </Typography>}
+
+                        {!loading && numberOfTasks > 0 && <Typography component="div" sx={{
+                            fontSize: { xs: 8, lg: 12 }, textAlign: 'center',
+                            borderRadius: 2, bgcolor: theme.custom.events.task, px: 0.5, py:0.2
+                        }} >
+                            {numberOfTasks}
+                        </Typography>}
+                        {!loading && numberOfReminders > 0 && <Typography component="div" sx={{
+                            fontSize: { xs: 8, lg: 12 }, textAlign: 'center',
+                            borderRadius: 3, bgcolor: theme.custom.events.reminder, px: 0.5, py:0.2
+                        }} >
+                            {numberOfReminders}
+                        </Typography>}
+                        {!loading && numberOfEvents > 0 && <Typography component="div" sx={{
+                            display: { xs: 'block', lg: 'none' }, fontSize: { xs: 8, lg: 12 }, textAlign: 'center',
+                            borderRadius: 2, bgcolor: theme.custom.events.event, px: 0.5, py:0.2
+                        }} >
+                            {numberOfEvents}
+                        </Typography>}
 
                     </Stack>
                     <Box sx={{
@@ -91,11 +106,11 @@ const DayGridElement = props => {
                     }}>
 
                         {!loading && events && events.map((event, ind) => {
-                            if (event.eventType == 0) return (
+                            if (event.type === 'event') return (
                                 <Typography
                                     key={ind}
                                     sx={{
-                                        display: { xs: 'none', lg: 'block' }, borderRadius: 5, bgcolor: theme.palette.primary.main,
+                                        display: { xs: 'none', lg: 'block' }, borderRadius: 5, bgcolor: theme.custom.events.event,
                                         color: 'white', textAlign: 'center',
 
                                         fontSize: 12, mr: 0.3, my: 0.3, py: 0.4, px: 0.8

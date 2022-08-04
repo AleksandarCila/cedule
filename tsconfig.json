@@ -15,6 +15,6 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "components/calendar/WeekView.js", "components/calendar/CalendarTabPanel.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "components/calendar/WeekViewComponents/WeekView.js", "components/calendar/CalendarTabPanel.js", "styles/theme/lightThemeOptions.js"],
   "exclude": ["node_modules"]
 }
