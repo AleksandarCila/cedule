@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react"
 import { withRouter } from "next/router"
-import { Box, Button, Menu, IconButton, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material"
+import { Box, Button, Menu, IconButton, ToggleButton, ToggleButtonGroup, Typography, Fab } from "@mui/material"
 import WestIcon from '@mui/icons-material/West';
 import EastIcon from '@mui/icons-material/East';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import AddIcon from '@mui/icons-material/Add';
 
 import { addDays, addMonths, addWeeks, endOfWeek, getWeek, setDate, startOfWeek } from "date-fns"
 
 import { CalendarState } from "../../context/CalendarContext";
+import { ModalState } from '../../context/ModalContext'
+
 
 import MonthView from './MonthView'
 import WeekView from "./WeekViewComponents/WeekView"
@@ -18,7 +21,7 @@ import { daysLong, months } from "../../utility/constants"
 const tabNames = [{
     href: 'month',
     title: 'Month',
-    content: <MonthView/>
+    content: <MonthView />
 }, {
     href: 'week',
     title: 'Week',
@@ -26,7 +29,7 @@ const tabNames = [{
 }, {
     href: 'day',
     title: 'Day',
-    content: <DayView/>
+    content: <DayView />
 }, {
     href: 'agenda',
     title: 'Agenda',
@@ -56,6 +59,9 @@ const CalendarTabPanel = ({ router }) => {
         state: { calendarState },
         dispatch,
     } = CalendarState();
+    const {
+        dispatch: dispatchModal
+    } = ModalState();
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -204,17 +210,36 @@ const CalendarTabPanel = ({ router }) => {
                 <Typography variant="h5">{getTimeLabel()}</Typography>
 
             </Box>
-            <Box sx={{ flex: 1, maxHeight: "100%", overflowY: "hidden" }}>
+            <Fab
+                color="primary"
+                onClick={() => {
+                    dispatchModal({
+                        type: "SHOW_MODAL",
+                        modalType: "NEW_EVENT",
+                        modalProps: {},
+                    });
+                }}
+                sx={{
+                    display: { xs: "block", lg: "none" }, position: 'absolute', bottom: 25, right: 25,
+                    display: "flex", justifyContent: 'center', alignItems: "center"
+                }}>
+                <AddIcon />
+            </Fab>
+            <Box sx={{ flex: 1, maxHeight: "100%", overflowY: "hidden", position: 'relative' }}>
+
+
                 {tabNames.map((tab, ind) => {
                     return (
                         <Typography component="div"
                             role="tabpanel"
                             hidden={tabValue !== ind}
                             key={ind}
-                            sx={{display: tabValue !== ind ? "none":"flex", justifyContent: 'space-between', flexDirection: 'column'
-                            , width: "100%", maxHeight: 1080, height: "100%", minHeight: 460, bgcolor: "#fff",}}
+                            sx={{
+                                display: tabValue !== ind ? "none" : "flex", justifyContent: 'space-between', flexDirection: 'column'
+                                , width: "100%", maxHeight: 1080, height: "100%", minHeight: 460, bgcolor: "#fff",
+                            }}
                         >
-                                {tab.content}
+                            {tab.content}
                         </Typography>
                     )
                 })}

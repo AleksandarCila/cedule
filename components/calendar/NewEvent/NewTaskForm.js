@@ -27,14 +27,14 @@ const SectionDivider = props => {
 }
 
 const NewTaskForm = props => {
-    const { day, time } = props;
+    const { day, time, calendars } = props;
     const [formState, setFormState] = useState({
         name: "",
         dateValue: day ? day : new Date(),
         timeValue: time ? new Date().setTime(time) : 0,
         allDay: false,
         taskDescription: "",
-        calendar: "Kalendar1",
+        calendar: calendars[0].id,
         formErrors: { name: '', dateValue: '', timeValue: '' },
         nameValid: false,
         dateValid: true,
@@ -42,9 +42,9 @@ const NewTaskForm = props => {
     })
     const [formValid, setFormValid] = useState(false);
 
-    const handleUserInput = (e, inputName = "", inpuValue = "") => {
+    const handleUserInput = (e, inputName = "", inputValue = "") => {
         const name = e ? e.target.name : inputName;
-        const value = e ? e.target.value : inpuValue;
+        const value = e ? e.target.value : inputValue;
         validateField(name, value);
     }
 
@@ -200,9 +200,12 @@ const NewTaskForm = props => {
                                 }}
                                 size="small"
                             >
-                                <MenuItem value="Kalendar1">Kal Ime 1</MenuItem>
-                                <MenuItem value="Kalendar2">Kal Ime 2</MenuItem>
-                                <MenuItem value="Kalendar3">Kal Ime 3</MenuItem>
+                                {calendars.map((calendar, ind) => {
+                                    return (
+                                        <MenuItem key={ind} value={calendar.id}>{calendar.name}</MenuItem>
+
+                                    )
+                                })}
                             </Select>
                         </FormControl>
                     </Box>

@@ -8,7 +8,7 @@ import { timeStamps } from '../../../utility/constants'
 export default function TimePickerComboBox(props) {
     const { label, minTime, value, onChange, disabled, error } = props;
     const timeStampsInternal = minTime ? timeStamps.slice(minTime.id + 1) : timeStamps;
-    console.log("ERROR_:"+label+""+error);
+    // console.log(timeStampsInternal);
     return (
         <Autocomplete
             id="time-picker-stamps"
@@ -18,7 +18,9 @@ export default function TimePickerComboBox(props) {
             options={timeStampsInternal}
             fullWidth
             // error={error}
-            
+            isOptionEqualToValue={(option, value) => {
+                return option.id === value.id ? true : false;
+            }}
             autoHighlight
             onInputChange={(newTime) => { if (newTime) onChange(newTime.target.value) }}
             getOptionLabel={(option) => option.label}

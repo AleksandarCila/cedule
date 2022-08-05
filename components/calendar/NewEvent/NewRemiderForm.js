@@ -27,13 +27,13 @@ const SectionDivider = props => {
 }
 
 const NewReminderForm = props => {
-    const { day, time } = props;
+    const { day, time, calendars } = props;
     const [formState, setFormState] = useState({
         name: "",
         dateValue: day ? day : new Date(),
         timeValue: time ? new Date().setTime(time) : 0,
         allDay: false,
-        calendar: "Kalendar1",
+        calendar: calendars[0].id,
         formErrors: { name: '', dateValue: '', timeValue: '' },
         nameValid: false,
         dateValid: true,
@@ -168,7 +168,6 @@ const NewReminderForm = props => {
                         <SectionDivider title="My Calendars"><ListAltIcon color="primary" /></SectionDivider>
 
                         <FormControl fullWidth>
-                            {/* <InputLabel id="demo-simple-select-label">Calendars</InputLabel> */}
                             <Select
                                 labelId="calendar-select-label"
                                 id="calendar-select"
@@ -180,9 +179,12 @@ const NewReminderForm = props => {
                                 }}
                                 size="small"
                             >
-                                <MenuItem value="Kalendar1">Kal Ime 1</MenuItem>
-                                <MenuItem value="Kalendar2">Kal Ime 2</MenuItem>
-                                <MenuItem value="Kalendar3">Kal Ime 3</MenuItem>
+                                {calendars.map((calendar, ind) => {
+                                    return (
+                                        <MenuItem key={ind} value={calendar.id}>{calendar.name}</MenuItem>
+
+                                    )
+                                })}
                             </Select>
                         </FormControl>
                     </Box>

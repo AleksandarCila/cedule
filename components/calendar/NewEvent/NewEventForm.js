@@ -60,7 +60,6 @@ const NewEventForm = props => {
         let timeEndValid = formState.timeEndValid;
 
         let timeValueEnd = formState.timeValueEnd;
-        console.log(formState)
         switch (fieldName) {
             case 'name':
                 nameValid = value.length > 0 ? true : false;
@@ -152,7 +151,7 @@ const NewEventForm = props => {
                         value={formState.name} placeholder="Add an Event name" variant="outlined" size="small"
                         fullWidth sx={{ mb: 2 }}
                         helperText={formState.nameValid ? "" : "Event must have a name"}
-                        error={formState.nameValid} />
+                        error={!formState.nameValid} />
                     <SectionDivider title="Event Time & Date"><AccessTimeIcon color="primary" /></SectionDivider>
 
                     <Grid container sx={{ width: '100%' }} spacing={2}>

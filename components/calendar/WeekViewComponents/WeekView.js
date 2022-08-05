@@ -1,12 +1,11 @@
 
 import { useState, useRef } from 'react';
-import { Box, Typography, Divider, Fab } from '@mui/material'
+import { Divider } from '@mui/material'
 import { useTheme } from '@mui/material';
-import { addAlphaToColor } from "../../../utility/addAlphaToColor";
-import AddIcon from '@mui/icons-material/Add';
+import { ModalState } from "../../../context/ModalContext";
+import { CalendarState } from '../../../context/CalendarContext'
 
-import CalendarLayout from '../CalendarLayout';
-import NewEventModal from '../NewEvent/NewEventModal';
+
 import WeekViewDayHeaders from './WeekViewDayHeaders'
 import WeekViewDayEvents from './WeekViewDayEvents'
 import TimeStamp from './TimeStamp'
@@ -14,7 +13,12 @@ import TimeStamp from './TimeStamp'
 import { days, timeStamps } from "../../../utility/constants"
 
 const WeekEventSlotElement = props => {
-  const { ind, day, events, handleOpenAddEventModal } = props;
+  const { ind, hourInd, handleOpenAddEventModal } = props;
+  const {
+    state: { calendarState },
+  } = CalendarState();
+
+
   const [hover, setHover] = useState(false);
 
   const dragOverItem = useRef();
@@ -73,7 +77,7 @@ const WeekEventSlotElement = props => {
       onDragLeave={dragExit}
       onDragOver={onDragOver}
       onDrop={handleDrop}
-    // draggable
+      onClick={() => handleOpenAddEventModal(hourInd, calendarState.weekDays[ind])}
     >
     </div >)
 
@@ -84,23 +88,13 @@ const WeekView = (props) => {
 
   const theme = useTheme();
 
-  const [addEventModalState, setAddEvenModalState] = useState({
-    time: new Date(),
-    day: new Date()
-  })
+  const {
+    dispatch: dispatchModal
+  } = ModalState();
 
-  const [openAddEventModal, setOpenAddEventModal] = useState(false);
-  const handleOpenAddEventModal = (time, day) => {
-
-    setAddEvenModalState({
-      time: time, day: day
-    })
-    setOpenAddEventModal(prev => !prev)
-  }
 
   return (
     <>
-      <NewEventModal time={addEventModalState.time} day={addEventModalState.day} openAddEventModal={openAddEventModal} handleOpenAddEventModal={handleOpenAddEventModal} />
 
       <Divider />
       <WeekViewDayHeaders />
@@ -127,10 +121,19 @@ const WeekView = (props) => {
             <WeekViewDayEvents weekDayIndex={ind} />
             {timeStamps && timeStamps.map((hour, hourInd) => {
               return (
-                <WeekEventSlotElement key={hourInd} ind={ind}
+                <WeekEventSlotElement key={hourInd} ind={ind} hourInd={hourInd}
                   // time={time}
                   // handleOpenAddEventModal={() => (handleOpenAddEventModal(time, day))
-                  handleOpenAddEventModal={() => { }}
+                  handleOpenAddEventModal={(time, day) => {
+                    dispatchModal({
+                      type: "SHOW_MODAL",
+                      modalType: "NEW_EVENT",
+                      modalProps: {
+                        time: time,
+                        day: day
+                      },
+                    })
+                  }}
                   draggable
                   onDragEnter={(e) => dragEnter(e, ind)}
 

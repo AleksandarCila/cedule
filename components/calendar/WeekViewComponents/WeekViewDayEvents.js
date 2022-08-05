@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 
 import { CalendarState } from "../../../context/CalendarContext";
+import { ModalState } from '../../../context/ModalContext'
+
 import { isSameDay } from "date-fns";
 
 import { timeStamps } from "../../../utility/constants"
 import { Typography, Box } from "@mui/material";
+import { addAlphaToColor } from "../../../utility/addAlphaToColor";
 
 
 
@@ -13,6 +16,11 @@ const WeekViewDayEvents = (props) => {
         state: { calendarState },
         dispatch,
     } = CalendarState();
+
+    const {
+        dispatch: dispatchModal
+    } = ModalState();
+
     const [loading, setLoading] = useState(true);
     const { weekDayIndex } = props;
 
@@ -49,7 +57,7 @@ const WeekViewDayEvents = (props) => {
 
     const dragEnter = (e, position) => {
         dragOverItem.current = position;
-        console.log(e.target.innerHTML);
+        // console.log(e.target.innerHTML);
     };
 
     const onDragOver = (event) => {
@@ -64,7 +72,6 @@ const WeekViewDayEvents = (props) => {
     return (
         <>
             {!loading && events && events.map((event, ind) => {
-                console.log(event);
                 return (
                     <Box
                         key={ind}
@@ -81,11 +88,25 @@ const WeekViewDayEvents = (props) => {
                             boxShadow: 3,
                             py: 0.1,
                             px: 0.5,
-                        }} draggable
+
+                            "&:hover":{
+                                cursor:"pointer",
+                                backgroundColor: addAlphaToColor(event.color, 0.9)
+                            }
+                        }} 
+                        draggable
                         onDragStart={(e) => dragStart(e, ind, event)}
                         onDragEnd={(e) => dragEnd(e, ind)}
                         onDragOver={onDragOver}
-
+                        onClick={() => {
+                            dispatchModal({
+                                type: "SHOW_MODAL",
+                                modalType: "EVENT_INFO",
+                                modalProps: {
+                                    event: event
+                                }
+                            })
+                        }}
                     // onDragEnter={(e) => dragEnter(e, ind)}
                     >
                         <Typography fontSize="small" noWrap={true}>{timeStamps[event.eventStartTime].label}-{timeStamps[event.eventStartTime + event.eventLength].label}</Typography>

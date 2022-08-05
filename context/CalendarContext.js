@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useReducer } from "react";
-import { USERS, events,calendars } from "../utility/constants";
+import { USERS, events, calendars } from "../utility/constants";
 import { calendarReducer } from "./Reducers";
-import { startOfWeek, endOfWeek, eachDayOfInterval, isSameDay,  } from 'date-fns'
+import { startOfWeek, endOfWeek, eachDayOfInterval, isSameDay, } from 'date-fns'
 
 
 const CalendarContext = createContext();
@@ -15,16 +15,23 @@ const getWeekDays = (date) => {
   });
 }
 
+const todayEvents = []
+calendars.forEach((calendar) => {
+  if (calendar.visible) {
+    todayEvents.push({
+      ...calendar, events: calendar.events.filter((event) => {
+        return isSameDay(event.eventDate, new Date())
+      })
+    });
+  }
+})
+
 const initialState = {
   selectedDate: new Date(),
   weekDays: getWeekDays(new Date()),
   events: USERS,
   calendars: calendars,
-  todayEvents: calendars.forEach((calendar)=>{
-    return {...calendar, events:calendar.events.filter((event)=>{
-      isSameDay(event.eventDate, new Date())
-    })}
-  })
+  todayEvents: todayEvents
 };
 
 const Context = ({ children }) => {

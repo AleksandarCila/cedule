@@ -25,9 +25,7 @@ const EventList = props => {
     // events = events.sort((a, b) => { return a.eventStartTime - b.eventStartTime })
 
     const events=calendarState.todayEvents;
-    console.log(events);
     useEffect(() => (setLoading(false)), [])
-
     return (
         <div>
             <div style={{ width: "100%", height: 113, position: 'relative' }}>

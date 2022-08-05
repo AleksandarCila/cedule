@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import { CalendarState } from "../../../context/CalendarContext";
+import { ModalState } from "../../../context/ModalContext";
 import Image from 'next/image'
 import { Divider, Fab, Typography, useTheme } from '@mui/material';
 import { addAlphaToColor } from "../../../utility/addAlphaToColor";
 
-import { IconButton, Button } from '@mui/material'
+import { Button } from '@mui/material'
 
 import AddIcon from '@mui/icons-material/Add';
 import SettingsIcon from '@mui/icons-material/Settings';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 
-import NewEventModal from '../NewEvent/NewEventModal'
+// import NewEventModal from '../NewEvent/NewEventModal'
 
 import CalendarCheckButton from './CalendarCheckButton'
 
@@ -19,18 +20,18 @@ const CalendarList = props => {
         state: { calendarState },
         dispatch,
     } = CalendarState();
+
+    const {
+        dispatch: dispatchModal
+    } = ModalState();
+
     const [loading, setLoading] = useState(true);
 
-    const [openAddEventModal, setOpenAddEventModal] = useState(false);
-    const handleOpenAddEventModal = () => {
-        setOpenAddEventModal(prev => !prev)
-    }
     const theme = useTheme();
 
     useEffect(() => { setLoading(false) }, [])
     return (
         <div>
-            <NewEventModal openAddEventModal={openAddEventModal} handleOpenAddEventModal={handleOpenAddEventModal} />
             <div style={{ width: "100%", height: 113, position: 'relative' }}>
 
                 <Image
@@ -45,7 +46,14 @@ const CalendarList = props => {
                 </div>
             </div>
             <div style={{ padding: 8, width: "100%", display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: "wrap" }}>
-                <Button size="medium" color="primary" variant="contained" endIcon={<PlaylistAddIcon />} onClick={handleOpenAddEventModal}
+                {/* <Button size="medium" color="primary" variant="contained" endIcon={<PlaylistAddIcon />} onClick={handleOpenAddEventModal} */}
+                <Button size="medium" color="primary" variant="contained" endIcon={<PlaylistAddIcon />} onClick={() => {
+                    dispatchModal({
+                        type: "SHOW_MODAL",
+                        modalType: "NEW_EVENT",
+                        modalProps: {},
+                    });
+                }}
                     sx={{ width: "100%" }}>
                     Add a new Event
                 </Button>
@@ -55,7 +63,13 @@ const CalendarList = props => {
 
                 }}>
                     <Typography variant="h6" sx={{ width: "100%" }}>Calendars</Typography>
-                    <Fab variant="extended" color="primary" size="small" sx={{ width: 25, mx: 0.5 }}><AddIcon /></Fab>
+                    <Fab variant="extended" color="primary" size="small" sx={{ width: 25, mx: 0.5 }} onClick={() => {
+                        dispatchModal({
+                            type: "SHOW_MODAL",
+                            modalType: "NEW_CALENDAR",
+                            modalProps: {},
+                        });
+                    }}><AddIcon /></Fab>
                     <Fab variant="extended" color="secondary" size="small" sx={{ width: 25 }}><SettingsIcon /></Fab>
                 </div>
                 <Divider sx={{ width: '100%', my: 2 }} />

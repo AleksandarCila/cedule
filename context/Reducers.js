@@ -57,7 +57,7 @@ export const calendarReducer = (state, action) => {
         if (calendar.visible) {
           todayEvents.push({
             ...calendar, events: calendar.events.filter((event) => {
-              return isSameDay(event.eventDate, action.payload.day)
+              return isSameDay(event.eventDate, oldSelectedDate)
             })
           });
         }
