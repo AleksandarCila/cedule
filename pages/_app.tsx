@@ -23,15 +23,16 @@ const clientSideEmotionCache = createEmotionCache();
 let lightTheme = createTheme(lightThemeOptions);
 lightTheme = responsiveFontSizes(lightTheme);
 
+
 const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
 
   return (
     <CacheProvider value={emotionCache}>
-      <ThemeProvider theme={lightTheme}>
-        <CssBaseline />
-        <Component {...pageProps} />
-      </ThemeProvider>
+        <ThemeProvider theme={lightTheme}>
+          <CssBaseline />
+          <Component {...pageProps} />
+        </ThemeProvider>
     </CacheProvider>
   );
 };

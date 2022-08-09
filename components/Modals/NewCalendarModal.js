@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Modal, Box, Typography, Button, Fab, TextField, FormControl, RadioGroup, Radio, FormControlLabel, FormLabel } from '@mui/material'
 
 import { ModalState } from '../../context/ModalContext'
+import { CalendarState } from '../../context/CalendarContext';
 
 
 import { useTheme } from '@mui/material';
@@ -12,9 +13,14 @@ import CloseIcon from '@mui/icons-material/Close'
 
 import { calendarColors } from '../../utility/constants';
 
+
 const NewCalendarModal = props => {
     const [value, setValue] = useState(0);
-
+    const {
+        state: { modalState },
+        dispatch: dispatchModal
+    } = ModalState();
+    const { dispatch } = CalendarState();
     const handleChange = (event) => {
         setFormState({
             ...formState,
@@ -23,16 +29,13 @@ const NewCalendarModal = props => {
         setValue(event.target.value);
     };
     const [formState, setFormState] = useState({
-        name: "",
+        name: modalState.modalProps.name ? modalState.modalProps.name : "",
         color: calendarColors[0],
         formErrors: { name: '', },
-        nameValid: false,
+        nameValid: modalState.modalProps.name ? true : false,
     })
     const [formValid, setFormValid] = useState(false);
-    const {
-        state: { modalState },
-        dispatch
-    } = ModalState();
+
 
     const open = modalState.modalType === "NEW_CALENDAR" ? true : false;
     const theme = useTheme();
@@ -66,11 +69,47 @@ const NewCalendarModal = props => {
     }
 
     useEffect(() => {
+        setFormState({
+            ...formState,
+            name: modalState.modalProps.name ? modalState.modalProps.name : "",
+            nameValid: modalState.modalProps.name ? true : false,
+        })
+    }, [modalState.modalProps])
+
+    useEffect(() => {
         setFormValid(formState.nameValid);
     }, [formState.nameValid])
 
-    const handleAddCalendar = () => {
-        console.log("add Calendar")
+    const handleAddCalendar = async () => {
+        const calendarData = {
+            // user_id: calendars[formState.calendar].id,
+            name: formState.name,
+            color: formState.color,
+        }
+        if (modalState.modalProps.edit) {
+            dispatch({ type: "EDIT_CALENDAR", calendarData: { ...calendarData, id: modalState.modalProps.id } });
+            await fetch("/api/calendar/editCalendar", {
+                method: "POST",
+                body: [JSON.stringify({ ...calendarData, id: modalState.modalProps.id })],
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+        }
+        else {
+            dispatch({
+                type: "ADD_NEW_CALENDAR",
+                calendarData: calendarData
+            })
+            await fetch("/api/calendar/addNewCalendar", {
+                method: "POST",
+                body: [JSON.stringify(calendarData)],
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+        }
+        dispatchModal({ type: "HIDE_MODAL" })
     }
 
 
@@ -79,7 +118,7 @@ const NewCalendarModal = props => {
             {open &&
                 <Modal
                     open={open}
-                    onClose={() => dispatch(
+                    onClose={() => dispatchModal(
                         {
                             type: "HIDE_MODAL",
                         }
@@ -107,7 +146,7 @@ const NewCalendarModal = props => {
                                 color="primary"
                                 size="small"
                                 onClick={() => {
-                                    dispatch({
+                                    dispatchModal({
                                         type: "HIDE_MODAL",
                                     });
                                 }}
@@ -120,7 +159,7 @@ const NewCalendarModal = props => {
                             <Box sx={{ width: "100%", height: 50, bgcolor: theme.palette.primary.main }}>
 
                             </Box>
-                            <Typography variant="h5" sx={{ p: 2, }}>Add a new Calendar</Typography>
+                            <Typography variant="h5" sx={{ p: 2, }}>{modalState.modalProps.edit ? "Edit Calendar" : "Add a new Calendar"}</Typography>
                             <Box sx={{ width: '100%', p: 2 }}>
                                 <TextField required onChange={(e) => handleUserInput(e)} id="name" name="name" label="Calendar Name"
                                     value={formState.name} placeholder="Add a Calendar name" variant="outlined" size="small"
@@ -140,7 +179,7 @@ const NewCalendarModal = props => {
                                     {calendarColors.map((color, ind) => {
                                         return (
 
-                                            <FormControlLabel value={ind} control={<Radio sx={{
+                                            <FormControlLabel key={ind} value={ind} control={<Radio sx={{
                                                 color: color, '&.Mui-checked': {
                                                     color: color,
                                                 },
@@ -151,7 +190,7 @@ const NewCalendarModal = props => {
                             </FormControl>
                         </div>
                         <Button onClick={handleAddCalendar} size="large" variant="contained" disabled={!formValid} sx={{ my: 2, }}>
-                            Add Calendar
+                            {modalState.modalProps.edit ? "Save Calendar" : "Add Calendar"}
                         </Button>
                     </Box>
                 </Modal>}</>

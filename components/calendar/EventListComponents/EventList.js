@@ -8,6 +8,11 @@ import EventCollapseGroup from './EventCollapseGroup'
 
 import { daysLong, months } from "../../../utility/constants";
 
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import EventIcon from '@mui/icons-material/Event';
+
+
 const EventList = props => {
     const {
         state: { calendarState },
@@ -18,13 +23,7 @@ const EventList = props => {
 
     const theme = useTheme();
 
-    // let events = calendarState.events.filter((event) => {
-    //     if (isSameDay(calendarState.selectedDate, event.eventDate)) return event;
-
-    // });
-    // events = events.sort((a, b) => { return a.eventStartTime - b.eventStartTime })
-
-    const events=calendarState.todayEvents;
+    const events = calendarState.todayEvents;
     useEffect(() => (setLoading(false)), [])
     return (
         <div>
@@ -45,13 +44,12 @@ const EventList = props => {
                     {daysLong[calendarState.selectedDate.getDay()] + " " + calendarState.selectedDate.getDate() + ", " + months[calendarState.selectedDate.getMonth()]}
                 </Typography>
                 {/* <EventCollapseGroup events={events} label="Events" /> */}
-                {!loading && events && events.map((event, ind) => {
-                    return <Box key={ind} sx={{my:1}}>
-                        <EventCollapseGroup events={event.events} label={event.name} color={event.color}/>
-                        {/* <Divider /> */}
-                    </Box>
-
-                })}
+                {events && events.length>0 && <>
+                    <EventCollapseGroup events={events[1].events} label={events[1].label}><AssignmentIcon /></EventCollapseGroup>
+                    <EventCollapseGroup events={events[2].events} label={events[2].label}><NotificationsActiveIcon /></EventCollapseGroup>
+                    <EventCollapseGroup events={events[0].events} label={events[0].label}><EventIcon /></EventCollapseGroup>
+                </>
+                }
                 {loading && <Skeleton variant="rectangular" width="100%" height={118} />}
             </Box>
 

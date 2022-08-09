@@ -6,7 +6,6 @@ const initialState = {
 export const modalReducer = (state = initialState, action) => {
     switch (action.type) {
         case 'SHOW_MODAL':
-            console.log(state)
             return {
                 ...state,
                 modalState: {

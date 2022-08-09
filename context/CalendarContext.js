@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer } from "react";
+import React, { createContext, useContext, useEffect, useReducer } from "react";
 import { USERS, events, calendars } from "../utility/constants";
 import { calendarReducer } from "./Reducers";
 import { startOfWeek, endOfWeek, eachDayOfInterval, isSameDay, } from 'date-fns'
@@ -29,10 +29,11 @@ calendars.forEach((calendar) => {
 const initialState = {
   selectedDate: new Date(),
   weekDays: getWeekDays(new Date()),
-  events: USERS,
-  calendars: calendars,
-  todayEvents: todayEvents
+  events: [],
+  calendars: [],
+  todayEvents: []
 };
+
 
 const Context = ({ children }) => {
   let savedCalendarState = false;
@@ -52,8 +53,11 @@ const Context = ({ children }) => {
   );
 };
 
+
+
 export default Context;
 
 export const CalendarState = () => {
   return useContext(CalendarContext);
 };
+

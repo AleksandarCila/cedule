@@ -1,10 +1,14 @@
 import { CalendarState } from "../../context/CalendarContext";
 import { isToday, isSameDay, isSameMonth, isWeekend } from 'date-fns'
-import { Box, Divider, Typography, Stack, Chip } from "@mui/material";
+import { Box, Divider, Typography, Stack, Chip, Badge } from "@mui/material";
 import { useTheme } from '@mui/material';
 import { addAlphaToColor } from "../../utility/addAlphaToColor";
 import { calendarTheme } from '../../styles/theme/calendarTheme'
 import { useEffect, useState } from "react";
+
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import EventIcon from '@mui/icons-material/Event';
 
 const DayGridElement = props => {
     const { day, ind, events } = props;
@@ -73,33 +77,26 @@ const DayGridElement = props => {
             }}>
                 <Box sx={{ width: "100%", }}>
                     <Typography variant="span" sx={{ fontSize: { xs: "small", lg: "medium" } }}>{day.getDate()} </Typography>
-                    {events.length > 0 && <Divider sx={{ width: "100%" }} />}
+                    {events.length > 0 && <Divider sx={{ width: "100%", mb: 0.5 }} />}
                 </Box>
-                <Box sx={{ width: "100%", py:0.5 }}>
+                <Box sx={{ width: "100%", py: 0.5 }}>
+                    {numberOfTasks > 0 && <Badge
+                        badgeContent={numberOfTasks}
+                        color="primary" variant="dot" sx={{ mr: 1 }}>
+                        <AssignmentIcon fontSize="small" color="action" />
+                    </Badge>}
+                    {numberOfReminders > 0 && <Badge
+                        badgeContent={numberOfReminders}
+                        color="primary" variant="dot" sx={{ mr: 1 }}>
+                        <NotificationsActiveIcon fontSize="small" color="action" />
+                    </Badge>}
+                    {numberOfEvents > 0 &&
+                        <Box component="span" sx={{ display: { xs: 'block', lg: 'none' } }}><Badge
+                            badgeContent={numberOfEvents}
+                            color="primary" variant="dot" sx={{ mr: 1 }}>
+                            <EventIcon fontSize="small" color="action" />
+                        </Badge></Box>}
 
-                    <Stack direction='row'
-                        spacing={{ xs: 1, sm: 1 }}>
-
-                        {!loading && numberOfTasks > 0 && <Typography component="div" sx={{
-                            fontSize: { xs: 8, lg: 12 }, textAlign: 'center',
-                            borderRadius: 2, bgcolor: theme.custom.events.task, px: 0.5, py:0.2
-                        }} >
-                            {numberOfTasks}
-                        </Typography>}
-                        {!loading && numberOfReminders > 0 && <Typography component="div" sx={{
-                            fontSize: { xs: 8, lg: 12 }, textAlign: 'center',
-                            borderRadius: 3, bgcolor: theme.custom.events.reminder, px: 0.5, py:0.2
-                        }} >
-                            {numberOfReminders}
-                        </Typography>}
-                        {!loading && numberOfEvents > 0 && <Typography component="div" sx={{
-                            display: { xs: 'block', lg: 'none' }, fontSize: { xs: 8, lg: 12 }, textAlign: 'center',
-                            borderRadius: 2, bgcolor: theme.custom.events.event, px: 0.5, py:0.2
-                        }} >
-                            {numberOfEvents}
-                        </Typography>}
-
-                    </Stack>
                     <Box sx={{
                         pb: 1,
                         my: 0, display: 'flex', justifyContent: 'flex-start', alignItems: 'center', flexWrap: 'wrap',

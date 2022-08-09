@@ -1,6 +1,6 @@
 import { Typography, Box, Divider } from "@mui/material";
 import { getTimeLabel } from "../../../utility/constants";
-import DescriptionIcon from '@mui/icons-material/Description';
+import EventNoteIcon from '@mui/icons-material/EventNote';
 import { ModalState } from '../../../context/ModalContext'
 
 
@@ -32,7 +32,7 @@ const EventComponent = props => {
                     {event.allDay ? "All Day" : getTimeLabel(event.eventStartTime) + " - " + getTimeLabel(event.eventStartTime + event.eventLength)}
                 </Typography>
                 <Typography variant="span" fontSize="small" sx={{ mr: 1 }} noWrap={true}>{event.name}</Typography>
-                {event.description.length > 0 && <DescriptionIcon fontSize="small" />}
+                {event.description.length > 0 && <EventNoteIcon fontSize="small" />}
             </Box>
         </Box>
     )

@@ -6,11 +6,11 @@ import { Divider, Fab, Typography, useTheme } from '@mui/material';
 import { addAlphaToColor } from "../../../utility/addAlphaToColor";
 
 import { Button } from '@mui/material'
-
 import AddIcon from '@mui/icons-material/Add';
 import SettingsIcon from '@mui/icons-material/Settings';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 
+import CalendarMoreButton from './CalendarMoreButton'
 // import NewEventModal from '../NewEvent/NewEventModal'
 
 import CalendarCheckButton from './CalendarCheckButton'
@@ -29,7 +29,12 @@ const CalendarList = props => {
 
     const theme = useTheme();
 
-    useEffect(() => { setLoading(false) }, [])
+    useEffect(async () => {
+        setLoading(false);
+
+    }, [])
+
+   
     return (
         <div>
             <div style={{ width: "100%", height: 113, position: 'relative' }}>
@@ -76,7 +81,7 @@ const CalendarList = props => {
                 <div style={{ width: "100%", padding: "0px 16px" }}>
                     {!loading && calendarState.calendars.map((calendar, id) => {
                         return (
-                            <div key={id}>
+                            <div key={id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <CalendarCheckButton color={calendar.color} label={calendar.name} checked={calendar.visible}
                                     onClick={() => {
                                         dispatch({
@@ -88,7 +93,8 @@ const CalendarList = props => {
                                         });
                                     }}
                                 />
-
+                                
+                                <CalendarMoreButton calendar={calendar} dispatch={dispatch}/>
                             </div>
                         )
                     })}

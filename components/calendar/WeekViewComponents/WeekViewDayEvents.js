@@ -44,19 +44,13 @@ const WeekViewDayEvents = (props) => {
 
     useEffect(() => (setLoading(false)), [])
 
-    const dragStart = (e, position, event) => {
-        // dragItem.current = position;
-        // console.log(e.target.innerHTML);
-        let data = {
-            name: 'foobar',
-            age: 15
-        };
-
+    const dragStart = (e, event) => {
         e.dataTransfer.setData('data', JSON.stringify(event));
     };
 
-    const dragEnter = (e, position) => {
-        dragOverItem.current = position;
+    const dragEnter = (event, position) => {
+        event.stopPropagation();
+        event.preventDefault();
         // console.log(e.target.innerHTML);
     };
 
@@ -95,7 +89,7 @@ const WeekViewDayEvents = (props) => {
                             }
                         }} 
                         draggable
-                        onDragStart={(e) => dragStart(e, ind, event)}
+                        onDragStart={(e) => dragStart(e, event)}
                         onDragEnd={(e) => dragEnd(e, ind)}
                         onDragOver={onDragOver}
                         onClick={() => {

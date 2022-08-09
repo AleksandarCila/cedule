@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal, Box, Typography, Tab, Tabs, Fab } from "@mui/material";
 
 import { ModalState } from '../../../context/ModalContext'
@@ -59,8 +59,14 @@ const NewEventModal = props => {
     const [value, setValue] = useState(0);
 
     const handleChange = (event, newValue) => {
-        setValue(newValue);
+        setValue(newValue)
+
     };
+
+    useEffect(() => {
+        setValue(modalState.modalProps.tabId ? modalState.modalProps.tabId : 0)
+    }, [modalState.modalProps])
+    console.log(modalState.modalProps.tabId);
 
     return (
         <div>
@@ -113,14 +119,14 @@ const NewEventModal = props => {
                                 <Tab icon={<CircleIcon sx={{ color: theme.custom.events.reminder }} fontSize="small" />} iconPosition="start" label="Reminder" {...a11yProps(2)} />
                             </Tabs>
                         </Box>
-                        <TabPanel value={value} index={0}>
-                            <NewEventForm time={time} day={day} calendars={calendarState.calendars} />
+                        <TabPanel value={value} index={0} >
+                            <NewEventForm time={time} day={day} calendars={calendarState.calendars} event={modalState.modalProps.event} />
                         </TabPanel>
-                        <TabPanel value={value} index={1}>
-                            <NewTaskForm time={time} day={day} calendars={calendarState.calendars} />
+                        <TabPanel value={value} index={1} >
+                            <NewTaskForm time={time} day={day} calendars={calendarState.calendars} event={modalState.modalProps.event} />
                         </TabPanel>
-                        <TabPanel value={value} index={2}>
-                            <NewReminderForm time={time} day={day} calendars={calendarState.calendars} />
+                        <TabPanel value={value} index={2} >
+                            <NewReminderForm time={time} day={day} calendars={calendarState.calendars} event={modalState.modalProps.event} />
                         </TabPanel>
                     </Box>
                 </Box>

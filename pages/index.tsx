@@ -11,7 +11,10 @@ import NewEventModal from "../components/calendar/NewEvent/NewEventModal";
 import EventInfoModal from '../components/Modals/EventInfoModal'
 import NewCalendarModal from '../components/Modals/NewCalendarModal'
 
-const Home: NextPage = () => {
+
+const Home: NextPage = ( ) => {
+
+
   return (
     <Context>
       <ModalContext>
@@ -32,9 +35,12 @@ const Home: NextPage = () => {
             <Calendar />
           </main>
         </div>
+
       </ModalContext>
     </Context>
   )
 }
+
+
 
 export default Home

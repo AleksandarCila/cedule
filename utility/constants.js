@@ -134,8 +134,15 @@ Array.from({ length: 10 }).forEach(() => {
 });
 
 const calendarEvents = []
-Array.from({ length: 10 }).forEach(() => {
+Array.from({ length: 10 }).forEach(async () => {
   calendarEvents.push(createRandomEvent());
+  // await fetch("/api/events/addNewEvent", {
+  //   method: "POST",
+  //   body: [JSON.stringify(createRandomEvent())],
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  // });
 })
 
 const calendarTasks = []

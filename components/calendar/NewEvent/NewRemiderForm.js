@@ -12,6 +12,9 @@ import BorderColorIcon from '@mui/icons-material/BorderColor';
 import TimePickerComboBox from './TimePickerComboBox'
 import { timeStamps } from '../../../utility/constants'
 
+import { CalendarState } from "../../../context/CalendarContext";
+import { ModalState } from "../../../context/ModalContext";
+
 const SectionDivider = props => {
     const { children, title } = props;
     return (
@@ -27,19 +30,25 @@ const SectionDivider = props => {
 }
 
 const NewReminderForm = props => {
-    const { day, time, calendars } = props;
+    const { day, time, calendars, event } = props;
+    const {
+        dispatch,
+    } = CalendarState();
+    const {
+        dispatch: dispatchModal
+    } = ModalState();
     const [formState, setFormState] = useState({
-        name: "",
-        dateValue: day ? day : new Date(),
-        timeValue: time ? new Date().setTime(time) : 0,
-        allDay: false,
-        calendar: calendars[0].id,
+        name: event ? event.name : "",
+        dateValue: event ? event.eventDate : day ? day : new Date(),
+        timeValue: event ? event.eventStartTime : time ? new Date().setTime(time) : 0,
+        allDay: event ? event.allDay : false,
+        calendar: event ? 0 : 0,
         formErrors: { name: '', dateValue: '', timeValue: '' },
-        nameValid: false,
+        nameValid: event ? true : false,
         dateValid: true,
         timeValid: true,
     })
-    const [formValid, setFormValid] = useState(false);
+    const [formValid, setFormValid] = useState(event ? true : false);
 
     const handleUserInput = (e, inputName = "", inpuValue = "") => {
         const name = e ? e.target.name : inputName;
@@ -97,12 +106,50 @@ const NewReminderForm = props => {
         setFormValid(formState.nameValid && formState.dateValid && formState.timeValid);
     }, [formState.nameValid, formState.dateValid, formState.timeValid])
 
-    const handleAddReminder = () => {
-        console.log("add reminder")
+    const handleAddReminder = async () => {
+        const eventData = {
+            calendar_id: calendars[formState.calendar].id,
+            name: formState.name,
+            description: "",
+            type: 'reminder',
+            eventDate: formState.dateValue,
+            eventStartTime: formState.timeValue,
+            eventLength: 1,
+            color: calendars[formState.calendar].color,
+            allDay: formState.allDay
+        }
+        if (event) {
+            dispatch({
+                type: "UPDATE_EVENT",
+                eventData: { ...eventData, id: event.id }
+            })
+            await fetch("/api/events/updateEvent", {
+                method: "POST",
+                body: [JSON.stringify({ ...eventData, id: event.id })],
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+        }
+        else {
+            dispatch({
+                type: "ADD_NEW_EVENT",
+                eventData: eventData
+            })
+            await fetch("/api/events/addNewEvent", {
+                method: "POST",
+                body: [JSON.stringify(eventData)],
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+        }
+        dispatchModal({ type: "HIDE_MODAL" })
     }
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
             <Box
+                
                 component="form"
                 sx={{
                     m: 1,
@@ -181,7 +228,7 @@ const NewReminderForm = props => {
                             >
                                 {calendars.map((calendar, ind) => {
                                     return (
-                                        <MenuItem key={ind} value={calendar.id}>{calendar.name}</MenuItem>
+                                        <MenuItem key={ind} value={ind}>{calendar.name}</MenuItem>
 
                                     )
                                 })}
@@ -192,7 +239,7 @@ const NewReminderForm = props => {
 
                 <div style={{ width: "100%", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <Button onClick={handleAddReminder} size="large" variant="contained" disabled={!formValid}>
-                        Add Reminder
+                        {event ? "Save Reminder" : "Add Reminder"}
                     </Button>
                 </div>
             </Box>

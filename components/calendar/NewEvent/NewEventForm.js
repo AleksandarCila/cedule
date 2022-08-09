@@ -12,6 +12,8 @@ import BorderColorIcon from '@mui/icons-material/BorderColor';
 import TimePickerComboBox from './TimePickerComboBox'
 import { timeStamps } from '../../../utility/constants'
 
+import { CalendarState } from "../../../context/CalendarContext";
+import { ModalState } from "../../../context/ModalContext";
 
 const SectionDivider = props => {
     const { children, title } = props;
@@ -28,23 +30,29 @@ const SectionDivider = props => {
 }
 
 const NewEventForm = props => {
-    const { day, time } = props;
+    const { day, time, calendars, event } = props;
+    const {
+        dispatch,
+    } = CalendarState();
+    const {
+        dispatch: dispatchModal
+    } = ModalState();
     const [formState, setFormState] = useState({
-        name: "",
-        dateValue: day ? day : new Date(),
-        timeValueStart: time ? new Date().setTime(time) : 0,
-        timeValueEnd: time ? new Date().setTime(time) : 0,
-        allDay: false,
-        taskDescription: "",
-        calendar: "Kalendar1",
+        name: event ? event.name : "",
+        dateValue: event ? event.eventDate : day ? day : new Date(),
+        timeValueStart: event ? event.eventStartTime : time ? new Date().setTime(time) : 0,
+        timeValueEnd: event ? (event.eventStartTime + event.eventLength) : time ? new Date().setTime(time) : 0,
+        allDay: event ? event.allDay : false,
+        taskDescription: event ? event.description : "",
+        calendar: event ? 0 : 0,
         formErrors: { name: '', dateValue: '', timeValueStart: '', timeValueEnd: '' },
-        nameValid: false,
+        nameValid: event ? true : false,
         dateValid: true,
         timeStartValid: true,
         timeEndValid: true,
     })
 
-    const [formValid, setFormValid] = useState(false);
+    const [formValid, setFormValid] = useState(event ? true : false);
 
     const handleUserInput = (e, inputName = "", inpuValue = "") => {
         const name = e ? e.target.name : inputName;
@@ -125,8 +133,46 @@ const NewEventForm = props => {
         setFormValid(formState.nameValid && formState.dateValid && formState.timeStartValid && formState.timeEndValid);
     }, [formState.nameValid, formState.dateValid, formState.timeStartValid, formState.timeEndValid])
 
-    const handleAddEvent = () => {
-        console.log("add Event")
+    const handleAddEvent = async () => {
+        const eventData = {
+            calendar_id: calendars[formState.calendar].id,
+            name: formState.name,
+            description: formState.taskDescription,
+            type: 'event',
+            eventDate: formState.dateValue,
+            eventStartTime: formState.timeValueStart,
+            eventLength: formState.timeValueEnd - formState.timeValueStart,
+            color: calendars[formState.calendar].color,
+            allDay: formState.allDay
+        }
+        if (event) {
+            dispatch({
+                type: "UPDATE_EVENT",
+                eventData: {...eventData, id:event.id}
+            })
+            await fetch("/api/events/updateEvent", {
+                method: "POST",
+                body: [JSON.stringify({...eventData, id:event.id})],
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+        }
+        else {
+            dispatch({
+                type: "ADD_NEW_EVENT",
+                eventData: eventData
+            })
+            await fetch("/api/events/addNewEvent", {
+                method: "POST",
+                body: [JSON.stringify(eventData)],
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+        }
+        dispatchModal({ type: "HIDE_MODAL" })
     }
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -172,7 +218,7 @@ const NewEventForm = props => {
                             />
                         </Grid>
                         <Grid item xs={6} >
-                            
+
                             <TimePickerComboBox
                                 label="Start Time"
                                 onChange={(newValue) => {
@@ -203,7 +249,7 @@ const NewEventForm = props => {
                                     handleUserInput(null, 'allDay', event.target.checked);
                                 }} />} label="All day" />
                         </Grid>
-                        
+
                         <Grid item xs={12}>
                             <SectionDivider title="Event Description"><TocIcon color="primary" /></SectionDivider>
 
@@ -239,9 +285,12 @@ const NewEventForm = props => {
                                 }}
                                 size="small"
                             >
-                                <MenuItem value="Kalendar1">Kal Ime 1</MenuItem>
-                                <MenuItem value="Kalendar2">Kal Ime 2</MenuItem>
-                                <MenuItem value="Kalendar3">Kal Ime 3</MenuItem>
+                                {calendars.map((calendar, ind) => {
+                                    return (
+                                        <MenuItem key={ind} value={ind}>{calendar.name}</MenuItem>
+
+                                    )
+                                })}
                             </Select>
                         </FormControl>
                     </Box>
@@ -249,7 +298,7 @@ const NewEventForm = props => {
 
                 <div style={{ width: "100%", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <Button onClick={handleAddEvent} size="large" variant="contained" disabled={!formValid}>
-                        Add Event
+                        {event ? "Save Event" : "Add Event"}
                     </Button>
                 </div>
             </Box>

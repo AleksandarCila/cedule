@@ -12,10 +12,13 @@ import TimeStamp from './TimeStamp'
 
 import { days, timeStamps } from "../../../utility/constants"
 
+import { addHours } from 'date-fns';
+
 const WeekEventSlotElement = props => {
   const { ind, hourInd, handleOpenAddEventModal } = props;
   const {
     state: { calendarState },
+    dispatch
   } = CalendarState();
 
 
@@ -43,7 +46,7 @@ const WeekEventSlotElement = props => {
     event.preventDefault();
   }
 
-  const handleDrop = event => {
+  const handleDrop = async event => {
     event.stopPropagation()
     event.preventDefault()
     setHover(false);
@@ -58,6 +61,20 @@ const WeekEventSlotElement = props => {
     }
 
     // Do something with the data
+    const newDate= calendarState.weekDays[ind]
+    dispatch({
+      type: "CHANGE_EVENT_DATE",
+      event: data,
+      newDate: newDate,
+      startTime: hourInd,
+    })
+    await fetch("/api/events/updateEvent", {
+      method: "POST",
+      body: [JSON.stringify({ ...data, eventDate: addHours(newDate,6), eventStartTime: hourInd })],
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     console.log(data);
   };
 
