@@ -1,19 +1,24 @@
-import { CalendarState } from "../../../context/CalendarContext";
-import Image from 'next/image'
-import { useTheme, Skeleton, Typography, Box, Divider } from '@mui/material';
-import { addAlphaToColor } from "../../../utility/addAlphaToColor";
-import { isSameDay } from "date-fns";
 import { useState, useEffect } from "react";
+// Context States
+import { CalendarState } from "../../../context/CalendarContext";
+
+// Components
+import Image from 'next/image'
+import { useTheme, Skeleton, Typography, Box } from '@mui/material';
 import EventCollapseGroup from './EventCollapseGroup'
 
+// Utility
+import { addAlphaToColor } from "../../../utility/addAlphaToColor";
 import { daysLong, months } from "../../../utility/constants";
 
+// Icons
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import EventIcon from '@mui/icons-material/Event';
 
 
 const EventList = props => {
+    // States
     const {
         state: { calendarState },
         dispatch,
@@ -43,14 +48,18 @@ const EventList = props => {
                 <Typography variant="h6">
                     {daysLong[calendarState.selectedDate.getDay()] + " " + calendarState.selectedDate.getDate() + ", " + months[calendarState.selectedDate.getMonth()]}
                 </Typography>
-                {/* <EventCollapseGroup events={events} label="Events" /> */}
-                {events && events.length>0 && <>
-                    <EventCollapseGroup events={events[1].events} label={events[1].label}><AssignmentIcon /></EventCollapseGroup>
-                    <EventCollapseGroup events={events[2].events} label={events[2].label}><NotificationsActiveIcon /></EventCollapseGroup>
-                    <EventCollapseGroup events={events[0].events} label={events[0].label}><EventIcon /></EventCollapseGroup>
-                </>
+                {calendarState.loading ?
+                    <>
+                        <Skeleton variant="text" animation="wave" />
+                        <Skeleton variant="text" animation="wave" />
+                        <Skeleton variant="text" animation="wave" />
+                    </> :
+                    events && <>
+                        <EventCollapseGroup events={events[1].events} label={events[1].label}><AssignmentIcon /></EventCollapseGroup>
+                        <EventCollapseGroup events={events[2].events} label={events[2].label}><NotificationsActiveIcon /></EventCollapseGroup>
+                        <EventCollapseGroup events={events[0].events} label={events[0].label}><EventIcon /></EventCollapseGroup>
+                    </>
                 }
-                {loading && <Skeleton variant="rectangular" width="100%" height={118} />}
             </Box>
 
         </div>

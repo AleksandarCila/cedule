@@ -31,7 +31,9 @@ const initialState = {
   weekDays: getWeekDays(new Date()),
   events: [],
   calendars: [],
-  todayEvents: []
+  todayEvents: [],
+  notes: [],
+  loading: true,
 };
 
 

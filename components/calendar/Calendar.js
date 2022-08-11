@@ -23,15 +23,22 @@ const MyCalendar = props => {
         dispatch,
     } = CalendarState();
 
-    useEffect(async() => {
-        const res = await fetch("api/calendar/getAllCalendars", {
+    useEffect(async () => {
+        let res = await fetch("api/calendar/getAllCalendars", {
             method: "GET",
         });
         const calendars = await res.json();
-        console.log(calendars);
         dispatch({
-            type:"SET_CALENDARS",
-            calendars:calendars,
+            type: "SET_CALENDARS",
+            calendars: calendars,
+        })
+        res = await fetch("api/notes/getAllNotes", {
+            method: "GET",
+        });
+        const notes = await res.json();
+        dispatch({
+            type: "SET_NOTES",
+            notes: notes,
         })
     }, [])
 

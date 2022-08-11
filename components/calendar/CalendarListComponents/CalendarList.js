@@ -1,44 +1,44 @@
-import { useEffect, useState } from "react";
+// Context states
 import { CalendarState } from "../../../context/CalendarContext";
 import { ModalState } from "../../../context/ModalContext";
+
+// Components
 import Image from 'next/image'
-import { Divider, Fab, Typography, useTheme } from '@mui/material';
+import { Divider, Fab, Typography, Button, useTheme, Skeleton } from '@mui/material';
+import CalendarListItem from './CalendarListItem'
+
+// Utility
 import { addAlphaToColor } from "../../../utility/addAlphaToColor";
 
-import { Button } from '@mui/material'
+// Icon
 import AddIcon from '@mui/icons-material/Add';
 import SettingsIcon from '@mui/icons-material/Settings';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 
-import CalendarMoreButton from './CalendarMoreButton'
-// import NewEventModal from '../NewEvent/NewEventModal'
-
-import CalendarCheckButton from './CalendarCheckButton'
-
 const CalendarList = props => {
+    // States
     const {
         state: { calendarState },
-        dispatch,
     } = CalendarState();
-
     const {
         dispatch: dispatchModal
     } = ModalState();
+    const stateLoading = calendarState.loading;
 
-    const [loading, setLoading] = useState(true);
-
+    // Hooks
     const theme = useTheme();
 
-    useEffect(async () => {
-        setLoading(false);
-
-    }, [])
-
-   
+    // Functions
+    const handleOpenModal = (type, props = {}) => {
+        dispatchModal({
+            type: "SHOW_MODAL",
+            modalType: type,
+            modalProps: props,
+        });
+    }
     return (
         <div>
             <div style={{ width: "100%", height: 113, position: 'relative' }}>
-
                 <Image
                     src="/assets/calendar_header_image.webp"
                     alt="Various people stand in a line backwards cartoon"
@@ -51,53 +51,28 @@ const CalendarList = props => {
                 </div>
             </div>
             <div style={{ padding: 8, width: "100%", display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: "wrap" }}>
-                {/* <Button size="medium" color="primary" variant="contained" endIcon={<PlaylistAddIcon />} onClick={handleOpenAddEventModal} */}
-                <Button size="medium" color="primary" variant="contained" endIcon={<PlaylistAddIcon />} onClick={() => {
-                    dispatchModal({
-                        type: "SHOW_MODAL",
-                        modalType: "NEW_EVENT",
-                        modalProps: {},
-                    });
-                }}
+                <Button size="medium" color="primary" variant="contained" endIcon={<PlaylistAddIcon />} onClick={() => { handleOpenModal("NEW_EVENT") }}
                     sx={{ width: "100%" }}>
                     Add a new Event
                 </Button>
                 <Divider sx={{ width: '100%', my: 2 }} />
                 <div style={{
                     width: "100%", display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
-
                 }}>
                     <Typography variant="h6" sx={{ width: "100%" }}>Calendars</Typography>
-                    <Fab variant="extended" color="primary" size="small" sx={{ width: 25, mx: 0.5 }} onClick={() => {
-                        dispatchModal({
-                            type: "SHOW_MODAL",
-                            modalType: "NEW_CALENDAR",
-                            modalProps: {},
-                        });
-                    }}><AddIcon /></Fab>
+                    <Fab variant="extended" color="primary" size="small" sx={{ width: 25, mx: 0.5 }} onClick={() => { handleOpenModal("NEW_CALENDAR") }}><AddIcon /></Fab>
                     <Fab variant="extended" color="secondary" size="small" sx={{ width: 25 }}><SettingsIcon /></Fab>
                 </div>
                 <Divider sx={{ width: '100%', my: 2 }} />
-                <div style={{ width: "100%", padding: "0px 16px" }}>
-                    {!loading && calendarState.calendars.map((calendar, id) => {
-                        return (
-                            <div key={id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <CalendarCheckButton color={calendar.color} label={calendar.name} checked={calendar.visible}
-                                    onClick={() => {
-                                        dispatch({
-                                            type: "SET_CALENDAR_VISIBILITY",
-                                            payload: {
-                                                calendarId: calendar.id,
-                                                visible: !calendar.visible
-                                            },
-                                        });
-                                    }}
-                                />
-                                
-                                <CalendarMoreButton calendar={calendar} dispatch={dispatch}/>
-                            </div>
-                        )
-                    })}
+                <div style={{ width: "100%", padding: "0px 8px" }}>
+                    {stateLoading ?
+                        <>
+                            <Skeleton variant="text" animation="wave" />
+                            <Skeleton variant="text" animation="wave" />
+                            <Skeleton variant="text" animation="wave" />
+                        </> : calendarState.calendars.map((calendar, id) => {
+                            return (<CalendarListItem key={id} calendar={calendar} />)
+                        })}
                 </div>
             </div>
 

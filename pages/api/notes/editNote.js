@@ -4,14 +4,11 @@ export default async function handler(req, res) {
     let results;
     if (req.method === "POST") {
         try {
-            let result = await excuteQuery({
-                query: "DELETE FROM calendars WHERE id = ?",
-                values: [req.body],
+            const result = await excuteQuery({
+                query: "UPDATE notes SET title = ?, content = ?  WHERE id = ? ",
+                values: [req.body.title, req.body.content, req.body.id],
             });
-            result = await excuteQuery({
-                query: "DELETE FROM events WHERE calendar_id = ?",
-                values: [req.body],
-            });
+
             res.status(201).end(JSON.stringify({ result }));
         } catch (error) {
             res

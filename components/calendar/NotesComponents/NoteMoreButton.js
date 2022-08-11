@@ -10,7 +10,7 @@ import { Typography } from '@mui/material';
 import { ModalState } from '../../../context/ModalContext';
 
 export default function CalendarMoreButton(props) {
-    const { calendar, dispatch } = props;
+    const { note, dispatch } = props;
 
     const {
         dispatch: dispatchModal
@@ -25,27 +25,28 @@ export default function CalendarMoreButton(props) {
         setAnchorEl(null);
     };
 
-    const handleDeleteButton = async (calendar_id) => {
+    const handleDeleteButton = async (note_id) => {
         dispatch({
-            type: "DELETE_CALENDAR",
-            id: calendar_id
+            type: "DELETE_NOTE",
+            id: note_id
         })
-        await fetch("/api/calendar/deleteCalendar", {
+        await fetch("/api/notes/deleteNote", {
             method: "POST",
-            body: [JSON.stringify(calendar_id)],
+            body: [JSON.stringify(note_id)],
             headers: {
                 "Content-Type": "application/json",
             },
         });
     }
-    const handleOpenEditCalendar = (calendar) => {
+    const handleOpenEditNote = (note) => {
         dispatchModal({
             type: "SHOW_MODAL",
-            modalType: "NEW_CALENDAR",
+            modalType: "NEW_NOTE",
             modalProps: {
-                name: calendar.name,
+                title: note.title,
+                content: note.content,
                 edit:true,
-                id: calendar.id
+                id: note.id
             },
 
         })
@@ -73,13 +74,13 @@ export default function CalendarMoreButton(props) {
 
             >
                 <MenuItem onClick={() => {
-                    handleOpenEditCalendar(calendar);
+                    handleOpenEditNote(note);
                     handleClose();
                 }}>
                     <EditIcon fontSize="small" /><Typography variant="span" fontSize="small">Edit</Typography>
                 </MenuItem>
                 <MenuItem onClick={() => {
-                    handleDeleteButton(calendar.id);
+                    handleDeleteButton(note.id);
                     handleClose();
                 }} >
                     <DeleteIcon fontSize="small" /><Typography variant="span" fontSize="small">Delete</Typography>

@@ -15,6 +15,8 @@ import { timeStamps } from '../../../utility/constants'
 import { CalendarState } from "../../../context/CalendarContext";
 import { ModalState } from "../../../context/ModalContext";
 
+import { addHours } from "date-fns";
+
 const SectionDivider = props => {
     const { children, title } = props;
     return (
@@ -139,7 +141,7 @@ const NewEventForm = props => {
             name: formState.name,
             description: formState.taskDescription,
             type: 'event',
-            eventDate: formState.dateValue,
+            eventDate: addHours(formState.dateValue,6),
             eventStartTime: formState.timeValueStart,
             eventLength: formState.timeValueEnd - formState.timeValueStart,
             color: calendars[formState.calendar].color,
@@ -148,11 +150,11 @@ const NewEventForm = props => {
         if (event) {
             dispatch({
                 type: "UPDATE_EVENT",
-                eventData: {...eventData, id:event.id}
+                eventData: { ...eventData, id: event.id }
             })
             await fetch("/api/events/updateEvent", {
                 method: "POST",
-                body: [JSON.stringify({...eventData, id:event.id})],
+                body: [JSON.stringify({ ...eventData, id: event.id })],
                 headers: {
                     "Content-Type": "application/json",
                 },

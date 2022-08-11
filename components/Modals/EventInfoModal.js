@@ -40,7 +40,7 @@ const EventInfoModal = props => {
             {openAddEventModal &&
                 <Modal
                     open={openAddEventModal}
-                    onClose={() => dispatch(
+                    onClose={() => dispatchModal(
                         {
                             type: "HIDE_MODAL",
                         }
@@ -68,7 +68,7 @@ const EventInfoModal = props => {
                                 color="primary"
                                 size="small"
                                 onClick={() => {
-                                    dispatch({
+                                    dispatchModal({
                                         type: "HIDE_MODAL",
                                     });
                                 }}

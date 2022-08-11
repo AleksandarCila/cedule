@@ -84,7 +84,8 @@ export const calendarReducer = (state, action) => {
         calendarState: {
           ...state.calendarState,
           todayEvents: getTodayEvents(newCalendars, oldSelectedDate),
-          calendars: newCalendars
+          calendars: newCalendars,
+          loading:false
         },
       }
       return newState;
@@ -104,7 +105,7 @@ export const calendarReducer = (state, action) => {
         calendarState: {
           ...state.calendarState,
           todayEvents: getTodayEvents(newCalendars, oldSelectedDate),
-          calendars: newCalendars
+          calendars: newCalendars,
         },
 
       };
@@ -268,7 +269,7 @@ export const calendarReducer = (state, action) => {
         if (calendar.id === action.event.calendar_id) {
           return { ...calendar, events: calendar.events.filter((event) => { if (event.id != action.event.id) return event; }) }
         }
-        else{
+        else {
           return calendar;
         }
       });
@@ -283,7 +284,64 @@ export const calendarReducer = (state, action) => {
 
       };
       return newState; F
+    case "SET_NOTES":
 
+      const newNotes = [];
+      action.notes.forEach((note) => {
+        newNotes.push({
+          ...note, date: parseISO(note.date)
+        })
+      })
+
+      newState = {
+        ...state,
+        calendarState: {
+          ...state.calendarState,
+          notes: newNotes
+        },
+      }
+      return newState;
+    case "ADD_NEW_NOTE":
+      newNotes = state.calendarState.notes;
+      newNotes.push(action.noteData)
+      newState = {
+        ...state,
+        calendarState: {
+          ...state.calendarState,
+          notes: newNotes
+        }
+      }
+      return newState;
+    case "EDIT_NOTE":
+      newNotes = state.calendarState.notes.map((note) => {
+        if (note.id === action.noteData.id) {
+          return { ...note, title: action.noteData.title, content: action.noteData.content }
+        }
+        else return note
+      })
+      newState = {
+        ...state,
+        calendarState: {
+          ...state.calendarState,
+          notes: newNotes
+        }
+      }
+      return newState;
+
+    case "DELETE_NOTE":
+      newNotes = state.calendarState.notes.filter((note) => {
+        if (note.id !== action.id) {
+          return note
+        }
+      });
+      newState = {
+        ...state,
+        calendarState: {
+          ...state.calendarState,
+          notes: newNotes
+        }
+      }
+      return newState;
     default:
       return state;
   }

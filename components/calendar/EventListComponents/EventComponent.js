@@ -1,30 +1,37 @@
-import { Typography, Box, Divider } from "@mui/material";
-import { getTimeLabel } from "../../../utility/constants";
-import EventNoteIcon from '@mui/icons-material/EventNote';
+// Context States
 import { ModalState } from '../../../context/ModalContext'
 
+// Components
+import { Typography, Box, Divider } from "@mui/material";
+
+// Utility
+import { getTimeLabel } from "../../../utility/constants";
+
+// Icon
+import EventNoteIcon from '@mui/icons-material/EventNote';
 
 const EventComponent = props => {
     const { event } = props;
+
+    // States
     const {
         dispatch
     } = ModalState();
 
+    const handleOpenModal = (type, props = {}) => {
+        dispatch({
+            type: "SHOW_MODAL",
+            modalType: type,
+            modalProps: props
+        })
+    }
     return (
         <Box sx={{
             display: 'flex', justifyContent: 'flex-start', alignItems: 'center', "&:hover": {
                 color: event.color
             }
         }}
-            onClick={() => {
-                dispatch({
-                    type: "SHOW_MODAL",
-                    modalType: "EVENT_INFO",
-                    modalProps: {
-                        event: event
-                    }
-                })
-            }}
+            onClick={() => { handleOpenModal("EVENT_INFO", { event: event }) }}
         >
             <Divider sx={{ height: 25, width: 5, borderRightWidth: 5, mr: 1, borderColor: event.color }} orientation="vertical" />
             <Box sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', flexWrap: "wrap", my: 0.5 }}>

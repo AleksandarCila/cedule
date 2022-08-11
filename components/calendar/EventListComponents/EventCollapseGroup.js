@@ -1,11 +1,18 @@
 import { useState } from "react";
+
+// Components
 import { Collapse, Divider, Typography, Box } from "@mui/material";
 import EventComponent from './EventComponent'
 
 const EventCollapseGroup = props => {
-    const { children, events, label, color } = props;
+    const { children, events, label } = props;
+    
+    // States
     const [collapsed, setCollapsed] = useState(true);
-    // console.log(events);
+
+    const handleClick = () =>{
+        setCollapsed(prev => !prev)
+    }
     return (
         <Box sx={{
             "&:hover": {
@@ -13,8 +20,7 @@ const EventCollapseGroup = props => {
             },
             my:1
         }}>
-
-            <Typography variant="span" onClick={() => { setCollapsed(prev => !prev) }}
+            <Typography variant="span" onClick={handleClick}
                 sx={{
                     "&:hover": {
                         cursor: 'pointer'

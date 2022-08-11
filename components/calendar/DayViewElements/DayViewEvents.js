@@ -1,54 +1,43 @@
-import { useState, useEffect, useRef } from "react";
-
+// Context States
 import { CalendarState } from "../../../context/CalendarContext";
 import { ModalState } from '../../../context/ModalContext'
 
-import { isSameDay } from "date-fns";
-
-import { timeStamps } from "../../../utility/constants"
+// Components
 import { Typography, Box } from "@mui/material";
+
+// Utility
+import { isSameDay } from "date-fns";
+import { timeStamps } from "../../../utility/constants"
 import { addAlphaToColor } from "../../../utility/addAlphaToColor";
 
-
-
 const WeekViewDayEvents = (props) => {
+    const { weekDayIndex } = props;
+
+    // States
     const {
         state: { calendarState },
-        dispatch,
     } = CalendarState();
-
     const {
         dispatch: dispatchModal
     } = ModalState();
+    const day = calendarState.weekDays[weekDayIndex];
 
-    const [loading, setLoading] = useState(true);
-    // const { weekDayIndex } = props;
-
-    const day = props.day ? props.day : calendarState.weekDays[props.weekDayIndex];
-    // console.log(props.day && props.day);
+    // For each visible calendar, get events that are on the same day 
     let events = [];
     calendarState.calendars.forEach((calendar) => {
         if (calendar.visible)
             events = events.concat(calendar.events)
     })
-
-
     events = events.filter((event) => {
         if (isSameDay(day, event.eventDate)) return event;
 
     });
     events = events.sort((a, b) => { return a.eventStartTime - b.eventStartTime })
 
-    useEffect(() => (setLoading(false)), [])
 
+    // Drag Functions
     const dragStart = (e, event) => {
         e.dataTransfer.setData('data', JSON.stringify(event));
-    };
-
-    const dragEnter = (event, position) => {
-        event.stopPropagation();
-        event.preventDefault();
-        // console.log(e.target.innerHTML);
     };
 
     const onDragOver = (event) => {
@@ -56,13 +45,17 @@ const WeekViewDayEvents = (props) => {
         event.preventDefault();
     }
 
-    const dragEnd = (e, position) => {
-        // console.log(e.target);
+    // Functions
+    const handleOpenModal = (type, props = {}) => {
+        dispatchModal({
+            type: "SHOW_MODAL",
+            modalType: type,
+            modalProps: props,
+        })
     }
-
     return (
         <>
-            {!loading && events && events.map((event, ind) => {
+            {!calendarState.loading && events.map((event, ind) => {
                 return (
                     <Box
                         key={ind}
@@ -74,31 +67,19 @@ const WeekViewDayEvents = (props) => {
                             height: `${event.eventLength * (1 / timeStamps.length * 100)}%`,
                             backgroundColor: event.color,
                             borderRadius: 2,
-                            // border: "1px solid black",
                             zIndex: 999 + ind,
                             boxShadow: 3,
                             py: 0.1,
                             px: 0.5,
-
-                            "&:hover":{
-                                cursor:"pointer",
+                            "&:hover": {
+                                cursor: "pointer",
                                 backgroundColor: addAlphaToColor(event.color, 0.9)
                             }
-                        }} 
+                        }}
                         draggable
                         onDragStart={(e) => dragStart(e, event)}
-                        onDragEnd={(e) => dragEnd(e, ind)}
                         onDragOver={onDragOver}
-                        onClick={() => {
-                            dispatchModal({
-                                type: "SHOW_MODAL",
-                                modalType: "EVENT_INFO",
-                                modalProps: {
-                                    event: event
-                                }
-                            })
-                        }}
-                    // onDragEnter={(e) => dragEnter(e, ind)}
+                        onClick={() => { handleOpenModal("EVENT_INFO", { event: event }) }}
                     >
                         <Typography fontSize="small" noWrap={true}>{timeStamps[event.eventStartTime].label}-{timeStamps[event.eventStartTime + event.eventLength].label}</Typography>
                     </Box>)

@@ -14,6 +14,7 @@ import { timeStamps } from '../../../utility/constants'
 
 import { CalendarState } from "../../../context/CalendarContext";
 import { ModalState } from "../../../context/ModalContext";
+import { addHours } from "date-fns";
 
 const SectionDivider = props => {
     const { children, title } = props;
@@ -112,7 +113,7 @@ const NewReminderForm = props => {
             name: formState.name,
             description: "",
             type: 'reminder',
-            eventDate: formState.dateValue,
+            eventDate: addHours(formState.dateValue,6),
             eventStartTime: formState.timeValue,
             eventLength: 1,
             color: calendars[formState.calendar].color,

@@ -51,6 +51,7 @@ export const getTimeLabel = (timeStampId) => {
 
 
 import { faker } from '@faker-js/faker';
+import { isBefore } from 'date-fns';
 // import { faker } from '@faker-js/faker/locale/de';
 
 export const USERS = [];
@@ -125,7 +126,49 @@ export function createRandomReminder() {
   };
 }
 
+export function createRandomNote() {
+  return {
+    id: faker.datatype.uuid(),
+    name: faker.lorem.words(5),
+    tags: [{id:0,name:"Other",id:0,name:"Other", }],
+    content: faker.lorem.lines(),
+    color: faker.color.rgb({ prefix: "#" }),
+    date: faker.date.soon(10),
+  }
+}
+
+export let notes = [];
+Array.from({ length: 10 }).forEach(() => {
+  notes.push(createRandomNote())
+});
+notes=notes.sort((a, b) => {
+  if (isBefore(a, b)) return 1
+  else -1
+})
+
 export const events = [];
+
+export const NOTE_TAGS = [{
+  id: 0,
+  name: 'work',
+},
+{
+  id: 1,
+  name: 'school',
+},
+
+{
+  id: 2,
+  name: 'home',
+},
+{
+  id: 3,
+  name: 'other',
+},
+]
+
+
+
 
 Array.from({ length: 10 }).forEach(() => {
   events.push(createRandomTask());

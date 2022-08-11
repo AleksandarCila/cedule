@@ -114,9 +114,9 @@ const NewEventModal = props => {
                         </Fab>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                             <Tabs value={value} onChange={handleChange} aria-label="event tabs">
-                                <Tab icon={<CircleIcon sx={{ color: theme.custom.events.event }} fontSize="small" />} iconPosition="start" label="Event" {...a11yProps(0)} />
-                                <Tab icon={<CircleIcon sx={{ color: theme.custom.events.task }} fontSize="small" />} iconPosition="start" label="Task" {...a11yProps(1)} />
-                                <Tab icon={<CircleIcon sx={{ color: theme.custom.events.reminder }} fontSize="small" />} iconPosition="start" label="Reminder" {...a11yProps(2)} />
+                                <Tab disabled={modalState.modalProps.tabId != null && modalState.modalProps.tabId != 0} icon={<CircleIcon sx={{ color: theme.custom.events.event }} fontSize="small" />} iconPosition="start" label="Event" {...a11yProps(0)} />
+                                <Tab disabled={modalState.modalProps.tabId != null && modalState.modalProps.tabId != 1} icon={<CircleIcon sx={{ color: theme.custom.events.task }} fontSize="small" />} iconPosition="start" label="Task" {...a11yProps(1)} />
+                                <Tab disabled={modalState.modalProps.tabId != null && modalState.modalProps.tabId != 2} icon={<CircleIcon sx={{ color: theme.custom.events.reminder }} fontSize="small" />} iconPosition="start" label="Reminder" {...a11yProps(2)} />
                             </Tabs>
                         </Box>
                         <TabPanel value={value} index={0} >

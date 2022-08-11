@@ -14,7 +14,8 @@ import { ModalState } from '../../context/ModalContext'
 
 import MonthView from './MonthView'
 import WeekView from "./WeekViewComponents/WeekView"
-import DayView from './DayView'
+import DayView from './DayViewElements/DayView'
+import NoteView from './NotesComponents/NoteView'
 
 import { daysLong, months } from "../../utility/constants"
 
@@ -31,9 +32,9 @@ const tabNames = [{
     title: 'Day',
     content: <DayView />
 }, {
-    href: 'agenda',
-    title: 'Agenda',
-    content: <>Agenda</>
+    href: 'notes',
+    title: 'Notes',
+    content: <NoteView />
 }]
 
 const TabButton = props => {
@@ -156,7 +157,7 @@ const CalendarTabPanel = ({ router }) => {
         return timeLabel;
     }
     const handleTabChange = (e, newValue) => {
-        setTabValue(newValue);
+        if (newValue !== null) setTabValue(newValue);
     }
     return (
         <Box sx={{ height: "100%", display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
@@ -193,7 +194,7 @@ const CalendarTabPanel = ({ router }) => {
                         size="small"
                         variant="contained"
                     >
-                        {tabNames[tabValue].title}
+                        {tabNames[tabValue] && tabNames[tabValue].title}
                     </Button>
                     <Menu
                         anchorEl={anchorEl}
@@ -213,11 +214,18 @@ const CalendarTabPanel = ({ router }) => {
             <Fab
                 color="primary"
                 onClick={() => {
-                    dispatchModal({
-                        type: "SHOW_MODAL",
-                        modalType: "NEW_EVENT",
-                        modalProps: {},
-                    });
+                    if (tabValue == 3) {
+                        dispatchModal({
+                            type: "SHOW_MODAL",
+                            modalType: "NEW_NOTE",
+                            modalProps: {},
+                        });
+                    } else
+                        dispatchModal({
+                            type: "SHOW_MODAL",
+                            modalType: "NEW_EVENT",
+                            modalProps: {},
+                        });
                 }}
                 sx={{
                     display: { xs: "block", lg: "none" }, position: 'absolute', bottom: 25, right: 25,
@@ -244,7 +252,7 @@ const CalendarTabPanel = ({ router }) => {
                     )
                 })}
             </Box>
-        </Box>
+        </Box >
     )
 }
 
