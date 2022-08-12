@@ -24,8 +24,9 @@ const DayHeaderElement = props => {
             height: "100%",
             padding: 2,
             display: 'flex', justifyContent: 'center', alignItems: 'center',
-            backgroundColor: addAlphaToColor(theme.palette.primary.light, 0.3),
-            borderBottom: isToday(day) ? `5px solid ${theme.palette.primary.light}` : addAlphaToColor(theme.palette.primary.main, 1),
+            backgroundColor: theme.palette.primary.light,
+            borderBottom: isToday(day) ? `5px solid ${theme.palette.primary.light}` : theme.palette.primary.main,
+            color: theme.palette.primary.contrastText
         }}
         >
             <Typography fontSize="small" variant="span">{day.getDate()} {days[day.getDay()]}</Typography>
@@ -45,14 +46,14 @@ const DayViewHeader = (props) => {
     const theme = useTheme();
 
     return (
-        <div style={{ width: "100%", height: 40, minHeight: 40, paddingRight: 18 }}>
+        <div style={{ width: "100%", height: 40, minHeight: 40, paddingRight: 16 }}>
             <div style={{
                 width: "100%",
                 height: "100%",
                 display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gridAutoColumns: "auto", gridAutoRows: "auto",
             }}>
                 <div style={{
-                    borderRight: `1px solid ${theme.palette.grey['300']}`,
+                    borderRight: `1px solid ${theme.palette.backgroundLight}`,
                     height: "100%",
                     width: "100%", overflow: "hidden", textOverflow: "ellipsis",
                 }}>

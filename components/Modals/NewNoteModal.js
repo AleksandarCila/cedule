@@ -1,20 +1,16 @@
 import { useState, useEffect } from 'react';
 
-import { Modal, Box, Typography, Button, Fab, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material'
-
+// Context States
 import { ModalState } from '../../context/ModalContext'
 import { CalendarState } from '../../context/CalendarContext';
 
+// Components
+import { Box, IconButton, Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions, useTheme } from '@mui/material'
 
-import { useTheme } from '@mui/material';
-import { addAlphaToColor } from '../../utility/addAlphaToColor';
-import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close'
 
-import { calendarColors } from '../../utility/constants';
-
-
 const NewNoteModal = props => {
+    // States
     const [value, setValue] = useState(0);
     const {
         state: { modalState },
@@ -32,8 +28,23 @@ const NewNoteModal = props => {
 
 
     const open = modalState.modalType === "NEW_NOTE" ? true : false;
-    const theme = useTheme();
 
+    // Hooks
+    const theme = useTheme();
+    useEffect(() => {
+        setFormState({
+            ...formState,
+            title: modalState.modalProps.title ? modalState.modalProps.title : "",
+            content: modalState.modalProps.content ? modalState.modalProps.content : "",
+            titleValid: modalState.modalProps.title ? true : false,
+        })
+    }, [modalState.modalProps])
+
+    useEffect(() => {
+        setFormValid(formState.titleValid);
+    }, [formState.titleValid])
+
+    // Functions
     const handleUserInput = (e, inputName = "", inputValue = "") => {
         const name = e ? e.target.name : inputName;
         const value = e ? e.target.value : inputValue;
@@ -61,19 +72,6 @@ const NewNoteModal = props => {
         });
 
     }
-
-    useEffect(() => {
-        setFormState({
-            ...formState,
-            title: modalState.modalProps.title ? modalState.modalProps.title : "",
-            content: modalState.modalProps.content ? modalState.modalProps.content : "",
-            titleValid: modalState.modalProps.title ? true : false,
-        })
-    }, [modalState.modalProps])
-
-    useEffect(() => {
-        setFormValid(formState.titleValid);
-    }, [formState.titleValid])
 
     const handleAddNote = async () => {
         const noteData = {
@@ -120,6 +118,14 @@ const NewNoteModal = props => {
                 >
                     <DialogTitle sx={{ bgcolor: theme.palette.primary.main }}>{modalState.modalProps.edit ? "Edit Note" : "Add a new Note"}</DialogTitle>
                     <DialogContent >
+                        <IconButton
+                            onClick={handleClose}
+                            sx={{
+                                position: 'absolute', top: 9, right: 10, color: "#000",
+                                display: "flex", justifyContent: 'center', alignItems: "center"
+                            }}>
+                            <CloseIcon />
+                        </IconButton>
                         <Box sx={{ width: '100%', p: 2 }}>
                             <TextField required onChange={(e) => handleUserInput(e)} id="title" name="title" label="Note Title"
                                 value={formState.title} placeholder="Add a Note title" variant="outlined" size="small"

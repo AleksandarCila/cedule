@@ -1,33 +1,26 @@
 import { useState, useEffect } from 'react';
 
-import { Modal, Box, Typography, Button, Fab, TextField, FormControl, RadioGroup, Radio, FormControlLabel, FormLabel } from '@mui/material'
-
+// Context States
 import { ModalState } from '../../context/ModalContext'
 import { CalendarState } from '../../context/CalendarContext';
 
+// Components
+import { DialogTitle, Dialog, DialogContent, DialogActions, Box, Typography, Button, Fab, TextField, FormControl, RadioGroup, Radio, FormControlLabel, useTheme, IconButton } from '@mui/material'
 
-import { useTheme } from '@mui/material';
-import { addAlphaToColor } from '../../utility/addAlphaToColor';
-import EditIcon from '@mui/icons-material/Edit';
-import CloseIcon from '@mui/icons-material/Close'
-
+// Utility
 import { calendarColors } from '../../utility/constants';
 
+// Icons
+import CloseIcon from '@mui/icons-material/Close'
 
 const NewCalendarModal = props => {
-    const [value, setValue] = useState(0);
+    // States
     const {
         state: { modalState },
         dispatch: dispatchModal
     } = ModalState();
     const { dispatch } = CalendarState();
-    const handleChange = (event) => {
-        setFormState({
-            ...formState,
-            color: calendarColors[event.target.value]
-        })
-        setValue(event.target.value);
-    };
+    const [value, setValue] = useState(0);
     const [formState, setFormState] = useState({
         name: modalState.modalProps.name ? modalState.modalProps.name : "",
         color: calendarColors[0],
@@ -35,10 +28,31 @@ const NewCalendarModal = props => {
         nameValid: modalState.modalProps.name ? true : false,
     })
     const [formValid, setFormValid] = useState(false);
-
-
     const open = modalState.modalType === "NEW_CALENDAR" ? true : false;
+
+    // Hooks
     const theme = useTheme();
+
+    useEffect(() => {
+        setFormState({
+            ...formState,
+            name: modalState.modalProps.name ? modalState.modalProps.name : "",
+            nameValid: modalState.modalProps.name ? true : false,
+        })
+    }, [modalState.modalProps])
+
+    useEffect(() => {
+        setFormValid(formState.nameValid);
+    }, [formState.nameValid])
+
+    // Functions
+    const handleChange = (event) => {
+        setFormState({
+            ...formState,
+            color: calendarColors[event.target.value]
+        })
+        setValue(event.target.value);
+    };
 
     const handleUserInput = (e, inputName = "", inputValue = "") => {
         const name = e ? e.target.name : inputName;
@@ -67,18 +81,6 @@ const NewCalendarModal = props => {
         });
 
     }
-
-    useEffect(() => {
-        setFormState({
-            ...formState,
-            name: modalState.modalProps.name ? modalState.modalProps.name : "",
-            nameValid: modalState.modalProps.name ? true : false,
-        })
-    }, [modalState.modalProps])
-
-    useEffect(() => {
-        setFormValid(formState.nameValid);
-    }, [formState.nameValid])
 
     const handleAddCalendar = async () => {
         const calendarData = {
@@ -109,91 +111,67 @@ const NewCalendarModal = props => {
                 },
             });
         }
-        dispatchModal({ type: "HIDE_MODAL" })
+        hideModal();
     }
 
-
+    const hideModal = () => {
+        dispatchModal({ type: "HIDE_MODAL" })
+    }
     return (
         <>
             {open &&
-                <Modal
+                <Dialog
                     open={open}
-                    onClose={() => dispatchModal(
-                        {
-                            type: "HIDE_MODAL",
-                        }
-                    )}
+                    onClose={hideModal}
                 >
-                    <Box sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
+                    <DialogTitle sx={{ bgcolor: theme.palette.primary.main }}>{modalState.modalProps.edit ? "Edit Calendar" : "Add a new Calendar"}</DialogTitle>
 
-                        width: { xs: "80vw", md: "50vw" },
-                        height: "70vh",
-                        overflow: 'hidden',
-                        bgcolor: "#fff",
-                        borderRadius: 5,
-                        boxShadow: 24,
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        flexDirection: 'column',
-                    }}>
-                        <div style={{ width: "100%" }}>
-                            <Fab
-                                color="primary"
-                                size="small"
-                                onClick={() => {
-                                    dispatchModal({
-                                        type: "HIDE_MODAL",
-                                    });
-                                }}
-                                sx={{
-                                    position: 'absolute', top: 7, right: 10,
-                                    display: "flex", justifyContent: 'center', alignItems: "center"
-                                }}>
-                                <CloseIcon />
-                            </Fab>
-                            <Box sx={{ width: "100%", height: 50, bgcolor: theme.palette.primary.main }}>
+                    <DialogContent >
+                        <IconButton
+                            onClick={hideModal}
+                            sx={{
+                                position: 'absolute', top: 9, right: 10, color: "#000",
+                                display: "flex", justifyContent: 'center', alignItems: "center"
+                            }}>
+                            <CloseIcon />
+                        </IconButton>
 
-                            </Box>
-                            <Typography variant="h5" sx={{ p: 2, }}>{modalState.modalProps.edit ? "Edit Calendar" : "Add a new Calendar"}</Typography>
-                            <Box sx={{ width: '100%', p: 2 }}>
-                                <TextField required onChange={(e) => handleUserInput(e)} id="name" name="name" label="Calendar Name"
-                                    value={formState.name} placeholder="Add a Calendar name" variant="outlined" size="small"
-                                    fullWidth sx={{ mb: 2 }}
-                                    helperText={formState.nameValid ? "" : "Calendar must have a name"}
-                                    error={!formState.nameValid} />
-                            </Box>
-                            <Typography variant="body1" sx={{ px: 2, }}>Pick a Calendar color</Typography>
-                            <FormControl sx={{ px: 3 }}>
-                                <RadioGroup
-                                    row
-                                    aria-labelledby="colors-radio-buttons-group"
-                                    name="controlled-radio-buttons-group"
-                                    value={value}
-                                    onChange={handleChange}
-                                >
-                                    {calendarColors.map((color, ind) => {
-                                        return (
-
-                                            <FormControlLabel key={ind} value={ind} control={<Radio sx={{
-                                                color: color, '&.Mui-checked': {
-                                                    color: color,
-                                                },
-                                            }} />} />
-                                        )
-                                    })}
-                                </RadioGroup>
-                            </FormControl>
-                        </div>
+                        <Box sx={{ width: '100%', p: 2 }}>
+                            <TextField required onChange={(e) => handleUserInput(e)} id="name" name="name" label="Calendar Name"
+                                value={formState.name} placeholder="Add a Calendar name" variant="outlined" size="small"
+                                fullWidth sx={{ mb: 2 }}
+                                helperText={formState.nameValid ? "" : "Calendar must have a name"}
+                                error={!formState.nameValid}
+                                inputProps={{ maxLength: 60 }} />
+                        </Box>
+                        <Typography variant="body1" sx={{ px: 2, }}>Pick a Calendar color</Typography>
+                        <FormControl sx={{ px: 3 }}>
+                            <RadioGroup
+                                row
+                                aria-labelledby="colors-radio-buttons-group"
+                                name="controlled-radio-buttons-group"
+                                value={value}
+                                onChange={handleChange}
+                            >
+                                {calendarColors.map((color, ind) => {
+                                    return (
+                                        <FormControlLabel key={ind} value={ind} control={<Radio sx={{
+                                            color: color, '&.Mui-checked': {
+                                                color: color,
+                                            },
+                                        }} />} />
+                                    )
+                                })}
+                            </RadioGroup>
+                        </FormControl>
+                    </DialogContent>
+                    <DialogActions>
                         <Button onClick={handleAddCalendar} size="large" variant="contained" disabled={!formValid} sx={{ my: 2, }}>
                             {modalState.modalProps.edit ? "Save Calendar" : "Add Calendar"}
                         </Button>
-                    </Box>
-                </Modal>}</>
+                    </DialogActions>
+                </Dialog>}
+        </>
     )
 
 }

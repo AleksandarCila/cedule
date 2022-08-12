@@ -4,7 +4,7 @@ import { ModalState } from "../../../context/ModalContext";
 
 // Components
 import Image from 'next/image'
-import { Divider, Fab, Typography, Button, useTheme, Skeleton } from '@mui/material';
+import { Divider, Typography, Button, useTheme, Skeleton, IconButton } from '@mui/material';
 import CalendarListItem from './CalendarListItem'
 
 // Utility
@@ -38,8 +38,8 @@ const CalendarList = props => {
     }
     return (
         <div>
-            <div style={{ width: "100%", height: 113, position: 'relative' }}>
-                <Image
+            <div style={{ width: "100%", height: 50, position: 'relative' }}>
+                {/* <Image
                     src="/assets/calendar_header_image.webp"
                     alt="Various people stand in a line backwards cartoon"
                     layout='fill'
@@ -48,22 +48,22 @@ const CalendarList = props => {
                 <div
                     style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: addAlphaToColor(theme.palette.primary.main, 0.15) }}
                 >
-                </div>
+                </div> */}
             </div>
             <div style={{ padding: 8, width: "100%", display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: "wrap" }}>
                 <Button size="medium" color="primary" variant="contained" endIcon={<PlaylistAddIcon />} onClick={() => { handleOpenModal("NEW_EVENT") }}
                     sx={{ width: "100%" }}>
                     Add a new Event
                 </Button>
-                <Divider sx={{ width: '100%', my: 2 }} />
+                <Divider sx={{ width: '100%', my: 1 }} />
                 <div style={{
                     width: "100%", display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
                 }}>
-                    <Typography variant="h6" sx={{ width: "100%" }}>Calendars</Typography>
-                    <Fab variant="extended" color="primary" size="small" sx={{ width: 25, mx: 0.5 }} onClick={() => { handleOpenModal("NEW_CALENDAR") }}><AddIcon /></Fab>
-                    <Fab variant="extended" color="secondary" size="small" sx={{ width: 25 }}><SettingsIcon /></Fab>
+                    <Typography variant="body1" fontSize="large" sx={{ width: "100%" }}>Calendars</Typography>
+                    <IconButton disableRipple color="primary" size="small" sx={{ width: 25, mx: 0.5 }} onClick={() => { handleOpenModal("NEW_CALENDAR") }}><AddIcon /></IconButton>
+                    <IconButton disableRipple color="primary" size="small" sx={{ width: 25 }}><SettingsIcon /></IconButton>
                 </div>
-                <Divider sx={{ width: '100%', my: 2 }} />
+                {/* <Divider sx={{ width: '100%', my: 1 }} /> */}
                 <div style={{ width: "100%", padding: "0px 8px" }}>
                     {stateLoading ?
                         <>

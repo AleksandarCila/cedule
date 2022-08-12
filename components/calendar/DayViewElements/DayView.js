@@ -79,9 +79,9 @@ const DayEventSlotElement = props => {
         <div style={{
             padding: 2,
             // borderRight: ((ind + 1) % 7) != 0 ? `1px solid ${theme.palette.grey['300']}` : "",
-            borderBottom: `1px solid ${theme.palette.grey['300']}`,
+            borderBottom: `1px solid ${theme.palette.backgroundLight}`,
             width: "100%", height: "100%",
-            backgroundColor: (hover ? theme.palette.primary.main : isWeekendDay ? theme.palette.grey['200'] : "#fff"),
+            backgroundColor: (hover ? theme.palette.primary.main : isWeekendDay ? theme.palette.backgroundLighter : ""),
         }}
             onDragEnter={dragEnter}
             onDragStart={(e) => { e.preventDefault() }}
@@ -118,7 +118,7 @@ const DayView = (props) => {
             <DayViewHeader />
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gridAutoColumns: "auto", gridAutoRows: "auto", overflowY: "scroll", }}>
                 <div style={{
-                    borderTop: `1px solid ${theme.palette.grey['300']}`,
+                    borderTop: `1px solid ${theme.palette.backgroundLight}`,
                     display: "grid", gridTemplateColumns: "repeat(1, 1fr)", gridAutoColumns: "auto", gridAutoRows: "auto"
                 }}>{
                         timeStamps.map((hour, hourInd) => {
@@ -129,7 +129,7 @@ const DayView = (props) => {
                 </div>
 
                 <div style={{
-                    borderTop: `1px solid ${theme.palette.grey['300']}`,
+                    borderTop: `1px solid ${theme.palette.backgroundLight}`,
                     position: 'relative',
                     display: "grid", gridTemplateColumns: "repeat(1, 1fr)", gridAutoColumns: "auto", gridAutoRows: "auto"
                 }}>

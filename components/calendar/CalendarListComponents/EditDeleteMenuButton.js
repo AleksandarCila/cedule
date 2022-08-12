@@ -8,7 +8,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
-const ConfirmationDialog = props => {
+export const ConfirmationDialog = props => {
     const { handleAccept, handleCancel, info, show } = props;
 
 
@@ -28,8 +28,18 @@ const ConfirmationDialog = props => {
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleCancel}>No</Button>
-                <Button onClick={handleAccept}>
+                <Button onClick={(event) => {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    handleCancel()
+                }
+                }>No</Button>
+                <Button onClick={(event) => {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    handleAccept();
+                }
+                }>
                     Yes
                 </Button>
             </DialogActions>
@@ -45,6 +55,8 @@ export default function EditDeleteMenuButton(props) {
     const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
     // Functions
     const handleClick = (event) => {
+        event.stopPropagation();
+        event.preventDefault();
         setAnchorEl(event.currentTarget);
     };
     const handleClose = () => {
@@ -52,7 +64,7 @@ export default function EditDeleteMenuButton(props) {
     };
 
     return (
-        <div>
+        <div style={{ zIndex: 1000 }}>
             <IconButton
                 aria-label="more"
                 id="long-button"
@@ -70,23 +82,30 @@ export default function EditDeleteMenuButton(props) {
                 }}
                 anchorEl={anchorEl}
                 open={open}
-                onClose={handleClose}
+                onClose={(event) => {
+                    event.stopPropagation();
+                    event.preventDefault(); handleClose();
+                }}
 
             >
-                <MenuItem onClick={() => {
+                <MenuItem onClick={(event) => {
+                    event.stopPropagation();
+                    event.preventDefault();
                     onEditClick();
                     handleClose();
                 }}>
                     <ListItemIcon><EditIcon fontSize="small" /></ListItemIcon>
                     <ListItemText>Edit</ListItemText>
                 </MenuItem>
-                <MenuItem onClick={() => {
+                <MenuItem onClick={(event) => {
+                    event.stopPropagation();
+                    event.preventDefault();
                     setShowConfirmationDialog(true);
                 }} >
                     <ListItemIcon><DeleteIcon fontSize="small" /></ListItemIcon>
                     <ListItemText>Delete</ListItemText>
                 </MenuItem>
-                <ConfirmationDialog handleAccept={() => { onDeleteClick(); setShowConfirmationDialog(false); handleClose();}}
+                <ConfirmationDialog handleAccept={() => { onDeleteClick(); setShowConfirmationDialog(false); handleClose(); }}
                     handleCancel={() => { setShowConfirmationDialog(false) }}
                     info={`Are you sure that you want to delete this?`} show={showConfirmationDialog} />
             </Menu>

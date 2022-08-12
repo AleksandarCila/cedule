@@ -11,6 +11,7 @@ import NewEventModal from "../components/calendar/NewEvent/NewEventModal";
 import EventInfoModal from '../components/Modals/EventInfoModal'
 import NewCalendarModal from '../components/Modals/NewCalendarModal'
 import NewNoteModal from "../components/Modals/NewNoteModal";
+import NoteReadingModal from "../components/Modals/NoteReadingModal"
 
 const Home: NextPage = () => {
 
@@ -33,6 +34,7 @@ const Home: NextPage = () => {
             <EventInfoModal />
             <NewCalendarModal />
             <NewNoteModal />
+            <NoteReadingModal />
             <Calendar />
           </main>
         </div>

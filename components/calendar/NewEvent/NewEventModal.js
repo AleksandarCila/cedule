@@ -1,18 +1,23 @@
 import { useEffect, useState } from "react";
-import { Modal, Box, Typography, Tab, Tabs, Fab } from "@mui/material";
 
+// Context States
 import { ModalState } from '../../../context/ModalContext'
 import { CalendarState } from '../../../context/CalendarContext'
 
-import { useTheme } from '@mui/material';
-import { addAlphaToColor } from "../../../utility/addAlphaToColor";
-
-import CircleIcon from '@mui/icons-material/Circle';
-import CloseIcon from '@mui/icons-material/Close';
-
+// Components
+import { Modal, Box, Typography, Tab, Tabs, Fab, useTheme, Dialog, DialogContent, DialogContentText, DialogTitle, DialogActions } from "@mui/material";
 import NewTaskForm from './NewTaskForm'
 import NewReminderForm from './NewRemiderForm'
 import NewEventForm from './NewEventForm'
+
+// Utility
+import { addAlphaToColor } from "../../../utility/addAlphaToColor";
+
+// Icons
+import CircleIcon from '@mui/icons-material/Circle';
+import CloseIcon from '@mui/icons-material/Close';
+
+
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -20,14 +25,13 @@ function TabPanel(props) {
     return (
         <div
             role="tabpanel"
-            hidden={value !== index}
             id={`event-tabpanel-${index}`}
             aria-labelledby={`event-tab-${index}`}
             {...other}
-            style={{ height: 'calc(100% - 60px)', overflowY: 'scroll' }}
+            style={{}}
         >
             {value === index && (
-                <Box sx={{ p: 1 }}>
+                <Box sx={{  height: 450, width: "100%" }}>
                     {children}
                 </Box>
             )}
@@ -43,6 +47,7 @@ function a11yProps(index) {
 }
 
 const NewEventModal = props => {
+    // States
     const {
         state: { modalState },
         dispatch
@@ -50,88 +55,69 @@ const NewEventModal = props => {
     const {
         state: { calendarState },
     } = CalendarState();
+    const [value, setValue] = useState(0);
 
     const { time, day } = modalState.modalProps;
     const openAddEventModal = modalState.modalType === "NEW_EVENT" ? true : false;
 
-
+    // Hooks
     const theme = useTheme();
-    const [value, setValue] = useState(0);
+    useEffect(() => {
+        setValue(modalState.modalProps.tabId ? modalState.modalProps.tabId : 0)
+    }, [modalState.modalProps])
 
+    // Functions
     const handleChange = (event, newValue) => {
         setValue(newValue)
 
     };
 
-    useEffect(() => {
-        setValue(modalState.modalProps.tabId ? modalState.modalProps.tabId : 0)
-    }, [modalState.modalProps])
-    console.log(modalState.modalProps.tabId);
-
+    const hideModal = () => {
+        dispatch(
+            {
+                type: "HIDE_MODAL",
+            }
+        )
+    }
     return (
-        <div>
-            <Modal
-                open={openAddEventModal}
-                onClose={() => dispatch(
-                    {
-                        type: "HIDE_MODAL",
-                    }
-                )}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Box sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
+        <Dialog
+            open={openAddEventModal}
+            onClose={hideModal}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+        >
 
-                    width: { xs: "80vw", md: "50vw" },
-                    height: "70vh",
-                    overflow: 'hidden',
-                    bgcolor: "#fff",
-                    borderRadius: 5,
-                    boxShadow: 24,
-                    p: 1,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    flexDirection: 'column',
-                }}>
-                    <Box sx={{ width: '100%', height: "100%" }}>
-                        <Fab
-                            color="primary"
-                            onClick={() => {
-                                dispatch({
-                                    type: "HIDE_MODAL",
-                                });
-                            }}
-                            sx={{
-                                position: 'absolute', top: 15, right: 15,
-                                display: "flex", justifyContent: 'center', alignItems: "center"
-                            }}>
-                            <CloseIcon />
-                        </Fab>
-                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                            <Tabs value={value} onChange={handleChange} aria-label="event tabs">
-                                <Tab disabled={modalState.modalProps.tabId != null && modalState.modalProps.tabId != 0} icon={<CircleIcon sx={{ color: theme.custom.events.event }} fontSize="small" />} iconPosition="start" label="Event" {...a11yProps(0)} />
-                                <Tab disabled={modalState.modalProps.tabId != null && modalState.modalProps.tabId != 1} icon={<CircleIcon sx={{ color: theme.custom.events.task }} fontSize="small" />} iconPosition="start" label="Task" {...a11yProps(1)} />
-                                <Tab disabled={modalState.modalProps.tabId != null && modalState.modalProps.tabId != 2} icon={<CircleIcon sx={{ color: theme.custom.events.reminder }} fontSize="small" />} iconPosition="start" label="Reminder" {...a11yProps(2)} />
-                            </Tabs>
-                        </Box>
-                        <TabPanel value={value} index={0} >
-                            <NewEventForm time={time} day={day} calendars={calendarState.calendars} event={modalState.modalProps.event} />
-                        </TabPanel>
-                        <TabPanel value={value} index={1} >
-                            <NewTaskForm time={time} day={day} calendars={calendarState.calendars} event={modalState.modalProps.event} />
-                        </TabPanel>
-                        <TabPanel value={value} index={2} >
-                            <NewReminderForm time={time} day={day} calendars={calendarState.calendars} event={modalState.modalProps.event} />
-                        </TabPanel>
-                    </Box>
+            <DialogTitle onClose={hideModal}>
+                <Fab
+                    color="primary"
+                    onClick={hideModal}
+                    size="small"
+                    sx={{
+                        position: 'absolute', top: 25, right: 15,
+                        display: "flex", justifyContent: 'center', alignItems: "center"
+                    }}>
+                    <CloseIcon />
+                </Fab>
+                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                    <Tabs size="small" value={value} onChange={handleChange} aria-label="event tabs" >
+                        <Tab  disableRipple disabled={modalState.modalProps.tabId != null && modalState.modalProps.tabId != 0} icon={<CircleIcon sx={{ color: theme.custom.events.event }} fontSize="small" />} iconPosition="start" label={<Typography fontSize="small">Event</Typography>} {...a11yProps(0)} />
+                        <Tab disableRipple disabled={modalState.modalProps.tabId != null && modalState.modalProps.tabId != 1} icon={<CircleIcon sx={{ color: theme.custom.events.task }} fontSize="small" />} iconPosition="start" label="Task" {...a11yProps(1)} />
+                        <Tab disableRipple disabled={modalState.modalProps.tabId != null && modalState.modalProps.tabId != 2} icon={<CircleIcon sx={{ color: theme.custom.events.reminder }} fontSize="small" />} iconPosition="start" label="Reminder" {...a11yProps(2)} />
+                    </Tabs>
                 </Box>
-            </Modal>
-        </div>
+            </DialogTitle>
+            <DialogContent >
+                <TabPanel value={value} index={0} >
+                    <NewEventForm time={time} day={day} calendars={calendarState.calendars} event={modalState.modalProps.event} />
+                </TabPanel>
+                <TabPanel value={value} index={1} >
+                    <NewTaskForm time={time} day={day} calendars={calendarState.calendars} event={modalState.modalProps.event} />
+                </TabPanel>
+                <TabPanel value={value} index={2} >
+                    <NewReminderForm time={time} day={day} calendars={calendarState.calendars} event={modalState.modalProps.event} />
+                </TabPanel>
+            </DialogContent>
+        </Dialog>
     )
 
 }

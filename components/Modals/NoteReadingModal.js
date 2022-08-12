@@ -4,7 +4,7 @@ import { ModalState } from '../../context/ModalContext'
 import { CalendarState } from '../../context/CalendarContext'
 
 // Componentes
-import { Box, Typography, Button, Fab, useTheme, Dialog, DialogContent, DialogActions, IconButton, Divider } from '@mui/material'
+import { Box, Typography, Button, Fab, useTheme, Dialog, DialogContent, DialogActions, IconButton, Divider, DialogTitle, DialogContentText } from '@mui/material'
 import { ConfirmationDialog } from '../calendar/CalendarListComponents/EditDeleteMenuButton';
 // Utility
 import { format } from 'date-fns';
@@ -18,7 +18,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close'
 
-const EventInfoModal = props => {
+const NoteReadingModal = props => {
     // States
     const {
         state: { calendarState },
@@ -29,12 +29,9 @@ const EventInfoModal = props => {
         dispatch: dispatchModal
     } = ModalState();
     const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
-    const { event } = modalState.modalProps;
-    const calendar = event && calendarState.calendars[calendarState.calendars.findIndex((calendar) => {
-        if (calendar.id === event.calendar_id) return calendar;
-    })]
+    const { note } = modalState.modalProps;
 
-    const openAddEventModal = modalState.modalType === "EVENT_INFO" ? true : false;
+    const openAddEventModal = modalState.modalType === "NOTE_READ" ? true : false;
 
     // Hooks
     const theme = useTheme();
@@ -50,18 +47,31 @@ const EventInfoModal = props => {
             modalProps: props
         })
     }
-    const deleteEvent = async () => {
+    const deleteNote = async () => {
         dispatch({
-            type: "DELETE_EVENT",
-            event: event
+            type: "DELETE_NOTE",
+            id: note.id
         })
-        await fetch("/api/events/deleteEvent", {
+        await fetch("/api/notes/deleteNote", {
             method: "POST",
-            body: [JSON.stringify(event.id)],
+            body: [JSON.stringify(note.id)],
             headers: {
                 "Content-Type": "application/json",
             },
         });
+    }
+    const handleOpenEditNote = () => {
+        dispatchModal({
+            type: "SHOW_MODAL",
+            modalType: "NEW_NOTE",
+            modalProps: {
+                title: note.title,
+                content: note.content,
+                edit: true,
+                id: note.id
+            },
+
+        })
     }
     return (
         <>
@@ -70,8 +80,7 @@ const EventInfoModal = props => {
                     open={openAddEventModal}
                     onClose={closeModal}
                 >
-
-                    
+                    <DialogTitle>{note.title}</DialogTitle>
                     <DialogContent >
                         <IconButton
                             disableRipple
@@ -85,37 +94,16 @@ const EventInfoModal = props => {
                         </IconButton>
 
                         <Box sx={{ width: '100%', p: 2 }}>
-                            <Typography variant="h5" sx={{ }}>{event.name}</Typography>
-                            <Divider sx={{width:"100%", borderBottomWidth:2, borderColor: event.color }}/>
-                            <Box sx={{ display: "flex", justifyContent: 'flex-start', alignItems: 'center', my: 2 }}>
-                                <EventNoteIcon />
-                                <Typography variant="body1" sx={{ px: 1 }}>{event.description.length > 0 ? event.description : "(no description)"}</Typography>
-                            </Box>
-                            <Box sx={{ display: "flex", justifyContent: 'flex-start', alignItems: 'center', my: 2 }}>
-                                <AccessTimeIcon />
-                                <Typography variant="body1" sx={{ px: 1 }}>
-                                    {format(event.eventDate, 'MMMMMM dd, yyyy')}
-                                </Typography>
-
-                                <Typography variant="body1" sx={{ px: 1 }}>
-                                    {event.allDay ? "All Day" : getTimeLabel(event.eventStartTime) + " - " + getTimeLabel(event.eventStartTime + event.eventLength)}
-                                </Typography>
-                            </Box>
-                            <Box sx={{ display: "flex", justifyContent: 'flex-start', alignItems: 'center', my: 2 }}>
-                                <CalendarMonthIcon />
-                                <Typography variant="body1" sx={{ px: 1 }}>
-                                    {calendar.name}
-                                </Typography>
-                            </Box>
+                            {/* <Divider sx={{ width: "100%", borderBottomWidth: 2, borderColor: event.color }} /> */}
+                            <DialogContentText>
+                                {note.content}
+                            </DialogContentText>
                         </Box>
                     </DialogContent>
                     <DialogActions>
                         <Button color="secondary" startIcon={<EditIcon />} onClick={() => {
                             closeModal();
-                            showModal("NEW_EVENT", {
-                                tabId: event.type === 'event' ? 0 : event.type === 'task' ? 1 : 2,
-                                event: event
-                            });
+                            handleOpenEditNote();
                         }}
                             sx={{ m: 1 }}>
                             Edit
@@ -128,7 +116,7 @@ const EventInfoModal = props => {
                             sx={{ m: 1 }}>
                             Delete
                         </Button>
-                        <ConfirmationDialog handleAccept={async () => { await deleteEvent(); setShowConfirmationDialog(false); closeModal(); }}
+                        <ConfirmationDialog handleAccept={async () => { await deleteNote(); setShowConfirmationDialog(false); closeModal(); }}
                             handleCancel={() => { setShowConfirmationDialog(false) }}
                             info={`Are you sure that you want to delete this?`} show={showConfirmationDialog} />
                     </DialogActions>
@@ -138,4 +126,4 @@ const EventInfoModal = props => {
 
 }
 
-export default EventInfoModal;
+export default NoteReadingModal;

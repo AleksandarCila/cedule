@@ -32,7 +32,7 @@ const EventList = props => {
     useEffect(() => (setLoading(false)), [])
     return (
         <div>
-            <div style={{ width: "100%", height: 113, position: 'relative' }}>
+            {/* <div style={{ width: "100%", height: 113, position: 'relative' }}>
                 <Image
                     src="/assets/tasks_header_image.jpg"
                     alt="To Do list on the computer cartoon"
@@ -43,8 +43,8 @@ const EventList = props => {
                     style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: addAlphaToColor(theme.palette.primary.main, 0.4) }}
                 >
                 </div>
-            </div>
-            <Box sx={{ width: '100%', p: 1 }}>
+            </div> */}
+            <Box sx={{ width: '100%', p: 2 }}>
                 <Typography variant="h6">
                     {daysLong[calendarState.selectedDate.getDay()] + " " + calendarState.selectedDate.getDate() + ", " + months[calendarState.selectedDate.getMonth()]}
                 </Typography>

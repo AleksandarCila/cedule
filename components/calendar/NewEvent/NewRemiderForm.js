@@ -1,20 +1,25 @@
-import { Box, TextField, Switch, FormControlLabel, Grid, Select, InputLabel, MenuItem, FormControl, Divider, Typography, Button } from "@mui/material";
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from "@mui/x-date-pickers";
 import { useEffect, useState } from "react";
 
-import { TimePicker, MobileDatePicker } from '@mui/x-date-pickers';
+// Context States
+import { CalendarState } from "../../../context/CalendarContext";
+import { ModalState } from "../../../context/ModalContext";
+
+// Components
+import { Box, TextField, Switch, FormControlLabel, Grid, Select, DialogActions, MenuItem, FormControl, Divider, Typography, Button } from "@mui/material";
+import { MobileDatePicker } from '@mui/x-date-pickers';
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import TimePickerComboBox from './TimePickerComboBox'
+
+// Utility
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { timeStamps } from '../../../utility/constants'
+import { addHours } from "date-fns";
+
+// Icons
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import TocIcon from '@mui/icons-material/Toc';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
-
-import TimePickerComboBox from './TimePickerComboBox'
-import { timeStamps } from '../../../utility/constants'
-
-import { CalendarState } from "../../../context/CalendarContext";
-import { ModalState } from "../../../context/ModalContext";
-import { addHours } from "date-fns";
 
 const SectionDivider = props => {
     const { children, title } = props;
@@ -22,16 +27,17 @@ const SectionDivider = props => {
         <Box sx={{ mb: 2, width: "100%", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <Box sx={{ pr: 2, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 {children}
-                <Typography sx={{ px: 2, }} variant="span">{title}</Typography>
+                <Typography sx={{ px: 2, }} variant="body1">{title}</Typography>
             </Box>
             <Divider sx={{ width: "100%", flex: 1 }} />
-
         </Box>
     )
 }
 
 const NewReminderForm = props => {
     const { day, time, calendars, event } = props;
+
+    // States
     const {
         dispatch,
     } = CalendarState();
@@ -51,6 +57,12 @@ const NewReminderForm = props => {
     })
     const [formValid, setFormValid] = useState(event ? true : false);
 
+    // Hooks
+    useEffect(() => {
+        setFormValid(formState.nameValid && formState.dateValid && formState.timeValid);
+    }, [formState.nameValid, formState.dateValid, formState.timeValid])
+
+    // Functions
     const handleUserInput = (e, inputName = "", inpuValue = "") => {
         const name = e ? e.target.name : inputName;
         const value = e ? e.target.value : inpuValue;
@@ -103,9 +115,6 @@ const NewReminderForm = props => {
         });
 
     }
-    useEffect(() => {
-        setFormValid(formState.nameValid && formState.dateValid && formState.timeValid);
-    }, [formState.nameValid, formState.dateValid, formState.timeValid])
 
     const handleAddReminder = async () => {
         const eventData = {
@@ -113,7 +122,7 @@ const NewReminderForm = props => {
             name: formState.name,
             description: "",
             type: 'reminder',
-            eventDate: addHours(formState.dateValue,6),
+            eventDate: addHours(formState.dateValue, 6),
             eventStartTime: formState.timeValue,
             eventLength: 1,
             color: calendars[formState.calendar].color,
@@ -150,99 +159,94 @@ const NewReminderForm = props => {
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
             <Box
-                
                 component="form"
                 sx={{
                     m: 1,
-                    // minHeight: 400,
-                    height: "100%",
-                    width: "100%",
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    flexDirection: 'column'
+                    flexDirection: 'column',
+
                 }}
-                autoComplete="off"
             >
-                <Box sx={{
-                    width: "100%",
-                }}>
+                <Box sx={{ width: "100%", mb: 2, }}>
                     <SectionDivider title="Reminder Name"><BorderColorIcon color="primary" /></SectionDivider>
 
                     <TextField required onChange={(e) => handleUserInput(e)} id="name" name="name" label=""
                         value={formState.name} placeholder="Add a Reminder name" variant="outlined" size="small"
-                        fullWidth sx={{ mb: 2 }}
+                        fullWidth
                         helperText={formState.nameValid ? "" : "Reminder must have a name"}
-                        error={!formState.nameValid} />
-                    <SectionDivider title="Reminder Time & Date"><AccessTimeIcon color="primary" /></SectionDivider>
+                        error={!formState.nameValid}
+                        inputProps={{ maxLength: 60 }} />
+                </Box>
+                <SectionDivider title="Reminder Time & Date"><AccessTimeIcon color="primary" /></SectionDivider>
 
-                    <Grid container sx={{ width: '100%' }} rowSpacing={2}>
-                        <Grid item xs={12}>
-                            <MobileDatePicker
-                                label="Reminder Date"
-                                inputFormat="MM/dd/yyyy"
-                                value={formState.dateValue}
-                                onChange={(newValue) => {
-                                    handleUserInput(null, 'dateValue', newValue)
-                                }}
-                                onError={() => { setFormState({ ...formState, dateValid: false }) }}
-                                onAccept={(newValue) => {
-                                    setFormState({ ...formState, dateValid: true });
-                                }}
+                <Grid container sx={{ width: '100%', mb: 2 }} spacing={2}>
+                    <Grid item xs={9}>
+                        <MobileDatePicker
+                            inputFormat="MM/dd/yyyy"
+                            value={formState.dateValue}
+                            onChange={(newValue) => {
+                                handleUserInput(null, 'dateValue', newValue)
+                            }}
+                            onError={() => { setFormState({ ...formState, dateValid: false }) }}
+                            onAccept={(newValue) => {
+                                setFormState({ ...formState, dateValid: true });
+                            }}
 
-                                renderInput={(params) => <TextField size="small" sx={{ my: 0, }} fullWidth {...params} />}
-                            />
-                        </Grid>
-                        <Grid item xs={6} >
-                            <FormControlLabel sx={{}} control={<Switch checked={formState.allDay}
+                            renderInput={(params) => <TextField size="small" sx={{ my: 0, }} fullWidth {...params} />}
+                        />
+                    </Grid>
+                    <Grid item xs={3}>
+                        <Box sx={{ width: "100%", height: "100%", display: 'flex', alignItems: 'center' }}>
+                            <FormControlLabel sx={{}} control={<Switch size="small" checked={formState.allDay}
                                 onChange={(event) => {
                                     handleUserInput(null, 'allDay', event.target.checked);
-                                }} />} label="All day" />
-                        </Grid>
-                        <Grid item xs={6} >
-                            <TimePickerComboBox
-                                label="Start Time"
-                                onChange={(newValue) => {
-                                    handleUserInput(null, 'timeValue', newValue);
-                                }}
-                                value={timeStamps[formState.timeValue]}
-                                error={formState.timeValid}
-                                disabled={formState.allDay}
-                            />
-                        </Grid>
-
+                                }} />} label={<Typography fontSize="small" variant="span">All Day</Typography>} />
+                        </Box>
                     </Grid>
-                    <Box sx={{ width: "100%", my: 2, }}>
-                        <SectionDivider title="My Calendars"><ListAltIcon color="primary" /></SectionDivider>
+                    <Grid item xs={12} >
+                        <TimePickerComboBox
+                            onChange={(newValue) => {
+                                handleUserInput(null, 'timeValue', newValue);
+                            }}
+                            value={timeStamps[formState.timeValue]}
+                            error={formState.timeValid}
+                            disabled={formState.allDay}
+                        />
+                    </Grid>
 
-                        <FormControl fullWidth>
-                            <Select
-                                labelId="calendar-select-label"
-                                id="calendar-select"
-                                value={formState.calendar}
-                                label=""
-                                name="calendar"
-                                onChange={(event) => {
-                                    handleUserInput(event);
-                                }}
-                                size="small"
-                            >
-                                {calendars.map((calendar, ind) => {
-                                    return (
-                                        <MenuItem key={ind} value={ind}>{calendar.name}</MenuItem>
+                </Grid>
+                <Box sx={{ width: "100%", mb: 2, }}>
+                    <SectionDivider title="My Calendars"><ListAltIcon color="primary" /></SectionDivider>
 
-                                    )
-                                })}
-                            </Select>
-                        </FormControl>
-                    </Box>
+                    <FormControl fullWidth>
+                        <Select
+                            labelId="calendar-select-label"
+                            id="calendar-select"
+                            value={formState.calendar}
+                            label=""
+                            name="calendar"
+                            onChange={(event) => {
+                                handleUserInput(event);
+                            }}
+                            size="small"
+                        >
+                            {calendars.map((calendar, ind) => {
+                                return (
+                                    <MenuItem key={ind} value={ind}>{calendar.name}</MenuItem>
+
+                                )
+                            })}
+                        </Select>
+                    </FormControl>
                 </Box>
 
-                <div style={{ width: "100%", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <DialogActions>
                     <Button onClick={handleAddReminder} size="large" variant="contained" disabled={!formValid}>
                         {event ? "Save Reminder" : "Add Reminder"}
                     </Button>
-                </div>
+                </DialogActions>
             </Box>
         </LocalizationProvider >
     )

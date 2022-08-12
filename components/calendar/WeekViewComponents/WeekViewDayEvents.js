@@ -1,54 +1,50 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
+// Context States
 import { CalendarState } from "../../../context/CalendarContext";
 import { ModalState } from '../../../context/ModalContext'
 
-import { isSameDay } from "date-fns";
-
-import { timeStamps } from "../../../utility/constants"
+// Components
 import { Typography, Box } from "@mui/material";
+
+// Utility
+import { isSameDay } from "date-fns";
+import { timeStamps } from "../../../utility/constants"
 import { addAlphaToColor } from "../../../utility/addAlphaToColor";
 
-
+// Icons
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import EventIcon from '@mui/icons-material/Event';
 
 const WeekViewDayEvents = (props) => {
+    // States
     const {
         state: { calendarState },
         dispatch,
     } = CalendarState();
-
     const {
         dispatch: dispatchModal
     } = ModalState();
-
     const [loading, setLoading] = useState(true);
-    // const { weekDayIndex } = props;
 
     const day = props.day ? props.day : calendarState.weekDays[props.weekDayIndex];
-    // console.log(props.day && props.day);
     let events = [];
     calendarState.calendars.forEach((calendar) => {
         if (calendar.visible)
             events = events.concat(calendar.events)
     })
-
-
     events = events.filter((event) => {
         if (isSameDay(day, event.eventDate)) return event;
-
     });
     events = events.sort((a, b) => { return a.eventStartTime - b.eventStartTime })
 
+    // Hooks
     useEffect(() => (setLoading(false)), [])
 
+    // Drag Handles
     const dragStart = (e, event) => {
         e.dataTransfer.setData('data', JSON.stringify(event));
-    };
-
-    const dragEnter = (event, position) => {
-        event.stopPropagation();
-        event.preventDefault();
-        // console.log(e.target.innerHTML);
     };
 
     const onDragOver = (event) => {
@@ -56,10 +52,14 @@ const WeekViewDayEvents = (props) => {
         event.preventDefault();
     }
 
-    const dragEnd = (e, position) => {
-        // console.log(e.target);
+    // Functions
+    const handleOpenModal = (type, props = {}) => {
+        dispatchModal({
+            type: "SHOW_MODAL",
+            modalType: type,
+            modalProps: props,
+        })
     }
-
     return (
         <>
             {!loading && events && events.map((event, ind) => {
@@ -74,33 +74,31 @@ const WeekViewDayEvents = (props) => {
                             height: `${event.eventLength * (1 / timeStamps.length * 100)}%`,
                             backgroundColor: event.color,
                             borderRadius: 2,
-                            // border: "1px solid black",
                             zIndex: 999 + ind,
                             boxShadow: 3,
-                            py: 0.1,
-                            px: 0.5,
-
-                            "&:hover":{
-                                cursor:"pointer",
+                            py: 0.2,
+                            px: 1,
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            "&:hover": {
+                                cursor: "pointer",
                                 backgroundColor: addAlphaToColor(event.color, 0.9)
                             }
-                        }} 
+                        }}
                         draggable
                         onDragStart={(e) => dragStart(e, event)}
-                        onDragEnd={(e) => dragEnd(e, ind)}
                         onDragOver={onDragOver}
-                        onClick={() => {
-                            dispatchModal({
-                                type: "SHOW_MODAL",
-                                modalType: "EVENT_INFO",
-                                modalProps: {
-                                    event: event
-                                }
-                            })
-                        }}
-                    // onDragEnter={(e) => dragEnter(e, ind)}
+                        onClick={() => { handleOpenModal("EVENT_INFO", { event: event }) }}
                     >
-                        <Typography fontSize="small" noWrap={true}>{timeStamps[event.eventStartTime].label}-{timeStamps[event.eventStartTime + event.eventLength].label}</Typography>
+                        <Box sx={{display:"flex", justifyContent:'flex-start', alignItems:'center'}}>
+                            {event.type === 'reminder' ? <NotificationsActiveIcon sx={{ fontSize: 16, mr:1 }} /> : event.type === 'task' ? <AssignmentIcon sx={{ fontSize: 16, mr:1 }} /> : ""}
+                            <Typography fontSize="small" variant="body1" noWrap={true}>
+                                {event.type==="event" ? `${timeStamps[event.eventStartTime].label}-${timeStamps[event.eventStartTime + event.eventLength].label}` : event.name}
+                            </Typography>
+                        </Box>
+                        <Typography fontSize="small" variant="body1" noWrap={true}>
+                            {event.name}
+                        </Typography>
                     </Box>)
             })}
         </>

@@ -20,7 +20,7 @@ const EventCollapseGroup = props => {
             },
             my:1
         }}>
-            <Typography variant="span" onClick={handleClick}
+            <Typography fontSize="small" variant="body1" onClick={handleClick}
                 sx={{
                     "&:hover": {
                         cursor: 'pointer'
@@ -30,7 +30,7 @@ const EventCollapseGroup = props => {
                     alignItems: 'center'
                 }}>
                 {children}
-                {label + " (" + events.length + ")"}
+                <Typography fontSize="small" sx={{ml:1}}>{label + " (" + events.length + ")"}</Typography>
             </Typography>
             <Divider sx={{ borderBottomWidth: 2,mt:0.5 }} />
 
