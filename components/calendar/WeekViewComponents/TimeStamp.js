@@ -22,7 +22,7 @@ const TimeStamp = props => {
                     paddingLeft:4,
                     width: "100%", height: "100%", overflow: "hidden", textOverflow: "ellipsis",
                     borderRight: `1px solid ${theme.palette.backgroundLight}`,
-                    borderBottom: `1px solid ${theme.palette.backgroundLight}`,
+                    borderBottom: `1px solid ${!isMainHourBorder ? "transparent" : theme.palette.backgroundLight}`,
                     backgroundColor: hour.timeLabel === "am" ? addAlphaToColor(theme.palette.primary.main, 0.15) : addAlphaToColor(theme.palette.primary.main, 0.2)
                 }}>
                     <Typography variant="body1" fontSize="small">

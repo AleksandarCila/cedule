@@ -39,9 +39,11 @@ const CalendarViewMenu = props => {
     return (
         <>
             <Box sx={{ display: { xs: 'none', lg: "flex" }, justifyContent: 'flex-end', alignItems: 'center', p: 1 }}>
-                <ToggleButtonGroup color="primary" size="small" value={tabValue} onChange={handleTabChange} exclusive={true}>
+                <ToggleButtonGroup color="primary" size="small" value={tabValue} onChange={handleTabChange} exclusive={true} sx={{".MuiToggleButton-root":{
+                            borderRadius:0,
+                        }}}>
                     {tabNames.map((tab, ind) => (
-                        <ToggleButton value={ind} key={ind}>
+                        <ToggleButton disableRipple value={ind} key={ind} >
                             {tab.title}
                         </ToggleButton>
                     ))}

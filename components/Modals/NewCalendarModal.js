@@ -13,6 +13,20 @@ import { calendarColors } from '../../utility/constants';
 // Icons
 import CloseIcon from '@mui/icons-material/Close'
 
+const ColorRadioButton = props => {
+    const { value, ind, color, onClick } = props;
+    const selected = value === ind;
+
+    return (
+        <Box sx={{ m: 0.2, p: 0.2, border: selected ? `1px solid ${color}` : "1px solid transparent", "&:hover": { cursor: "pointer" } }} onClick={onClick}>
+            <Box sx={{ width: 20, height: 20, bgcolor: color }}>
+
+            </Box>
+        </Box>
+    )
+}
+
+
 const NewCalendarModal = props => {
     // States
     const {
@@ -46,12 +60,12 @@ const NewCalendarModal = props => {
     }, [formState.nameValid])
 
     // Functions
-    const handleChange = (event) => {
+    const handleChange = (newValue) => {
         setFormState({
             ...formState,
-            color: calendarColors[event.target.value]
+            color: calendarColors[newValue]
         })
-        setValue(event.target.value);
+        setValue(newValue);
     };
 
     const handleUserInput = (e, inputName = "", inputValue = "") => {
@@ -130,7 +144,7 @@ const NewCalendarModal = props => {
                         <IconButton
                             onClick={hideModal}
                             sx={{
-                                position: 'absolute', top: 9, right: 10, color: "#000",
+                                position: 'absolute', top: 9, right: 10, color: "",
                                 display: "flex", justifyContent: 'center', alignItems: "center"
                             }}>
                             <CloseIcon />
@@ -139,13 +153,13 @@ const NewCalendarModal = props => {
                         <Box sx={{ width: '100%', p: 2 }}>
                             <TextField required onChange={(e) => handleUserInput(e)} id="name" name="name" label="Calendar Name"
                                 value={formState.name} placeholder="Add a Calendar name" variant="outlined" size="small"
-                                fullWidth sx={{ mb: 2 }}
+                                fullWidth sx={{ mb: 0 }}
                                 helperText={formState.nameValid ? "" : "Calendar must have a name"}
                                 error={!formState.nameValid}
                                 inputProps={{ maxLength: 60 }} />
                         </Box>
                         <Typography variant="body1" sx={{ px: 2, }}>Pick a Calendar color</Typography>
-                        <FormControl sx={{ px: 3 }}>
+                        <FormControl sx={{ px: 2 }}>
                             <RadioGroup
                                 row
                                 aria-labelledby="colors-radio-buttons-group"
@@ -155,11 +169,7 @@ const NewCalendarModal = props => {
                             >
                                 {calendarColors.map((color, ind) => {
                                     return (
-                                        <FormControlLabel key={ind} value={ind} control={<Radio sx={{
-                                            color: color, '&.Mui-checked': {
-                                                color: color,
-                                            },
-                                        }} />} />
+                                        <ColorRadioButton key={ind} ind={ind} value={value} color={color} onClick={() => {handleChange(ind)}} />
                                     )
                                 })}
                             </RadioGroup>

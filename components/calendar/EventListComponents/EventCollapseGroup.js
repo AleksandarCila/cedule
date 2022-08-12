@@ -20,7 +20,7 @@ const EventCollapseGroup = props => {
             },
             my:1
         }}>
-            <Typography fontSize="small" variant="body1" onClick={handleClick}
+            <Typography component="div" fontSize="small" variant="body1" onClick={handleClick}
                 sx={{
                     "&:hover": {
                         cursor: 'pointer'

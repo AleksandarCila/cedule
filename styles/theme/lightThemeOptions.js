@@ -11,7 +11,7 @@ const lightThemeOptions = {
     mode: 'dark',
     background: {
       default: customTheme.background,
-      paper: customTheme.background
+      paper: darken(customTheme.background,0.35)
     },
     text:{
       primary:"#F1DEDE"
@@ -28,6 +28,7 @@ const lightThemeOptions = {
     
     backgroundLight: lighten(customTheme.background, 0.15),
     backgroundLighter: lighten(customTheme.background, 0.25),
+    backgroundDarker: darken(customTheme.background,0.15),
   },
   
   typography: {
@@ -51,7 +52,37 @@ const lightThemeOptions = {
       task: '#ffca3a',
       reminder: '#ff595e'
     },
-  }
+  },
+  components: {
+    // Name of the component
+    MuiButton: {
+      styleOverrides: {
+        // Name of the slot
+        root: {
+          // Some CSS
+          borderRadius:0,
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        // Name of the slot
+        root: {
+          // Some CSS
+          borderRadius:0,
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        // Name of the slot
+        root: {
+          // Some CSS
+          borderRadius:0,
+        },
+      },
+    },
+  },
 };
 
 export default lightThemeOptions;

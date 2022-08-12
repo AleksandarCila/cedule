@@ -79,7 +79,7 @@ const EventInfoModal = props => {
                             sx={{
                                 position: 'absolute', top: 7, right: 10,
                                 display: "flex", justifyContent: 'center', alignItems: "center",
-                                color: "#000"
+                                color: ""
                             }}>
                             <CloseIcon />
                         </IconButton>

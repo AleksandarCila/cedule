@@ -69,9 +69,10 @@ const NoteBox = props => {
     return <Box
         onClick={(e) => { e.stopPropagation();e.preventDefault();  handleOpenToReadNote(); }}
         sx={{
-            borderRadius: 10,
-            border: 1,
-            borderColor: theme.palette.backgroundLight,
+            borderRadius: 2,
+            // border: 1,
+            bgcolor:theme.palette.backgroundLight,
+            // borderColor: theme.palette.backgroundLight,
             py: 3, px: 2, m: 0.5,
             boxShadow: `0px 0px 2px ${theme.palette.primary.main}`,
             width: { xs: "100%", sm: "40%", lg: "30%" },

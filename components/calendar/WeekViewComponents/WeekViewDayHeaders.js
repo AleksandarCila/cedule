@@ -6,7 +6,6 @@ import { CalendarState } from "../../../context/CalendarContext";
 import { Typography,useTheme } from '@mui/material'
 
 // Utility
-import { addAlphaToColor } from "../../../utility/addAlphaToColor";
 import { isSameDay, isToday } from 'date-fns';
 import { days } from "../../../utility/constants"
 

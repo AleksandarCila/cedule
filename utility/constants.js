@@ -4,13 +4,12 @@ export const months = ['January', 'February', 'March', 'April', 'May', 'June', '
 export const hours = ["1am", "2am", "3am", "4am", "5am", "6am", "7am", "8am", "9am", "10am", "11am", "12am",
   "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm", "10pm", "11pm",]
 
-export const calendarColors = [];
+export const calendarColors = ["#73AB84",'#FF7F51',"#B4A0E5","#D5A021","#677DB7","#F4AFAB","#DBB3B1","#355834","#6B9AC4","#5B5941","#FFE66D","#827191"];
 
 
-Array.from({ length: 15 }).forEach(() => {
-  calendarColors.push(faker.color.rgb({ prefix: '#' }));
-})
-
+// Array.from({ length: 15 }).forEach(() => {
+//   calendarColors.push(faker.color.rgb({ prefix: '#' }));
+// })
 let timeStampsArray = [];
 let timeStampsId = 0;
 for (let j = 0; j < 4; j++) {

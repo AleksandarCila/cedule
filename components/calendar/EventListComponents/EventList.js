@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 // Context States
 import { CalendarState } from "../../../context/CalendarContext";
 
@@ -24,12 +23,9 @@ const EventList = props => {
         dispatch,
     } = CalendarState();
 
-    const [loading, setLoading] = useState(true);
-
     const theme = useTheme();
 
     const events = calendarState.todayEvents;
-    useEffect(() => (setLoading(false)), [])
     return (
         <div>
             {/* <div style={{ width: "100%", height: 113, position: 'relative' }}>

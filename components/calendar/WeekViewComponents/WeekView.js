@@ -112,11 +112,14 @@ const WeekView = (props) => {
     <>
       <Divider />
       <WeekViewDayHeaders />
+
       <div style={{ display: "grid", gridTemplateColumns: "repeat(8, 1fr)", gridAutoColumns: "auto", gridAutoRows: "auto", overflowY: "scroll", }}>
         <div style={{
           borderTop: `1px solid ${theme.palette.backgroundLight}`,
           display: "grid", gridTemplateColumns: "repeat(1, 1fr)", gridAutoColumns: "auto", gridAutoRows: "auto"
-        }}>{
+        }}>
+          {
+
             timeStamps.map((hour, hourInd) => {
               return (
                 <TimeStamp key={hourInd} hour={hour} hourInd={hourInd} />

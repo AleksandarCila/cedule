@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 
 // Context States
 import { CalendarState } from "../../../context/CalendarContext";
@@ -9,31 +9,34 @@ import EventsBox from './EventsBox'
 
 // Utility
 import { isToday, isSameDay, isSameMonth, isWeekend } from 'date-fns'
-import { addAlphaToColor } from "../../../utility/addAlphaToColor";
-
 
 const DayGridElement = props => {
-    const { day, ind, events } = props;
+    const { day, ind, allEvents } = props;
     // States
     const {
         state: { calendarState },
         dispatch,
     } = CalendarState();
-    const [loading, setLoading] = useState(true);
     const selected = isSameDay(day, calendarState.selectedDate);
     const isThisMonth = isSameMonth(day, calendarState.selectedDate);
     const isWeekendDay = isWeekend(day);
 
+    const events = useMemo(() => {
+        let dayEvents = allEvents.filter((event) => {
+            if (isSameDay(day, event.eventDate)) return event;
+        });
+        dayEvents = dayEvents.sort((a, b) => { return a.eventStartTime - b.eventStartTime })
+        return dayEvents;
+    }, [calendarState.calendars]);
+
     // Hooks
     const theme = useTheme();
-
-    useEffect(() => (setLoading(false)), []);
 
     return (
         <Box sx={{
             p: 0.75,
             cursor: "pointer",
-            minHeight:{xs:180, lg:100},
+            minHeight: { xs: 180, lg: 100 },
             bgcolor: selected ? theme.palette.primary.dark :
                 (isThisMonth && !isWeekendDay) ? "" : theme.palette.backgroundLighter,
             borderRight: ((ind + 1) % 7) != 0 ? `1px solid ${theme.palette.backgroundLight}` : "",
@@ -55,8 +58,8 @@ const DayGridElement = props => {
                 justifyContent: 'flex-start',
                 alignItems: 'center',
                 flexDirection: 'column',
-                width:"100%"
-                
+                width: "100%"
+
             }}>
                 <Box sx={{ width: "100%", }}>
                     <Typography variant="span" sx={{ fontSize: { xs: "small", lg: "medium" } }}>{day.getDate()} </Typography>
@@ -64,8 +67,8 @@ const DayGridElement = props => {
                 </Box>
                 {calendarState.loading ?
                     <>
-                        <Skeleton animation="wave" sx={{width:"100%"}}/>
-                        <Skeleton animation="wave" sx={{width:"100%"}}/>
+                        <Skeleton animation="wave" sx={{ width: "100%" }} />
+                        <Skeleton animation="wave" sx={{ width: "100%" }} />
                     </> :
                     <EventsBox events={events} />}
             </Box>

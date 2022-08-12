@@ -50,9 +50,9 @@ const CalendarList = props => {
                 >
                 </div> */}
             </div>
-            <div style={{ padding: 8, width: "100%", display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: "wrap" }}>
+            <div style={{ padding: 8, width: "100%", display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: "wrap",}}>
                 <Button size="medium" color="primary" variant="contained" endIcon={<PlaylistAddIcon />} onClick={() => { handleOpenModal("NEW_EVENT") }}
-                    sx={{ width: "100%" }}>
+                    sx={{ width: "100%",borderRadius:0 }}>
                     Add a new Event
                 </Button>
                 <Divider sx={{ width: '100%', my: 1 }} />

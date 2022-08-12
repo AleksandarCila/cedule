@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 // Context States
 import { CalendarState } from "../../../context/CalendarContext";
@@ -29,16 +29,20 @@ const WeekViewDayEvents = (props) => {
     const [loading, setLoading] = useState(true);
 
     const day = props.day ? props.day : calendarState.weekDays[props.weekDayIndex];
-    let events = [];
-    calendarState.calendars.forEach((calendar) => {
-        if (calendar.visible)
-            events = events.concat(calendar.events)
-    })
-    events = events.filter((event) => {
-        if (isSameDay(day, event.eventDate)) return event;
-    });
-    events = events.sort((a, b) => { return a.eventStartTime - b.eventStartTime })
+    // let events = [];
 
+    const events = useMemo(() => {
+        let events=[];
+        calendarState.calendars.forEach((calendar) => {
+            if (calendar.visible)
+                events = events.concat(calendar.events)
+        })
+        events = events.filter((event) => {
+            if (isSameDay(day, event.eventDate)) return event;
+        });
+        events = events.sort((a, b) => { return a.eventStartTime - b.eventStartTime })
+        return events;
+    }, [calendarState.calendars, calendarState.weekDays]);
     // Hooks
     useEffect(() => (setLoading(false)), [])
 
@@ -90,10 +94,10 @@ const WeekViewDayEvents = (props) => {
                         onDragOver={onDragOver}
                         onClick={() => { handleOpenModal("EVENT_INFO", { event: event }) }}
                     >
-                        <Box sx={{display:"flex", justifyContent:'flex-start', alignItems:'center'}}>
-                            {event.type === 'reminder' ? <NotificationsActiveIcon sx={{ fontSize: 16, mr:1 }} /> : event.type === 'task' ? <AssignmentIcon sx={{ fontSize: 16, mr:1 }} /> : ""}
+                        <Box sx={{ display: "flex", justifyContent: 'flex-start', alignItems: 'center' }}>
+                            {event.type === 'reminder' ? <NotificationsActiveIcon sx={{ fontSize: 16, mr: 1 }} /> : event.type === 'task' ? <AssignmentIcon sx={{ fontSize: 16, mr: 1 }} /> : ""}
                             <Typography fontSize="small" variant="body1" noWrap={true}>
-                                {event.type==="event" ? `${timeStamps[event.eventStartTime].label}-${timeStamps[event.eventStartTime + event.eventLength].label}` : event.name}
+                                {event.type === "event" ? `${timeStamps[event.eventStartTime].label}-${timeStamps[event.eventStartTime + event.eventLength].label}` : event.name}
                             </Typography>
                         </Box>
                         <Typography fontSize="small" variant="body1" noWrap={true}>

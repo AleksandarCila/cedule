@@ -121,7 +121,7 @@ const NewNoteModal = props => {
                         <IconButton
                             onClick={handleClose}
                             sx={{
-                                position: 'absolute', top: 9, right: 10, color: "#000",
+                                position: 'absolute', top: 9, right: 10, color: "",
                                 display: "flex", justifyContent: 'center', alignItems: "center"
                             }}>
                             <CloseIcon />

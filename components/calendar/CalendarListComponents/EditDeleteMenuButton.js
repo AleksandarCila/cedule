@@ -72,6 +72,7 @@ export default function EditDeleteMenuButton(props) {
                 aria-expanded={open ? 'true' : undefined}
                 aria-haspopup="true"
                 onClick={handleClick}
+                disableRipple
             >
                 <MoreVertIcon />
             </IconButton>
