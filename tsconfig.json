@@ -15,6 +15,6 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "components/calendar/WeekViewComponents/WeekView.js", "components/calendar/CalendarTabComponents/CalendarTabPanel.js", "styles/theme/lightThemeOptions.js", "pages/api/calendars.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "components/calendar/WeekViewComponents/WeekView.tsx", "components/calendar/CalendarTabComponents/CalendarTabPanel.tsx", "styles/theme/lightThemeOptions.js", "pages/api/calendars.js", "context/CalendarContext.js", "config/db.js"],
   "exclude": ["node_modules"]
 }

@@ -17,7 +17,7 @@ const lightThemeOptions = {
       primary:"#F1DEDE"
     },
     primary: {
-      main: "#73AB84",
+      main: "#AAB9AF",
     },
     secondary:{
       main:"#577399"

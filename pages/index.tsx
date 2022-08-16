@@ -1,6 +1,8 @@
 import Context from "../context/CalendarContext";
 import ModalContext from '../context/ModalContext'
 
+import { useSession, signOut } from "next-auth/react";
+
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
@@ -12,10 +14,12 @@ import EventInfoModal from '../components/Modals/EventInfoModal'
 import NewCalendarModal from '../components/Modals/NewCalendarModal'
 import NewNoteModal from "../components/Modals/NewNoteModal";
 import NoteReadingModal from "../components/Modals/NoteReadingModal"
+import { useRouter } from "next/router";
 
 const Home: NextPage = () => {
-
-
+  const { data: session } = useSession();
+  const router = useRouter();
+  console.log(session);
   return (
     <Context>
       <ModalContext>
@@ -30,6 +34,9 @@ const Home: NextPage = () => {
 
 
           <main className={styles.main}>
+            {session ? <button onClick={() => { signOut() }}>LOGOUT</button> : <button onClick={() => {
+              router.push("/api/auth/signin")
+            }}>LOGIN</button>}
             <NewEventModal />
             <EventInfoModal />
             <NewCalendarModal />
