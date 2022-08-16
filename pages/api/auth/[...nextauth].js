@@ -47,13 +47,15 @@ export const authOptions = {
             return session;
         }
     },
-    secret: "test",
-    // pages:{
-    //     signin:
-    // }
+    secret: process.env.NEXTAUTH_SECRET,
+    
     jwt: {
-        secret: "test",
+        secret: process.env.NEXTAUTH_SECRET,
         encryption: true,
+    },
+    pages:{
+        signIn: "/login",
+        error: '/login'
     },
 }
 

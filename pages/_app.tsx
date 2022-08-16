@@ -13,7 +13,6 @@ import '@fontsource/roboto/700.css';
 import createEmotionCache from '../utility/createEmotionCache';
 import lightThemeOptions from '../styles/theme/lightThemeOptions';
 import '../styles/globals.css';
-import 'react-big-calendar/lib/sass/styles.scss'
 
 import Palette from "@mui/material/styles/createPalette";
 
@@ -37,7 +36,6 @@ interface MyAppProps extends AppProps {
 }
 
 const clientSideEmotionCache = createEmotionCache();
-
 {/* @ts-ignore custom is not part of theme object*/}
 let lightTheme = createTheme(lightThemeOptions);
 lightTheme = responsiveFontSizes(lightTheme);
