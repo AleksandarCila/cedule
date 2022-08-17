@@ -106,7 +106,7 @@ const NoteBox = (props:INoteBox) => {
         </Box> */}
         <Divider sx={{ width: "100%", my: 1 }} />
         <Box sx={{ width: "100%", height: 150, wordBreak: "break-all", overflow: "hidden", textOverflow: "ellipsis", }}>
-            <Typography variant="body1" fontSize="small">
+            <Typography variant="body1" fontSize="small" sx={{whiteSpace:"pre-line"}}>
                 {note.content}
             </Typography>
         </Box>

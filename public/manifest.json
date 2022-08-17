@@ -1,0 +1,32 @@
+{
+    "theme_color": "#AAB9AF",
+    "background_color": "#0D1321",
+    "display": "standalone",
+    "scope": "/",
+    "start_url": "/",
+    "name": "Cedule - Your Schedule",
+    "short_name": "Cedule",
+    "description": "Web Calendar Application for creating Tasks, Reminders and Events",
+    "icons": [
+        {
+            "src": "/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/icon-256x256.png",
+            "sizes": "256x256",
+            "type": "image/png"
+        },
+        {
+            "src": "/icon-384x384.png",
+            "sizes": "384x384",
+            "type": "image/png"
+        },
+        {
+            "src": "/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

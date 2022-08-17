@@ -3,8 +3,8 @@ import ModalContext from '../context/ModalContext'
 
 
 import type { NextPage } from 'next'
+
 import Head from 'next/head'
-import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
 import Calendar from '../components/calendar/Calendar'
@@ -13,7 +13,9 @@ import EventInfoModal from '../components/Modals/EventInfoModal'
 import NewCalendarModal from '../components/Modals/NewCalendarModal'
 import NewNoteModal from "../components/Modals/NewNoteModal";
 import NoteReadingModal from "../components/Modals/NoteReadingModal"
-import { useSession, signOut, } from "next-auth/react";
+import {getSession } from "next-auth/react";
+import { NextPageContext } from "next";
+import SettingsModal from "../components/Modals/SettingsModal";
 
 const Home: NextPage = () => {
   
@@ -25,13 +27,12 @@ const Home: NextPage = () => {
           <Head>
             <title>Cedule | Your Schedule</title>
             <meta name="description" content="Calendar events and tasks application" />
-            <link rel="icon" href="/favicon.ico" />
 
           </Head>
 
 
           <main className={styles.main}>
-            <button onClick={()=>signOut()}>LOGOUT</button>
+            <SettingsModal />
             <NewEventModal />
             <EventInfoModal />
             <NewCalendarModal />
@@ -46,6 +47,22 @@ const Home: NextPage = () => {
   )
 }
 
+Home.getInitialProps = async (context:NextPageContext) => {
+  const { req, res } = context;
+  const session = await getSession({ req });
+  
+  // console.log(res)
+  if (!session && res) {
+      res.writeHead(302, {
+          Location: "/login"
+      });
+      res.end();
+      return;
+  }
+  return {
+      session: session,
+  }
+}
 
 
 export default Home

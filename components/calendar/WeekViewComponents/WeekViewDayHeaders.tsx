@@ -66,7 +66,7 @@ const WeekViewDayHeaders = () => {
 
     // Hooks
     const theme = useTheme();
-
+    
     return (
         <div style={{ width: "100%", height: 40, minHeight: 40, paddingRight: 16 , minWidth:600}}>
             <div style={{

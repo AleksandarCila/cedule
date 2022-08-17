@@ -52,8 +52,8 @@ const ResponsiveDrawer = (props: IResponsiveDrawer) => {
                     '& .MuiDrawer-paper': { boxSizing: 'border-box', width: "90%" },
                 }}
             >
-                <Box sx={{ position: "absolute", top: 10, right: 10 }}>
-                    <Fab variant="extended" color="primary" size="small" sx={{ width: 25, mx: 0.5 }}
+                <Box sx={{ position: "absolute", top: 15, right: 10 }}>
+                    <Fab variant="extended" color="primary" sx={{ width: 25, mx: 0.5 }}
                         onClick={handleDrawerToggle}
                     ><CloseIcon /></Fab>
 

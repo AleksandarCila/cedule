@@ -14,7 +14,7 @@ import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import Event from '../../../types/interfaces/Event'
 interface IEventsIconNotification{
     numberOfEvents:number;
-    icon: ReactJSXElement;
+    icon?: ReactJSXElement;
 }
 interface IEventsBox{
     events:Event[];
@@ -62,15 +62,15 @@ const EventsBox = (props:IEventsBox) => {
     return (
         <Box sx={{ width: "100%", py: 0.5 }}>
             <EventsIconNotification numberOfEvents={numberOfTasks} icon={
-                <AssignmentIcon fontSize="small"  />
+                <AssignmentIcon sx={{fontSize:14}}  />
             } />
             <EventsIconNotification numberOfEvents={numberOfReminders} icon={
-                <NotificationsActiveIcon fontSize="small" />
+                <NotificationsActiveIcon sx={{fontSize:14}} />
             } />
 
             <Box component="span" sx={{ display: { xs: 'block', lg: 'none' } }}>
                 <EventsIconNotification numberOfEvents={numberOfEvents} icon={
-                    <EventIcon fontSize="small"  />
+                    <EventIcon sx={{fontSize:14}} />
                 } />
             </Box>
 

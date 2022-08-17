@@ -79,7 +79,7 @@ const CalendarTabPanel = () => {
                 }}>
                 <AddIcon />
             </Fab>
-            <Box sx={{ flex: 1, maxHeight: "100%", overflowY: "auto", position: 'relative', maxWidth:"99.5vw", overflowX:"auto" }}>
+            <Box sx={{ flex: 1, maxHeight: "100%", overflowY: "auto", position: 'relative', overflowX:"auto" }}>
 
 
                 {tabNames.map((tab, ind) => {
