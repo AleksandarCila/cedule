@@ -11,26 +11,26 @@ const lightThemeOptions = {
     mode: 'dark',
     background: {
       default: customTheme.background,
-      paper: darken(customTheme.background,0.35)
+      paper: darken(customTheme.background, 0.35)
     },
-    text:{
-      primary:"#F1DEDE"
+    text: {
+      primary: "#F1DEDE"
     },
     primary: {
       main: "#AAB9AF",
     },
-    secondary:{
-      main:"#577399"
+    secondary: {
+      main: "#577399"
     },
     error: {
       main: "#FE5F55"
     },
-    
+
     backgroundLight: lighten(customTheme.background, 0.15),
     backgroundLighter: lighten(customTheme.background, 0.25),
-    backgroundDarker: darken(customTheme.background,0.15),
+    backgroundDarker: darken(customTheme.background, 0.15),
   },
-  
+
   typography: {
     fontFamily: [
       '"Baloo 2"',
@@ -60,7 +60,7 @@ const lightThemeOptions = {
         // Name of the slot
         root: {
           // Some CSS
-          borderRadius:0,
+          borderRadius: 0,
         },
       },
     },
@@ -69,7 +69,7 @@ const lightThemeOptions = {
         // Name of the slot
         root: {
           // Some CSS
-          borderRadius:0,
+          borderRadius: 0,
         },
       },
     },
@@ -78,10 +78,11 @@ const lightThemeOptions = {
         // Name of the slot
         root: {
           // Some CSS
-          borderRadius:0,
+          borderRadius: 0,
         },
       },
     },
+   
   },
 };
 

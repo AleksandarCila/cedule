@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // Context States
 import { ModalState } from "../../context/ModalContext";
@@ -17,6 +17,7 @@ import {
   useTheme,
   Typography,
   useMediaQuery,
+  Divider
 } from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
@@ -39,6 +40,7 @@ const NewNoteModal = () => {
   const [formValid, setFormValid] = useState(false);
 
   const open = modalState.modalType === "NEW_NOTE" ? true : false;
+  const bottomDividerRef = useRef();
 
   // Hooks
   const theme = useTheme();
@@ -106,16 +108,19 @@ const NewNoteModal = () => {
         },
       });
     } else {
-      dispatch({
-        type: "ADD_NEW_NOTE",
-        noteData: noteData,
-      });
+
       await fetch("/api/notes/addNewNote", {
         method: "POST",
         body: JSON.stringify(noteData),
         headers: {
           "Content-Type": "application/json",
         },
+      }).then(async (response) => {
+        const note = await response.json();
+        dispatch({
+          type: "ADD_NEW_NOTE",
+          noteData: { ...noteData, id: note.result.insertId },
+        });
       });
     }
     handleClose();
@@ -140,11 +145,11 @@ const NewNoteModal = () => {
               pr: 1,
             }}
           >
-            <Typography variant="h6">
+            <Typography variant="body1">
               {modalState.modalProps.edit ? "Edit Note" : "Add a new Note"}
             </Typography>
             <IconButton onClick={handleClose} disableRipple={true}>
-              <CloseIcon  sx={{ fontSize: 30,color: theme.palette.primary.contrastText, }} />
+              <CloseIcon sx={{ fontSize: 30, color: theme.palette.primary.contrastText, }} />
             </IconButton>
           </DialogTitle>
           <DialogContent sx={{ p: 0.5 }}>
@@ -177,11 +182,15 @@ const NewNoteModal = () => {
                 minRows={7}
                 fullWidth
                 value={formState.content}
+                autoFocus={modalState.modalProps.edit ? true : false}
+                /* @ts-ignore */
+                onFocus={(event) => { event.target.setSelectionRange(1000, 1000); if (bottomDividerRef.current) bottomDividerRef.current.scrollIntoView({ behavior: 'smooth' }) }}
                 onChange={(event) => {
                   handleUserInput(event);
                 }}
                 inputProps={{ maxLength: 2000 }}
               />
+              <Box ref={bottomDividerRef}></Box>
             </Box>
           </DialogContent>
           <DialogActions>

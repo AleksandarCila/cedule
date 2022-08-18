@@ -26,15 +26,15 @@ import Event from '../../../types/interfaces/Event'
 import { ReactJSXElement } from "@emotion/react/types/jsx-namespace";
 interface ISectionDivider {
     children: ReactJSXElement | ReactJSXElement[];
-    title:string;
+    title: string;
 }
 interface INewReminderForm {
-    day?:Date;
+    day?: Date;
     time?: number;
     calendars: Calendar[];
-    event?:Event
+    event?: Event
 }
-const SectionDivider = (props:ISectionDivider) => {
+const SectionDivider = (props: ISectionDivider) => {
     const { children, title } = props;
     return (
         <Box sx={{ mb: 2, width: "100%", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -47,7 +47,7 @@ const SectionDivider = (props:ISectionDivider) => {
     )
 }
 
-const NewReminderForm = (props:INewReminderForm) => {
+const NewReminderForm = (props: INewReminderForm) => {
     const { day, time, calendars, event } = props;
 
     // States
@@ -76,13 +76,13 @@ const NewReminderForm = (props:INewReminderForm) => {
     }, [formState.nameValid, formState.dateValid, formState.timeValid])
 
     // Functions
-    const handleUserInput = (e:any, inputName = "", inpuValue = "") => {
+    const handleUserInput = (e: any, inputName = "", inpuValue = "") => {
         const name = e ? e.target.name : inputName;
         const value = e ? e.target.value : inpuValue;
         validateField(name, value);
     }
 
-    const validateField = (fieldName:string, value:any) => {
+    const validateField = (fieldName: string, value: any) => {
         let fieldValidationErrors = formState.formErrors;
         let nameValid = formState.nameValid;
         let dateValid = formState.dateValid;
@@ -135,7 +135,7 @@ const NewReminderForm = (props:INewReminderForm) => {
             name: formState.name,
             description: "",
             type: 'reminder',
-            eventDate: addHours(formState.dateValue, 6),
+            eventDate: addHours(formState.dateValue, 2),
             eventStartTime: formState.timeValue,
             eventLength: 1,
             color: calendars[formState.calendar].color,
@@ -155,16 +155,19 @@ const NewReminderForm = (props:INewReminderForm) => {
             });
         }
         else {
-            dispatch({
-                type: "ADD_NEW_EVENT",
-                eventData: eventData
-            })
             await fetch("/api/events/addNewEvent", {
                 method: "POST",
                 body: JSON.stringify(eventData),
                 headers: {
                     "Content-Type": "application/json",
                 },
+            }).then(async (response) => {
+                const newEvent = await response.json();
+
+                dispatch({
+                    type: "ADD_NEW_EVENT",
+                    eventData: { ...eventData, id: newEvent.result.insertId }
+                })
             });
         }
         dispatchModal({ type: "HIDE_MODAL" })
@@ -199,7 +202,7 @@ const NewReminderForm = (props:INewReminderForm) => {
                         <MobileDatePicker
                             inputFormat="MM/dd/yyyy"
                             value={formState.dateValue}
-                            onChange={(newValue:any) => {
+                            onChange={(newValue: any) => {
                                 handleUserInput(null, 'dateValue', newValue)
                             }}
                             onError={() => { setFormState({ ...formState, dateValid: false }) }}
@@ -213,14 +216,14 @@ const NewReminderForm = (props:INewReminderForm) => {
                     <Grid item xs={3}>
                         <Box sx={{ width: "100%", height: "100%", display: 'flex', alignItems: 'center' }}>
                             <FormControlLabel sx={{}} control={<Switch size="small" checked={formState.allDay}
-                                onChange={(event:any) => {
+                                onChange={(event: any) => {
                                     handleUserInput(null, 'allDay', event.target.checked);
                                 }} />} label={<Typography fontSize="small" variant="body1">All Day</Typography>} />
                         </Box>
                     </Grid>
                     <Grid item xs={12} >
                         <TimePickerComboBox
-                            onChange={(newValue:any) => {
+                            onChange={(newValue: any) => {
                                 handleUserInput(null, 'timeValue', newValue);
                             }}
                             value={timeStamps[formState.timeValue]}

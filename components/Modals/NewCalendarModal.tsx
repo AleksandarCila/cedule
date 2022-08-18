@@ -142,16 +142,19 @@ const NewCalendarModal = () => {
         },
       });
     } else {
-      dispatch({
-        type: "ADD_NEW_CALENDAR",
-        calendarData: calendarData,
-      });
+      
       await fetch("/api/calendar/addNewCalendar", {
         method: "POST",
         body: JSON.stringify(calendarData),
         headers: {
           "Content-Type": "application/json",
         },
+      }).then(async (response) => {
+        const calendar = await response.json();
+        dispatch({
+          type: "ADD_NEW_CALENDAR",
+          calendarData: { ...calendarData, id: calendar.result.insertId },
+        });
       });
     }
     hideModal();
@@ -176,7 +179,7 @@ const NewCalendarModal = () => {
               pr: 1,
             }}
           >
-            <Typography variant="h6">
+            <Typography variant="body1">
               {modalState.modalProps.edit
                 ? "Edit Calendar"
                 : "Add a new Calendar"}

@@ -58,7 +58,7 @@ const SettingsModal = () => {
               pr: 1,
             }}
           >
-            <Typography variant="h6">
+            <Typography variant="body1">
               Settings
             </Typography>
             <IconButton onClick={closeModal} disableRipple={true}>

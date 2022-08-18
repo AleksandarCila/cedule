@@ -1,9 +1,9 @@
 // Context States
 import { CalendarState } from "../../../context/CalendarContext";
-
+import { ModalState } from '../../../context/ModalContext'
 // Components
 import Image from "next/image";
-import { useTheme, Skeleton, Typography, Box } from "@mui/material";
+import { useTheme, Skeleton, Typography, Box, Button, Divider } from "@mui/material";
 import EventCollapseGroup from "./EventCollapseGroup";
 
 // Utility
@@ -11,6 +11,7 @@ import { addAlphaToColor } from "../../../utility/addAlphaToColor";
 import { daysLong, months } from "../../../utility/constants";
 
 // Icons
+import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import EventIcon from "@mui/icons-material/Event";
@@ -19,12 +20,22 @@ const EventList = () => {
   // States
   const {
     state: { calendarState },
-    dispatch,
   } = CalendarState();
-
+  const {
+    dispatch: dispatchModal
+  } = ModalState();
   const theme = useTheme();
 
   const events = calendarState.todayEvents;
+
+  // Functions
+  const handleOpenModal = (type: string, props: object = {}) => {
+    dispatchModal({
+      type: "SHOW_MODAL",
+      modalType: type,
+      modalProps: props,
+    });
+  };
   return (
     <div>
       <Box sx={{ pl: 2, pt: 1, display: { xs: "block", lg: "none" } }}>
@@ -37,6 +48,19 @@ const EventList = () => {
         />
       </Box>
       <Box sx={{ width: "100%", p: 2 }}>
+        <Button
+          size="medium"
+          color="primary"
+          variant="contained"
+          endIcon={<PlaylistAddIcon />}
+          onClick={() => {
+            handleOpenModal("EVENT_CHOOSE");
+          }}
+          sx={{ width: "100%", borderRadius: 0 }}
+        >
+          Add a new Event
+        </Button>
+        <Divider sx={{ width: "100%", my: 1 }} />
         <Typography variant="h6">
           {daysLong[calendarState.selectedDate.getDay()] +
             " " +

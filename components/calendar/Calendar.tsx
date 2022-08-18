@@ -27,10 +27,11 @@ const MyCalendar = () => {
   } = CalendarState();
   const {
     state: { modalState },
+    dispatch: dispatchModal
   } = ModalState();
   const [openOptions, setOpenOptions] = useState<boolean>(false);
   const [openTasks, setOpenTasks] = useState<boolean>(false);
-
+  const [counter, setCounter] = useState(0);
   // Hooks
   const theme = useTheme();
   const fetchCalendarsAndNotes = useCallback(async () => {
@@ -60,6 +61,50 @@ const MyCalendar = () => {
     fetchCalendarsAndNotes();
   }, [fetchCalendarsAndNotes]);
 
+
+  // Handles back button on PWA
+  // useEffect(() => {
+  //   const popstateListener = (event: any) => {
+  //     console.log(event.state)
+  //   }
+
+  //   window.addEventListener('popstate', popstateListener);
+
+  //   return () => { window.removeEventListener('popstate', popstateListener) }
+  // }, [])
+
+  // useEffect(() => {
+  //   if (openTasks) {
+  //     setCounter(prev => prev + 1);
+  //   }
+  //   else {
+  //     setCounter(prev => { if (prev <= 0) return 0; else return prev - 1 });
+  //   }
+
+  // }, [openTasks])
+  // useEffect(() => {
+  //   if (openOptions) {
+  //     setCounter(prev => prev + 1);
+  //   }
+  //   else {
+  //     setCounter(prev => { if (prev <= 0) return 0; else return prev - 1 });
+
+  //   }
+  // }, [openOptions])
+  // useEffect(() => {
+  //   if (modalState.modalType !== "HIDE_MODAL") {
+  //     setCounter(prev => prev + 1)
+  //   }
+  //   else {
+  //     setCounter(prev => { if (prev <= 0) return 0; else return prev - 1 });
+
+  //   }
+  // }, [modalState])
+  // useEffect(() => {
+  //   if (window) window.history.pushState({ depth: counter }, '')
+  //   var popStateEvent = new PopStateEvent('popstate', { state: counter });
+  //   dispatchEvent(popStateEvent);
+  // }, [counter])
   return (
     <div style={{ width: "100%" }}>
       <Box
@@ -72,7 +117,9 @@ const MyCalendar = () => {
       >
         <Fab
           color="primary"
-          onClick={() => setOpenOptions((prev) => !prev)}
+          onClick={() => {
+            setOpenOptions((prev) => !prev);
+          }}
           sx={{
             display: { xs: "flex", lg: "none" },
             position: "absolute",

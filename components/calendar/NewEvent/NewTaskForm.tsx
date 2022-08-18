@@ -138,7 +138,7 @@ const NewTaskForm = (props:INewTaskForm) => {
             name: formState.name,
             description: formState.taskDescription,
             type: 'task',
-            eventDate: addHours(formState.dateValue, 6),
+            eventDate: addHours(formState.dateValue, 2),
             eventStartTime: formState.timeValue,
             eventLength: 1,
             color: calendars[formState.calendar].color,
@@ -158,16 +158,19 @@ const NewTaskForm = (props:INewTaskForm) => {
             });
         }
         else {
-            dispatch({
-                type: "ADD_NEW_EVENT",
-                eventData: eventData
-            })
             await fetch("/api/events/addNewEvent", {
                 method: "POST",
                 body: JSON.stringify(eventData),
                 headers: {
                     "Content-Type": "application/json",
                 },
+            }).then(async (response) => {
+                const newEvent = await response.json();
+
+                dispatch({
+                    type: "ADD_NEW_EVENT",
+                    eventData: { ...eventData, id: newEvent.result.insertId }
+                })
             });
         }
 

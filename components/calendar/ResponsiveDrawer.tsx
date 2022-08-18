@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import { ModalState } from "../../context/ModalContext";
 // Components
 import { Box, Drawer, Fab } from '@mui/material'
 
@@ -15,10 +15,13 @@ interface IResponsiveDrawer {
     closeCalendarList(): void;
 }
 const ResponsiveDrawer = (props: IResponsiveDrawer) => {
+    const {
+        state: { modalState },
+    } = ModalState()
     const { children, anchor } = props;
     // States
     const [mobileOpen, setMobileOpen] = useState<boolean>(false);
-
+    // const openModal = modalState.modalType === "EVENTS"
     // Hooks
     useEffect(() => {
         setMobileOpen(props.mobileOpenCalendarList)
@@ -31,7 +34,7 @@ const ResponsiveDrawer = (props: IResponsiveDrawer) => {
         setMobileOpen(mobileOpen => !mobileOpen);
 
     };
-
+    
     return (
         <Box
             component="nav"
@@ -52,7 +55,7 @@ const ResponsiveDrawer = (props: IResponsiveDrawer) => {
                     '& .MuiDrawer-paper': { boxSizing: 'border-box', width: "90%" },
                 }}
             >
-                <Box sx={{ position: "absolute", top: 15, right: 10 }}>
+                <Box sx={{ position: "absolute", top: 10, right: 10 }}>
                     <Fab variant="extended" color="primary" sx={{ width: 25, mx: 0.5 }}
                         onClick={handleDrawerToggle}
                     ><CloseIcon /></Fab>

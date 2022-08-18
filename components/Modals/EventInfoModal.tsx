@@ -104,7 +104,7 @@ const EventInfoModal = () => {
               pr: 1,
             }}
           >
-            <Typography variant="h6">
+            <Typography variant="body1">
               {event.type.charAt(0).toUpperCase() + event.type.slice(1) + " Details"}
             </Typography>
             <IconButton onClick={closeModal} disableRipple={true}>

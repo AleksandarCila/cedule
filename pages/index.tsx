@@ -1,7 +1,7 @@
 import Context from "../context/CalendarContext";
 import ModalContext from '../context/ModalContext'
 
-
+import { Fade } from "@mui/material";
 import type { NextPage } from 'next'
 
 import Head from 'next/head'
@@ -13,11 +13,14 @@ import EventInfoModal from '../components/Modals/EventInfoModal'
 import NewCalendarModal from '../components/Modals/NewCalendarModal'
 import NewNoteModal from "../components/Modals/NewNoteModal";
 import NoteReadingModal from "../components/Modals/NoteReadingModal"
-import {getSession } from "next-auth/react";
+import EventTypeChooserModal from "../components/Modals/EventTypeChooserModal"
+import { getSession } from "next-auth/react";
 import { NextPageContext } from "next";
 import SettingsModal from "../components/Modals/SettingsModal";
 
 const Home: NextPage = () => {
+  
+
   
   return (
     <Context>
@@ -38,6 +41,7 @@ const Home: NextPage = () => {
             <NewCalendarModal />
             <NewNoteModal />
             <NoteReadingModal />
+            <EventTypeChooserModal />
             <Calendar />
           </main>
         </div>
@@ -47,20 +51,20 @@ const Home: NextPage = () => {
   )
 }
 
-Home.getInitialProps = async (context:NextPageContext) => {
+Home.getInitialProps = async (context: NextPageContext) => {
   const { req, res } = context;
   const session = await getSession({ req });
-  
+
   // console.log(res)
   if (!session && res) {
-      res.writeHead(302, {
-          Location: "/login"
-      });
-      res.end();
-      return;
+    res.writeHead(302, {
+      Location: "/login"
+    });
+    res.end();
+    return;
   }
   return {
-      session: session,
+    session: session,
   }
 }
 

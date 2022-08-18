@@ -3,7 +3,7 @@
 import { CalendarState } from "../../../context/CalendarContext";
 
 // Components
-import { Typography, useTheme } from '@mui/material'
+import { Typography, useTheme, useMediaQuery, Box } from '@mui/material'
 
 // Utility
 import { addAlphaToColor } from "../../../utility/addAlphaToColor";
@@ -12,10 +12,10 @@ import { days } from "../../../utility/constants"
 
 // Types
 interface IDayHeaderElement {
-    day:Date;
+    day: Date;
 }
 
-const DayHeaderElement = (props:IDayHeaderElement) => {
+const DayHeaderElement = (props: IDayHeaderElement) => {
     const { day } = props;
 
     // Hooks
@@ -24,7 +24,7 @@ const DayHeaderElement = (props:IDayHeaderElement) => {
     return (
         <div style={{
             cursor: 'pointer',
-            width: "100%",
+            width: "80%",
             height: "100%",
             padding: 2,
             display: 'flex', justifyContent: 'center', alignItems: 'center',
@@ -48,22 +48,39 @@ const DayViewHeader = () => {
 
     // Hooks
     const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
 
     return (
-        <div style={{ width: "100%", height: 40, minHeight: 40, paddingRight: 16 }}>
-            <div style={{
+        // <div style={{ width: "100%", height: 40, minHeight: 40, paddingRight: isMobile ? 0 : 16 }}>
+        //     <div style={{
+        //         width: "100%",
+        //         height: "100%",
+        //         display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gridAutoColumns: "auto", gridAutoRows: "auto",
+        //     }}>
+        //         <div style={{
+        //             borderRight: `1px solid ${theme.palette.backgroundLight}`,
+        //             height: "100%",
+        //             width: "100%", overflow: "hidden", textOverflow: "ellipsis",
+        //         }}>
+        //         </div>
+        //         <DayHeaderElement day={selectedDate} />
+        //     </div>
+        // </div>
+        <div style={{ width: "100%", height: 40, minHeight: 40, paddingRight: isMobile ? 0 : 16 }}>
+            <Box style={{
                 width: "100%",
                 height: "100%",
-                display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gridAutoColumns: "auto", gridAutoRows: "auto",
+                display: "flex",justifyContent:'space-between', alignItems:'center'
             }}>
                 <div style={{
                     borderRight: `1px solid ${theme.palette.backgroundLight}`,
                     height: "100%",
-                    width: "100%", overflow: "hidden", textOverflow: "ellipsis",
+                    width: "20%", overflow: "hidden", textOverflow: "ellipsis",
                 }}>
                 </div>
                 <DayHeaderElement day={selectedDate} />
-            </div>
+            </Box>
         </div>
     )
 }

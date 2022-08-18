@@ -102,7 +102,7 @@ const NoteReadingModal = () => {
               pr: 1,
             }}
           >
-            <Typography variant="h6">{note.title}</Typography>
+            <Typography variant="body1">{note.title}</Typography>
             <IconButton onClick={closeModal} disableRipple>
               <CloseIcon  sx={{ fontSize: 30,color: theme.palette.primary.contrastText, }} />
             </IconButton>

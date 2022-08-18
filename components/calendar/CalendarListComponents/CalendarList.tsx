@@ -66,19 +66,8 @@ const CalendarList = () => {
           flexWrap: "wrap",
         }}
       >
-        <Button
-          size="medium"
-          color="primary"
-          variant="contained"
-          endIcon={<PlaylistAddIcon />}
-          onClick={() => {
-            handleOpenModal("NEW_EVENT");
-          }}
-          sx={{ width: "100%", borderRadius: 0 }}
-        >
-          Add a new Event
-        </Button>
-        <Divider sx={{ width: "100%", my: 1 }} />
+        
+        <Divider sx={{ width: "100%", mb: 1 }} />
         <div
           style={{
             width: "100%",

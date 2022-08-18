@@ -5,7 +5,8 @@ const ModalContext = createContext();
 
 const initialState = {
     modalType: null,
-    modalProps: {}
+    modalProps: {},
+    isModalOn: false
   }
 
 const ModalStateContext = ({ children }) => {

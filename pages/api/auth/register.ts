@@ -20,13 +20,13 @@ export default async function handler(
         res.status(500);
         res.json({
           error: {
-            message:"E-mail already exists",
+            message: "E-mail already exists",
           },
         });
         res.end();
         return;
       }
-    } catch (err) {}
+    } catch (err) { }
 
     try {
       const saltRounds = 10;
@@ -36,7 +36,10 @@ export default async function handler(
           query: "INSERT INTO users (email, password) VALUES(?,?)",
           values: [req.body.email, hash],
         });
-
+        const calendar = await excuteQuery({
+          query: "INSERT INTO calendars (user_id, name, color) VALUES(?,?,?)",
+          values: [result.insertId, "My Calendar", "#ffca3a"]
+        })
         res.status(201).end(JSON.stringify({ result }));
       });
     } catch (error) {

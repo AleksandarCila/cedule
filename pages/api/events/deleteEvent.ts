@@ -13,7 +13,6 @@ export default async function handler(
 
     if (req.method === "POST") {
       try {
-        console.log(req.body);
         let result = await excuteQuery({
           query: "DELETE FROM events WHERE id = ?",
           values: [req.body],

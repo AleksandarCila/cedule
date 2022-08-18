@@ -27,15 +27,15 @@ import Calendar from '../../../types/interfaces/Calendar'
 import Event from '../../../types/interfaces/Event'
 interface ISectionDivider {
     children?: React.ReactNode;
-    title:string;
+    title: string;
 }
 interface INewEventForm {
-    day?:Date;
+    day?: Date;
     time?: number;
     calendars: Calendar[];
-    event?:Event
+    event?: Event
 }
-const SectionDivider = (props:ISectionDivider) => {
+const SectionDivider = (props: ISectionDivider) => {
     const { children, title } = props;
     return (
         <Box sx={{ mb: 2, width: "100%", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -49,7 +49,7 @@ const SectionDivider = (props:ISectionDivider) => {
     )
 }
 
-const NewEventForm = (props:INewEventForm) => {
+const NewEventForm = (props: INewEventForm) => {
     const { day, time, calendars, event } = props;
 
     // States
@@ -63,7 +63,7 @@ const NewEventForm = (props:INewEventForm) => {
         name: event ? event.name : "",
         dateValue: event ? event.eventDate : day ? day : new Date(),
         timeValueStart: event ? event.eventStartTime : time ? new Date().setTime(time) : 0,
-        timeValueEnd: event ? (event.eventStartTime + event.eventLength) : time ? new Date().setTime(time+1) : 1,
+        timeValueEnd: event ? (event.eventStartTime + event.eventLength) : time ? new Date().setTime(time + 1) : 1,
         allDay: event ? event.allDay : false,
         taskDescription: event ? event.description : "",
         calendar: event ? 0 : 0,
@@ -81,13 +81,13 @@ const NewEventForm = (props:INewEventForm) => {
     }, [formState.nameValid, formState.dateValid, formState.timeStartValid, formState.timeEndValid])
 
     // Functions
-    const handleUserInput = (e:any, inputName = "", inpuValue = "") => {
+    const handleUserInput = (e: any, inputName = "", inpuValue = "") => {
         const name = e ? e.target.name : inputName;
         const value = e ? e.target.value : inpuValue;
         validateField(name, value);
     }
 
-    const validateField = (fieldName:string, value:any) => {
+    const validateField = (fieldName: string, value: any) => {
         let fieldValidationErrors = formState.formErrors;
         let nameValid = formState.nameValid;
         let dateValid = formState.dateValid;
@@ -160,12 +160,13 @@ const NewEventForm = (props:INewEventForm) => {
             name: formState.name,
             description: formState.taskDescription,
             type: 'event',
-            eventDate: addHours(formState.dateValue, 6),
+            eventDate: addHours(formState.dateValue, 2),
             eventStartTime: formState.timeValueStart,
             eventLength: formState.timeValueEnd - formState.timeValueStart,
             color: calendars[formState.calendar].color,
             allDay: formState.allDay
         }
+
         if (event) {
             dispatch({
                 type: "UPDATE_EVENT",
@@ -180,16 +181,20 @@ const NewEventForm = (props:INewEventForm) => {
             });
         }
         else {
-            dispatch({
-                type: "ADD_NEW_EVENT",
-                eventData: eventData
-            })
+
             await fetch("/api/events/addNewEvent", {
                 method: "POST",
                 body: JSON.stringify(eventData),
                 headers: {
                     "Content-Type": "application/json",
                 },
+            }).then(async (response) => {
+                const newEvent = await response.json();
+
+                dispatch({
+                    type: "ADD_NEW_EVENT",
+                    eventData: { ...eventData, id: newEvent.result.insertId }
+                })
             });
 
         }
@@ -226,7 +231,7 @@ const NewEventForm = (props:INewEventForm) => {
                             // label="Event Date"
                             inputFormat="MM/dd/yyyy"
                             value={formState.dateValue}
-                            onChange={(newValue:any) => {
+                            onChange={(newValue: any) => {
                                 handleUserInput(null, 'dateValue', newValue)
                             }}
                             onError={() => { setFormState({ ...formState, dateValid: false }) }}
@@ -238,9 +243,9 @@ const NewEventForm = (props:INewEventForm) => {
                         />
                     </Grid>
                     <Grid item xs={3} >
-                        <Box sx={{width:"100%", height:"100%", display:'flex', alignItems:'center'}}>
+                        <Box sx={{ width: "100%", height: "100%", display: 'flex', alignItems: 'center' }}>
                             <FormControlLabel sx={{}} control={<Switch size="small" checked={formState.allDay}
-                                onChange={(event:any) => {
+                                onChange={(event: any) => {
                                     handleUserInput(null, 'allDay', event.target.checked);
                                 }} />} label={<Typography fontSize="small" variant="body1">All Day</Typography>} />
                         </Box>
@@ -249,7 +254,7 @@ const NewEventForm = (props:INewEventForm) => {
 
                         <TimePickerComboBox
                             label="Start Time"
-                            onChange={(newValue:any) => {
+                            onChange={(newValue: any) => {
                                 handleUserInput(null, 'timeValueStart', newValue);
                             }}
                             value={timeStamps[formState.timeValueStart]}
@@ -260,7 +265,7 @@ const NewEventForm = (props:INewEventForm) => {
                     <Grid item xs={6}>
                         <TimePickerComboBox
                             label="End Time"
-                            onChange={(newValue:any) => {
+                            onChange={(newValue: any) => {
                                 handleUserInput(null, 'timeValueEnd', newValue);
                             }}
                             value={timeStamps[formState.timeValueEnd]}
@@ -318,7 +323,7 @@ const NewEventForm = (props:INewEventForm) => {
 
 
                 <DialogActions>
-                    <Button onClick={handleAddEvent} size="large" variant="contained" disabled={!formValid}>
+                    <Button onClick={async () => await handleAddEvent()} size="large" variant="contained" disabled={!formValid}>
                         {event ? "Save Event" : "Add Event"}
                     </Button>
                 </DialogActions>

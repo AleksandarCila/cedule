@@ -89,7 +89,7 @@ const DayEventSlotElement = (props: IDayEventSlotElement) => {
         // borderRight: ((ind + 1) % 7) != 0 ? `1px solid ${theme.palette.grey['300']}` : "",
         borderBottom: `1px solid ${theme.palette.backgroundLight}`,
         width: "100%",
-        height: "100%",
+        height: 20,
         backgroundColor: hover
           ? theme.palette.primary.main
           : isWeekendDay
@@ -132,20 +132,21 @@ const DayView = () => {
       <DayViewHeader />
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(2, 1fr)",
-          gridAutoColumns: "auto",
-          gridAutoRows: "auto",
+          display: "flex",
+          justifyContent:'space-between',
+          alignItems:"flex-start",
           overflowY: "scroll",
+          width:"100%",
+          height:"100%"
         }}
       >
         <div
           style={{
             borderTop: `1px solid ${theme.palette.backgroundLight}`,
-            display: "grid",
-            gridTemplateColumns: "repeat(1, 1fr)",
-            gridAutoColumns: "auto",
-            gridAutoRows: "auto",
+            width:"20%",
+            display:"flex",
+            justifyContent:"flex-start",
+            flexDirection:'column'
           }}
         >
           {timeStamps.map((hour, hourInd) => {
@@ -157,10 +158,7 @@ const DayView = () => {
           style={{
             borderTop: `1px solid ${theme.palette.backgroundLight}`,
             position: "relative",
-            display: "grid",
-            gridTemplateColumns: "repeat(1, 1fr)",
-            gridAutoColumns: "auto",
-            gridAutoRows: "auto",
+            width:"80%"
           }}
         >
           <WeekViewDayEvents
