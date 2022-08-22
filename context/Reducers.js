@@ -1,4 +1,4 @@
-import { startOfWeek, endOfWeek, eachDayOfInterval, isSameISOWeek, isSameDay, parseISO } from 'date-fns'
+import { startOfWeek, endOfWeek, eachDayOfInterval, isSameISOWeek, isSameDay, parseISO,addDays } from 'date-fns'
 
 const getWeekDays = (date) => {
   const start = startOfWeek(date)
@@ -8,6 +8,12 @@ const getWeekDays = (date) => {
     end: end
   });
 }
+
+const getThreeDays = (date) => {
+  const yesterday = addDays(date, -1);
+  const tomorrow = addDays(date, 1);
+  return [yesterday, date, tomorrow];
+};
 
 const updateEventColors = (events, color) => {
   return events.map((event) => {
@@ -58,13 +64,13 @@ export const calendarReducer = (state, action) => {
   switch (action.type) {
     case "SET_SELECTED_DATE":
       const oldSelectedDate = state.calendarState.selectedDate;
-
       const newState = {
         ...state,
         calendarState: {
           ...state.calendarState,
           selectedDate: action.payload.day,
           weekDays: isSameISOWeek(action.payload.day, oldSelectedDate) ? state.calendarState.weekDays : getWeekDays(action.payload.day),
+          threeDays: getThreeDays(action.payload.day),
           todayEvents: getTodayEvents(state.calendarState.calendars, action.payload.day),
         },
 
@@ -303,7 +309,7 @@ export const calendarReducer = (state, action) => {
       return newState;
     case "ADD_NEW_NOTE":
       newNotes = state.calendarState.notes;
-      newNotes.push(action.noteData)
+      newNotes.unshift(action.noteData)
       newState = {
         ...state,
         calendarState: {

@@ -1,38 +1,61 @@
+// Contexts
 import Context from "../context/CalendarContext";
-import ModalContext from '../context/ModalContext'
+import ModalContext from "../context/ModalContext";
 
-import { Fade } from "@mui/material";
-import type { NextPage } from 'next'
-
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
-
-import Calendar from '../components/calendar/Calendar'
-import NewEventModal from "../components/calendar/NewEvent/NewEventModal";
-import EventInfoModal from '../components/Modals/EventInfoModal'
-import NewCalendarModal from '../components/Modals/NewCalendarModal'
-import NewNoteModal from "../components/Modals/NewNoteModal";
-import NoteReadingModal from "../components/Modals/NoteReadingModal"
-import EventTypeChooserModal from "../components/Modals/EventTypeChooserModal"
-import { getSession } from "next-auth/react";
+// Next imports
+import type { NextPage } from "next";
+import Head from "next/head";
+import { getSession, useSession } from "next-auth/react";
 import { NextPageContext } from "next";
-import SettingsModal from "../components/Modals/SettingsModal";
+import dynamic from "next/dynamic";
+
+import styles from "../styles/Home.module.css";
+
+// Components
+import Calendar from "../components/calendar/Calendar";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+
+// Dynamic imports of Modals
+const NewNoteModal = dynamic(() => import("../components/Modals/NewNoteModal"));
+const SettingsModal = dynamic(
+  () => import("../components/Modals/SettingsModal")
+);
+const EventTypeChooserModal = dynamic(
+  () => import("../components/Modals/EventTypeChooserModal")
+);
+const NoteReadingModal = dynamic(
+  () => import("../components/Modals/NoteReadingModal")
+);
+const NewCalendarModal = dynamic(
+  () => import("../components/Modals/NewCalendarModal")
+);
+const EventInfoModal = dynamic(
+  () => import("../components/Modals/EventInfoModal")
+);
+const NewEventModal = dynamic(
+  () => import("../components/calendar/NewEvent/NewEventModal")
+);
 
 const Home: NextPage = () => {
-  
-
-  
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login");
+    }
+  }, [status]);
   return (
     <Context>
       <ModalContext>
-
         <div className={styles.container}>
           <Head>
             <title>Cedule | Your Schedule</title>
-            <meta name="description" content="Calendar events and tasks application" />
-
+            <meta
+              name="description"
+              content="Calendar events and tasks application"
+            />
           </Head>
-
 
           <main className={styles.main}>
             <SettingsModal />
@@ -45,11 +68,10 @@ const Home: NextPage = () => {
             <Calendar />
           </main>
         </div>
-
       </ModalContext>
     </Context>
-  )
-}
+  );
+};
 
 Home.getInitialProps = async (context: NextPageContext) => {
   const { req, res } = context;
@@ -58,15 +80,14 @@ Home.getInitialProps = async (context: NextPageContext) => {
   // console.log(res)
   if (!session && res) {
     res.writeHead(302, {
-      Location: "/login"
+      Location: "/login",
     });
     res.end();
     return;
   }
   return {
     session: session,
-  }
-}
+  };
+};
 
-
-export default Home
+export default Home;

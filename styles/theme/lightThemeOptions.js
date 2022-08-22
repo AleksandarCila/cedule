@@ -1,29 +1,29 @@
-import { ThemeOptions } from '@mui/material/styles';
-import { blueGrey } from '@mui/material/colors';
-import { darken, lighten } from '@mui/material/styles';
+import { ThemeOptions } from "@mui/material/styles";
+import { blueGrey } from "@mui/material/colors";
+import { darken, lighten } from "@mui/material/styles";
 
 const customTheme = {
-  background: "#0D1321"
-}
+  background: "#0D1321",
+};
 
 const lightThemeOptions = {
   palette: {
-    mode: 'dark',
+    mode: "dark",
     background: {
       default: customTheme.background,
-      paper: darken(customTheme.background, 0.35)
+      paper: darken(customTheme.background, 0.35),
     },
     text: {
-      primary: "#F1DEDE"
+      primary: "#F1DEDE",
     },
     primary: {
       main: "#AAB9AF",
     },
     secondary: {
-      main: "#577399"
+      main: "#577399",
     },
     error: {
-      main: "#FE5F55"
+      main: "#FE5F55",
     },
 
     backgroundLight: lighten(customTheme.background, 0.15),
@@ -34,23 +34,23 @@ const lightThemeOptions = {
   typography: {
     fontFamily: [
       '"Baloo 2"',
-      '-apple-system',
-      'BlinkMacSystemFont',
+      "-apple-system",
+      "BlinkMacSystemFont",
       '"Segoe UI"',
-      'Roboto',
+      "Roboto",
       '"Helvetica Neue"',
-      'Arial',
-      'sans-serif',
+      "Arial",
+      "sans-serif",
       '"Apple Color Emoji"',
       '"Segoe UI Emoji"',
       '"Segoe UI Symbol"',
-    ].join(','),
+    ].join(","),
   },
   custom: {
     events: {
-      event: '#1982c4',
-      task: '#ffca3a',
-      reminder: '#ff595e'
+      event: "#1982c4",
+      task: "#ffca3a",
+      reminder: "#ff595e",
     },
   },
   components: {
@@ -82,7 +82,24 @@ const lightThemeOptions = {
         },
       },
     },
-   
+    MuiSpeedDialAction: {
+      styleOverrides: {
+        // Name of the slot
+        staticTooltipLabel: {
+          // Some CSS
+          backgroundColor: "#AAB9AF",
+          color: "#000"
+        },
+        fab: {
+          // Some CSS
+          backgroundColor: "#AAB9AF",
+          color: "#000",
+          "&:hover":{
+            backgroundColor:lighten(customTheme.background, 0.35)
+          }
+        },
+      },
+    },
   },
 };
 

@@ -19,8 +19,8 @@ input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-  -webkit-box-shadow:0 0 0 50px #0D1321 inset; /* Change the color to your own background color */
-  -webkit-text-fill-color: #F1DEDE;
+  -webkit-box-shadow:0 0 0 50px #0D1321 inset !important; /* Change the color to your own background color */
+  -webkit-text-fill-color: #F1DEDE !important;
 }
 
 @media (prefers-color-scheme: dark) {

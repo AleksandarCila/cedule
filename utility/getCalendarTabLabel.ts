@@ -16,13 +16,13 @@ export const getCalendarTabLabel = (date: Date, tabValue:number) => {
             timeLabel = "Week " + getWeek(date, {
                 weekStartsOn: 1,
                 firstWeekContainsDate: 4
-            }) + ", " + months[startOfWeekDay.getMonth()] + " " + startOfWeekDay.getDate() + " - " + months[endOfWeekDay.getMonth()] + " " + endOfWeekDay.getDate();
+            }) + ", " + months[startOfWeekDay.getMonth()].slice(0,3) + " " + startOfWeekDay.getDate() + " - " + months[endOfWeekDay.getMonth()].slice(0,3) + " " + endOfWeekDay.getDate();
             break;
         case 2:
             timeLabel = months[date.getMonth()] + ", " + daysLong[date.getDay()] + " " + date.getDate();
             break;
         case 3:
-            timeLabel = months[date.getMonth()] + ", " + date.getDate();
+            timeLabel = "Notes";
             break;
         default:
     }

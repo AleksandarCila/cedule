@@ -1,34 +1,18 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Cedule | Your Schedule.
 
-## Getting Started
+Cedule is a project for managing your schedule. It allows you to add different kind of activities (Events, Tasks, Reminders) to specific, custom created and color coded calendars. Beside activities and calendar, there is also a Notes panel where you can add Text Notes.
 
-First, run the development server:
+Visit the [Cedule](https://ceduleapp.com) webpage and try demo or register!
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+## Technology
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This lightweight web app features a fully responsive design, making it possible to use on both desktop and mobile devices. It is also available to be installed on your mobile device as a PWA.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+Core of this app is powered by [Next.js](https://nextjs.org) which enabled an easy setup for both frontend and API backend. Storing all the data and authentication is done via serverless-mysql which connects to a MySQL database hosted on shared hosting.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+[MUI](https://mui.com/) Component library is used to quickly develop and customize the UI. 
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+In order to keep this app lightweight and fast, [date-fns](https://date-fns.org/) javascript library for date manipulation is used.
 
-## Learn More
+Whole project was written in TypeScript.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.

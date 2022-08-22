@@ -2,19 +2,19 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { signIn } from "next-auth/react";
 // Components
-import { Box, TextField, Button, CircularProgress } from "@mui/material";
+import { Box, TextField, Button, CircularProgress, Typography } from "@mui/material";
 
 const inputStyle = {
   my: 1,
 };
 
-const RegisterForm = () => {
+const RegisterForm = ({ isOnline }: { isOnline: boolean }) => {
   const [formState, setFormState] = useState({
     email: "",
     password: "",
     confirmPassword: "",
     formErrors: { email: "", password: "" },
-    emailValid: false,
+    emailValid: true,
     passwordValid: false,
   });
   const [formValid, setFormValid] = useState(false);
@@ -191,8 +191,12 @@ const RegisterForm = () => {
         error={!formState.passwordValid}
         inputProps={{ minLength: 8, maxLength: 30 }}
       />
-      {loading ? (
-        <CircularProgress color="primary"sx={{mt:3}} size={30}/>
+      {!isOnline ? (
+        <Typography variant="body1" textAlign="center">
+          No Internet connection. Please reconnect in order to continue.
+        </Typography>
+      ) : loading ? (
+        <CircularProgress color="primary" sx={{ mt: 3 }} size={30} />
       ) : (
         <Button
           // type="submit"

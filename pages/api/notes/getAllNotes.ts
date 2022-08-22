@@ -15,12 +15,18 @@ export default async function handler(
       try {
         // console.log("req nom", req.body)
         results = await excuteQuery({
-          query: "SELECT * FROM notes",
+          query: "SELECT * FROM notes WHERE user_id = ? ORDER BY date DESC",
+          values: [token.id],
         });
-
-        res.status(200).json(results);
+        if (results.error) {
+          throw Error("DB Connection error")
+        } else {
+          res.status(200).json(results);
+        }
       } catch (error) {
-        console.log(error);
+        res
+          .status(400)
+          .end(JSON.stringify({ message: "ERROR: " + JSON.stringify(error) }));
       }
     }
   } else {

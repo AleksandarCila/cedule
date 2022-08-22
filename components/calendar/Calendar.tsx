@@ -4,15 +4,17 @@ import { CalendarState } from "../../context/CalendarContext";
 import { ModalState } from "../../context/ModalContext";
 
 // Components
-import { Button, Box, useTheme, Fab } from "@mui/material";
+import { Box, useTheme, Fab, useMediaQuery } from "@mui/material";
 import EventList from "./EventListComponents/EventList";
 import CalendarTabPanel from "./CalendarTabComponents/CalendarTabPanel";
 import ResponsiveDrawer from "./ResponsiveDrawer";
 import CalendarList from "./CalendarListComponents/CalendarList";
+import ErrorDialog from "../Modals/ErrorDialog";
 
 //Icons
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import ScheduleIcon from "@mui/icons-material/Schedule";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const drawerStyle = {
   width: { xs: "0%", lg: "20%" },
@@ -21,36 +23,57 @@ const drawerStyle = {
 
 const MyCalendar = () => {
   // States
+  const [serverError, setServerError] = useState(true);
   const {
     state: { calendarState },
     dispatch,
   } = CalendarState();
   const {
     state: { modalState },
-    dispatch: dispatchModal
+    dispatch: dispatchModal,
   } = ModalState();
   const [openOptions, setOpenOptions] = useState<boolean>(false);
   const [openTasks, setOpenTasks] = useState<boolean>(false);
-  const [counter, setCounter] = useState(0);
+
   // Hooks
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
   const fetchCalendarsAndNotes = useCallback(async () => {
+    setServerError(false);
     await fetch("api/calendar/getAllCalendars", {
       method: "GET",
     }).then(async (res) => {
-      const calendars = await res.json();
-      dispatch({
-        type: "SET_CALENDARS",
-        calendars: calendars,
-      });
+      if (res.status === 200) {
+        const calendars = await res.json();
+        dispatch({
+          type: "SET_CALENDARS",
+          calendars: calendars,
+        });
+      } else {
+        setServerError(true);
+        return;
+      }
     });
-    let res = await fetch("api/notes/getAllNotes", {
+    await fetch("api/notes/getAllNotes", {
       method: "GET",
-    });
-    const notes = await res.json();
-    dispatch({
-      type: "SET_NOTES",
-      notes: notes,
+    }).then(async (res) => {
+      if (res.status === 200) {
+        try {
+          const notes = await res.json();
+
+          dispatch({
+            type: "SET_NOTES",
+            notes: notes,
+          });
+        } catch (error) {
+          setServerError(true);
+          return;
+        }
+      } else {
+        setServerError(true);
+        return;
+      }
     });
   }, []);
   useEffect(() => {
@@ -61,52 +84,9 @@ const MyCalendar = () => {
     fetchCalendarsAndNotes();
   }, [fetchCalendarsAndNotes]);
 
-
-  // Handles back button on PWA
-  // useEffect(() => {
-  //   const popstateListener = (event: any) => {
-  //     console.log(event.state)
-  //   }
-
-  //   window.addEventListener('popstate', popstateListener);
-
-  //   return () => { window.removeEventListener('popstate', popstateListener) }
-  // }, [])
-
-  // useEffect(() => {
-  //   if (openTasks) {
-  //     setCounter(prev => prev + 1);
-  //   }
-  //   else {
-  //     setCounter(prev => { if (prev <= 0) return 0; else return prev - 1 });
-  //   }
-
-  // }, [openTasks])
-  // useEffect(() => {
-  //   if (openOptions) {
-  //     setCounter(prev => prev + 1);
-  //   }
-  //   else {
-  //     setCounter(prev => { if (prev <= 0) return 0; else return prev - 1 });
-
-  //   }
-  // }, [openOptions])
-  // useEffect(() => {
-  //   if (modalState.modalType !== "HIDE_MODAL") {
-  //     setCounter(prev => prev + 1)
-  //   }
-  //   else {
-  //     setCounter(prev => { if (prev <= 0) return 0; else return prev - 1 });
-
-  //   }
-  // }, [modalState])
-  // useEffect(() => {
-  //   if (window) window.history.pushState({ depth: counter }, '')
-  //   var popStateEvent = new PopStateEvent('popstate', { state: counter });
-  //   dispatchEvent(popStateEvent);
-  // }, [counter])
   return (
     <div style={{ width: "100%" }}>
+      <ErrorDialog open={serverError} handleClick={fetchCalendarsAndNotes} />
       <Box
         sx={{
           width: "100%",
@@ -118,12 +98,16 @@ const MyCalendar = () => {
         <Fab
           color="primary"
           onClick={() => {
+            dispatchModal({
+              type: "SHOW_MODAL",
+              modalType: "DEPTH",
+            });
             setOpenOptions((prev) => !prev);
           }}
           sx={{
             display: { xs: "flex", lg: "none" },
             position: "absolute",
-            bottom: 25,
+            bottom: 100,
             left: 25,
             justifyContent: "center",
             alignItems: "center",
@@ -133,11 +117,17 @@ const MyCalendar = () => {
         </Fab>
         <Fab
           color="primary"
-          onClick={() => setOpenTasks((prev) => !prev)}
+          onClick={() => {
+            dispatchModal({
+              type: "SHOW_MODAL",
+              modalType: "DEPTH",
+            });
+            setOpenTasks((prev) => !prev);
+          }}
           sx={{
             display: { xs: "flex", lg: "none" },
             position: "absolute",
-            bottom: 100,
+            bottom: 25,
             left: 25,
             justifyContent: "center",
             alignItems: "center",
@@ -149,7 +139,9 @@ const MyCalendar = () => {
           <ResponsiveDrawer
             anchor="left"
             mobileOpenCalendarList={openOptions}
-            closeCalendarList={() => setOpenOptions(false)}
+            closeCalendarList={() => {
+              setOpenOptions(false);
+            }}
           >
             <CalendarList />
           </ResponsiveDrawer>
@@ -170,7 +162,9 @@ const MyCalendar = () => {
           <ResponsiveDrawer
             anchor="right"
             mobileOpenCalendarList={openTasks}
-            closeCalendarList={() => setOpenTasks(false)}
+            closeCalendarList={() => {
+              setOpenTasks(false);
+            }}
           >
             <EventList />
           </ResponsiveDrawer>

@@ -18,6 +18,8 @@ interface IConfirmationDialog {
 interface IEditDeleteMenuButton {
     onEditClick(): void;
     onDeleteClick(): void;
+    style?: object;
+
 }
 export const ConfirmationDialog = (props: IConfirmationDialog) => {
     const { handleAccept, handleCancel, info, show } = props;
@@ -73,9 +75,8 @@ export default function EditDeleteMenuButton(props: IEditDeleteMenuButton) {
     const handleClose = () => {
         setAnchorEl(null);
     };
-
     return (
-        <div style={{ zIndex: 1000 }}>
+        <div style={{ zIndex: 1000,...props.style }}>
             <IconButton
                 aria-label="more"
                 id="long-button"

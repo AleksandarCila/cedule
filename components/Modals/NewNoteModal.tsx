@@ -17,13 +17,15 @@ import {
   useTheme,
   Typography,
   useMediaQuery,
-  Divider
+  CircularProgress,
 } from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
 
 const NewNoteModal = () => {
   // States
+  const [serverError, setServerError] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [value, setValue] = useState(0);
   const {
     state: { modalState },
@@ -95,20 +97,31 @@ const NewNoteModal = () => {
       content: formState.content,
       date: new Date(),
     };
+    setServerError(false);
+    setLoading(true);
     if (modalState.modalProps.edit) {
-      dispatch({
-        type: "EDIT_NOTE",
-        noteData: { ...noteData, id: modalState.modalProps.id },
-      });
       await fetch("/api/notes/editNote", {
         method: "POST",
         body: JSON.stringify({ ...noteData, id: modalState.modalProps.id }),
         headers: {
           "Content-Type": "application/json",
         },
+
+      }).then((response) => {
+        if (response.status === 201) {
+          dispatch({
+            type: "EDIT_NOTE",
+            noteData: { ...noteData, id: modalState.modalProps.id },
+          });
+          setLoading(false);
+
+        } else {
+          setServerError(true);
+          setLoading(false);
+          return;
+        }
       });
     } else {
-
       await fetch("/api/notes/addNewNote", {
         method: "POST",
         body: JSON.stringify(noteData),
@@ -116,11 +129,20 @@ const NewNoteModal = () => {
           "Content-Type": "application/json",
         },
       }).then(async (response) => {
-        const note = await response.json();
-        dispatch({
-          type: "ADD_NEW_NOTE",
-          noteData: { ...noteData, id: note.result.insertId },
-        });
+        if (response.status === 201) {
+          const note = await response.json();
+
+          dispatch({
+            type: "ADD_NEW_NOTE",
+            noteData: { ...noteData, id: note.result.insertId },
+          });
+          setLoading(false);
+        } else {
+          setServerError(true);
+          setLoading(false);
+
+          return;
+        }
       });
     }
     handleClose();
@@ -149,11 +171,24 @@ const NewNoteModal = () => {
               {modalState.modalProps.edit ? "Edit Note" : "Add a new Note"}
             </Typography>
             <IconButton onClick={handleClose} disableRipple={true}>
-              <CloseIcon sx={{ fontSize: 30, color: theme.palette.primary.contrastText, }} />
+              <CloseIcon
+                sx={{ fontSize: 30, color: theme.palette.primary.contrastText }}
+              />
             </IconButton>
           </DialogTitle>
           <DialogContent sx={{ p: 0.5 }}>
             <Box sx={{ width: "100%", p: 2 }}>
+              {serverError && (
+                <Typography
+                  color="error"
+                  variant="body1"
+                  textAlign="center"
+                  sx={{ my: 2 }}
+                  fontSize="large"
+                >
+                  An error occured. Try again!
+                </Typography>
+              )}
               <TextField
                 required
                 onChange={(e) => handleUserInput(e)}
@@ -183,8 +218,14 @@ const NewNoteModal = () => {
                 fullWidth
                 value={formState.content}
                 autoFocus={modalState.modalProps.edit ? true : false}
-                /* @ts-ignore */
-                onFocus={(event) => { event.target.setSelectionRange(1000, 1000); if (bottomDividerRef.current) bottomDividerRef.current.scrollIntoView({ behavior: 'smooth' }) }}
+                onFocus={(event) => {
+                  event.target.setSelectionRange(1000, 1000);
+                  if (bottomDividerRef.current)
+                    /* @ts-ignore */
+                    bottomDividerRef.current.scrollIntoView({
+                      behavior: "smooth",
+                    });
+                }}
                 onChange={(event) => {
                   handleUserInput(event);
                 }}
@@ -194,10 +235,16 @@ const NewNoteModal = () => {
             </Box>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-            <Button disabled={!formValid} onClick={handleAddNote}>
-              {modalState.modalProps.edit ? "Save Note" : "Add Note"}
-            </Button>
+            {loading ? (
+              <CircularProgress />
+            ) : (
+              <>
+                <Button onClick={handleClose}>Cancel</Button>
+                <Button disabled={!formValid} onClick={handleAddNote}>
+                  {modalState.modalProps.edit ? "Save Note" : "Add Note"}
+                </Button>
+              </>
+            )}
           </DialogActions>
         </Dialog>
       )}

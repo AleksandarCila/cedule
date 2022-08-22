@@ -54,7 +54,13 @@ const WeekViewDayEvents = (props: IWeekViewDayEvents) => {
       return a.eventStartTime - b.eventStartTime;
     });
     return events;
-  }, [calendarState.calendars, calendarState.weekDays, calendarState.selectedDate]);
+  }, [
+    calendarState.calendars,
+    calendarState.weekDays,
+    calendarState.threeDays,
+    calendarState.selectedDate,
+    day,
+  ]);
   // Hooks
   const theme = useTheme();
   useEffect(() => setLoading(false), []);
@@ -87,11 +93,13 @@ const WeekViewDayEvents = (props: IWeekViewDayEvents) => {
               key={ind}
               sx={{
                 position: "absolute",
-                top: `${(event.eventStartTime / timeStamps.length) * 100+0.05}%`,
-                left: `${2+ind * 2}%`,
+                top: `${
+                  (event.eventStartTime / timeStamps.length) * 100 + 0.05
+                }%`,
+                left: `${2 + ind * 2}%`,
                 width: `${96 - 2 * ind}%`,
                 height: `${
-                  event.eventLength * ((1 / timeStamps.length) * 100)-0.1
+                  event.eventLength * ((1 / timeStamps.length) * 100) - 0.1
                 }%`,
                 backgroundColor: theme.palette.primary.main,
                 borderRadius: 2,
@@ -99,15 +107,17 @@ const WeekViewDayEvents = (props: IWeekViewDayEvents) => {
                 boxShadow: 3,
                 py: 0.1,
                 px: 1,
-                  color:theme.palette.primary.contrastText,
+                color: theme.palette.primary.contrastText,
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 "&:hover": {
                   cursor: "pointer",
-                  backgroundColor: addAlphaToColor(theme.palette.primary.main, 0.9),
+                  backgroundColor: addAlphaToColor(
+                    theme.palette.primary.main,
+                    0.9
+                  ),
                 },
               }}
-              draggable
               onDragStart={(e) => dragStart(e, event)}
               onDragOver={onDragOver}
               onClick={() => {
@@ -121,7 +131,7 @@ const WeekViewDayEvents = (props: IWeekViewDayEvents) => {
                   alignItems: "center",
                 }}
               >
-                <Circle sx={{color:event.color, fontSize:10, mr:0.5}}/>
+                <Circle sx={{ color: event.color, fontSize: 10, mr: 0.5 }} />
                 {event.type === "reminder" ? (
                   <NotificationsActiveIcon sx={{ fontSize: 14, mr: 1 }} />
                 ) : event.type === "task" ? (
@@ -129,7 +139,7 @@ const WeekViewDayEvents = (props: IWeekViewDayEvents) => {
                 ) : (
                   ""
                 )}
-                <Typography fontSize="small" variant="body1" noWrap={true} >
+                <Typography fontSize="small" variant="body1" noWrap={true}>
                   {event.type === "event"
                     ? `${timeStamps[event.eventStartTime].label}-${
                         timeStamps[event.eventStartTime + event.eventLength]

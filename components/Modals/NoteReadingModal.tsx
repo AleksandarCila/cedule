@@ -8,7 +8,6 @@ import {
   Box,
   Typography,
   Button,
-  Fab,
   useTheme,
   Dialog,
   DialogContent,
@@ -29,6 +28,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import Note from "../../types/interfaces/Note";
 const NoteReadingModal = () => {
   // States
+  const [serverError, setServerError] = useState(false);
+
   const {
     state: { calendarState },
     dispatch,
@@ -50,24 +51,25 @@ const NoteReadingModal = () => {
   const closeModal = () => {
     dispatchModal({ type: "HIDE_MODAL" });
   };
-  const showModal = (type: string, props: object = {}) => {
-    dispatchModal({
-      type: "SHOW_MODAL",
-      modalType: type,
-      modalProps: props,
-    });
-  };
   const deleteNote = async () => {
-    dispatch({
-      type: "DELETE_NOTE",
-      id: note.id,
-    });
+    setServerError(false);
     await fetch("/api/notes/deleteNote", {
       method: "POST",
       body: JSON.stringify(note.id),
       headers: {
         "Content-Type": "application/json",
       },
+    }).then((response) => {
+      if (response.status === 201) {
+        dispatch({
+          type: "DELETE_NOTE",
+          id: note.id,
+        });
+        closeModal();
+      } else {
+        setServerError(true);
+        return;
+      }
     });
   };
   const handleOpenEditNote = () => {
@@ -104,13 +106,28 @@ const NoteReadingModal = () => {
           >
             <Typography variant="body1">{note.title}</Typography>
             <IconButton onClick={closeModal} disableRipple>
-              <CloseIcon  sx={{ fontSize: 30,color: theme.palette.primary.contrastText, }} />
+              <CloseIcon
+                sx={{ fontSize: 30, color: theme.palette.primary.contrastText }}
+              />
             </IconButton>
           </DialogTitle>
           <DialogContent sx={{ p: 0.5 }}>
+            {serverError && (
+              <Typography
+                color="error"
+                variant="body1"
+                textAlign="center"
+                sx={{ my: 2 }}
+                fontSize="large"
+              >
+                An error occured. Try again!
+              </Typography>
+            )}
             <Box sx={{ width: "100%", p: 2 }}>
               {/* <Divider sx={{ width: "100%", borderBottomWidth: 2, borderColor: event.color }} /> */}
-              <DialogContentText sx={{whiteSpace:"pre-line"}}>{note.content}</DialogContentText>
+              <DialogContentText sx={{ whiteSpace: "pre-line" }}>
+                {note.content.length > 0 ? note.content : "(Note is empty)"}
+              </DialogContentText>
             </Box>
           </DialogContent>
           <DialogActions>
@@ -137,11 +154,12 @@ const NoteReadingModal = () => {
             >
               Delete
             </Button>
+            <Button onClick={closeModal}>Cancel</Button>
+
             <ConfirmationDialog
               handleAccept={async () => {
                 await deleteNote();
                 setShowConfirmationDialog(false);
-                closeModal();
               }}
               handleCancel={() => {
                 setShowConfirmationDialog(false);

@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import Image from "next/image";
 import LoginForm from "./LoginForm";
 
-const LoginComponent = ({ csrfToken }: { csrfToken: string }) => {
+const LoginComponent = ({ csrfToken, isOnline }: { csrfToken: string, isOnline:boolean }) => {
   return (
     <Box
       sx={{
@@ -14,9 +14,9 @@ const LoginComponent = ({ csrfToken }: { csrfToken: string }) => {
       }}
     >
       <div style={{width:"100%"}}>
-        <Image src="/assets/logo.png" width="100%" height="20%" layout="responsive" objectFit="contain"/>
+        <Image priority src="/assets/logo.png" width="100%" height="20%" layout="responsive" objectFit="contain"/>
       </div>
-      <LoginForm csrfToken={csrfToken}/>
+      <LoginForm csrfToken={csrfToken} isOnline={isOnline}/>
     </Box>
   );
 };

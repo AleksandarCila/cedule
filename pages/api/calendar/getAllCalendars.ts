@@ -5,6 +5,7 @@ import Calendar from "../../../types/interfaces/Calendar";
 import Event from "@mui/icons-material/Event";
 
 import { getToken } from "next-auth/jwt";
+import { ConstructionOutlined } from "@mui/icons-material";
 
 export default async function handler(
   req: NextApiRequest,
@@ -18,7 +19,7 @@ export default async function handler(
       try {
         results = await excuteQuery({
           query: "SELECT * FROM calendars WHERE user_id = ?",
-          values:[ token.id]
+          values: [token.id],
         });
         // results = JSON.stringify(results);
         let calendars = await Promise.all(
@@ -36,10 +37,11 @@ export default async function handler(
             };
           })
         );
-
         res.status(200).json(calendars);
       } catch (error) {
-        console.log(error);
+        res
+          .status(400)
+          .end(JSON.stringify({ message: "ERROR: " + JSON.stringify(error) }));
       }
     }
   } else {

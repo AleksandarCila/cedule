@@ -17,8 +17,6 @@ import {
   TextField,
   FormControl,
   RadioGroup,
-  Radio,
-  FormControlLabel,
   useTheme,
   IconButton,
 } from "@mui/material";
@@ -57,6 +55,8 @@ const ColorRadioButton = (props: IColorRadioButton) => {
 
 const NewCalendarModal = () => {
   // States
+  const [serverError, setServerError] = useState(false);
+
   const {
     state: { modalState },
     dispatch: dispatchModal,
@@ -129,20 +129,27 @@ const NewCalendarModal = () => {
       name: formState.name,
       color: formState.color,
     };
+    setServerError(false);
+
     if (modalState.modalProps.edit) {
-      dispatch({
-        type: "EDIT_CALENDAR",
-        calendarData: { ...calendarData, id: modalState.modalProps.id },
-      });
       await fetch("/api/calendar/editCalendar", {
         method: "POST",
         body: JSON.stringify({ ...calendarData, id: modalState.modalProps.id }),
         headers: {
           "Content-Type": "application/json",
         },
+      }).then((response) => {
+        if (response.status === 201) {
+          dispatch({
+            type: "EDIT_CALENDAR",
+            calendarData: { ...calendarData, id: modalState.modalProps.id },
+          });
+        } else {
+          setServerError(true);
+          return;
+        }
       });
     } else {
-      
       await fetch("/api/calendar/addNewCalendar", {
         method: "POST",
         body: JSON.stringify(calendarData),
@@ -150,11 +157,16 @@ const NewCalendarModal = () => {
           "Content-Type": "application/json",
         },
       }).then(async (response) => {
-        const calendar = await response.json();
-        dispatch({
-          type: "ADD_NEW_CALENDAR",
-          calendarData: { ...calendarData, id: calendar.result.insertId },
-        });
+        if (response.status === 201) {
+          const calendar = await response.json();
+          dispatch({
+            type: "ADD_NEW_CALENDAR",
+            calendarData: { ...calendarData, id: calendar.result.insertId },
+          });
+        } else {
+          setServerError(true);
+          return;
+        }
       });
     }
     hideModal();
@@ -190,7 +202,18 @@ const NewCalendarModal = () => {
               />
             </IconButton>
           </DialogTitle>
-          <DialogContent sx={{p:0.5}}>
+          <DialogContent sx={{ p: 0.5 }}>
+            {serverError && (
+              <Typography
+                color="error"
+                variant="body1"
+                textAlign="center"
+                sx={{ my: 2 }}
+                fontSize="large"
+              >
+                An error occured. Try again!
+              </Typography>
+            )}
             <Box sx={{ width: "100%", p: 2 }}>
               <TextField
                 required
@@ -248,6 +271,7 @@ const NewCalendarModal = () => {
             >
               {modalState.modalProps.edit ? "Save Calendar" : "Add Calendar"}
             </Button>
+            <Button onClick={hideModal}>Cancel</Button>
           </DialogActions>
         </Dialog>
       )}

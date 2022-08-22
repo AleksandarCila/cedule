@@ -29,7 +29,13 @@ const inputStyle = {
   my: 1,
 };
 
-const LoginForm = ({ csrfToken }: { csrfToken: string }) => {
+const LoginForm = ({
+  csrfToken,
+  isOnline,
+}: {
+  csrfToken: string;
+  isOnline: boolean;
+}) => {
   const router = useRouter();
   const { error } = router.query;
   let errorMessage = getErrorText(error);
@@ -40,15 +46,15 @@ const LoginForm = ({ csrfToken }: { csrfToken: string }) => {
     password: "",
     confirmPassword: "",
     formErrors: { email: "", password: "" },
-    emailValid: false,
-    passwordValid: false,
+    emailValid: true,
+    passwordValid: true,
   });
-  const [formValid, setFormValid] = useState(false);
+  const [formValid, setFormValid] = useState(true);
 
   // Hooks
   const theme = useTheme();
   useEffect(() => {
-    setFormValid(formState.emailValid && formState.passwordValid);
+    // setFormValid(formState.emailValid && formState.passwordValid);
   }, [formState.emailValid, formState.passwordValid]);
 
   // Functions
@@ -63,25 +69,7 @@ const LoginForm = ({ csrfToken }: { csrfToken: string }) => {
     let passwordValid = formState.passwordValid;
 
     switch (fieldName) {
-      case "username":
-        let re =
-          /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        if (re.test(value)) {
-          emailValid = true;
-          fieldValidationErrors.email = "";
-        } else {
-          emailValid = false;
-          fieldValidationErrors.email = "E-mail is not correct";
-        }
-        break;
-      case "password":
-        if (value.length > 0) {
-          passwordValid = true;
-          fieldValidationErrors.password = "";
-        } else {
-          passwordValid = false;
-          fieldValidationErrors.password = "";
-        }
+      
       default:
         break;
     }
@@ -95,6 +83,13 @@ const LoginForm = ({ csrfToken }: { csrfToken: string }) => {
   };
   const onSubmit = async () => {
     setLoading(true);
+    await caches.keys().then(function (keyList) {
+      return Promise.all(
+        keyList.map(function (key) {
+          return caches.delete(key);
+        })
+      );
+    });
     signIn("credentials", {
       username: formState.username,
       password: formState.password,
@@ -161,20 +156,55 @@ const LoginForm = ({ csrfToken }: { csrfToken: string }) => {
         sx={inputStyle}
         error={!formState.passwordValid}
       />
-      {loading ? (
+      {!isOnline ? (
+        <Typography variant="body1" textAlign="center">
+          No Internet connection. Please reconnect in order to continue.
+        </Typography>
+      ) : loading ? (
         <CircularProgress color="primary" sx={{ mt: 3 }} size={30} />
       ) : (
-        <Button
-          type="submit"
-          size="large"
-          color="primary"
-          variant="contained"
-          disabled={!formValid}
-          onClick={onSubmit}
-          sx={{ mt: 3 }}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+          }}
         >
-          Login
-        </Button>
+          <Button
+            type="submit"
+            size="large"
+            color="primary"
+            variant="contained"
+            disabled={!formValid}
+            onClick={onSubmit}
+            sx={{ mt: 1 }}
+          >
+            Login
+          </Button>
+          <Button
+            size="large"
+            color="secondary"
+            variant="contained"
+            onClick={async () => {
+              setLoading(true);
+              await caches.keys().then(function (keyList) {
+                return Promise.all(
+                  keyList.map(function (key) {
+                    return caches.delete(key);
+                  })
+                );
+              });
+              signIn("credentials", {
+                username: "demo@demo.demo",
+                password: "demodemo",
+              });
+            }}
+            sx={{ mt: 1 }}
+          >
+            Try Demo
+          </Button>
+        </Box>
       )}
     </Box>
   );

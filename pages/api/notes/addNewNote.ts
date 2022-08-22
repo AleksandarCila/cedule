@@ -16,9 +16,8 @@ export default async function handler(
         const result = await excuteQuery({
           query:
             "INSERT INTO notes (user_id,title,content,date) VALUES(?,?,?,?)",
-          values: [1, req.body.title, req.body.content, req.body.date],
+          values: [token.id, req.body.title, req.body.content, req.body.date],
         });
-
         res.status(201).end(JSON.stringify({ result }));
       } catch (error) {
         res

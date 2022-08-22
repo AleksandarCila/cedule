@@ -3,11 +3,13 @@ import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import {
   getProviders,
-  signIn,
   getSession,
   getCsrfToken,
 } from "next-auth/react";
-import { TextField, Typography, Box, Stack } from "@mui/material";
+import {
+  Typography,
+  Box,
+} from "@mui/material";
 
 import RegisterComponent from "../components/Auth/RegisterComponent";
 import LoginComponent from "../components/Auth/LoginComponent";
@@ -16,9 +18,29 @@ import LoginComponent from "../components/Auth/LoginComponent";
 const Login: NextPage = ({ csrfToken }) => {
   const { data: session } = useSession();
   const [login, setLogin] = useState(true);
+  const [isOnline, setIsOnline] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // if (session)
   //     return (<>"You are already logged in"</>)
+
+  useEffect(() => {
+    setLoading(false);
+    const setClientIsOnline = () => {
+      setIsOnline(true);
+    };
+    const setClientIsOffline = () => {
+      setIsOnline(false);
+    };
+    setIsOnline(window.navigator.onLine);
+    window.addEventListener("online", setClientIsOnline);
+    window.addEventListener("offline", setClientIsOffline);
+
+    return () => {
+      window.removeEventListener("online", setClientIsOnline);
+      window.removeEventListener("offline", setClientIsOffline);
+    };
+  }, []);
   return (
     <Box
       sx={{
@@ -29,9 +51,14 @@ const Login: NextPage = ({ csrfToken }) => {
         alignItems: "center",
       }}
     >
+      
       <Box sx={{ width: { xs: "90%", md: "50%" } }}>
         <Box sx={{ my: 3 }}>
-          {login ? <LoginComponent csrfToken={csrfToken} /> : <RegisterComponent />}
+          {login ? (
+            <LoginComponent csrfToken={csrfToken} isOnline={isOnline} />
+          ) : (
+            <RegisterComponent isOnline={isOnline} />
+          )}
         </Box>
         {login ? (
           <Typography variant="body1" textAlign="center">
@@ -60,7 +87,9 @@ const Login: NextPage = ({ csrfToken }) => {
             </Typography>
           </Typography>
         )}
-        <Typography variant="body1"  textAlign="center">beta version</Typography>
+        <Typography variant="body1" textAlign="center">
+          beta version
+        </Typography>
       </Box>
     </Box>
   );

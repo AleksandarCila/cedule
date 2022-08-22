@@ -1,56 +1,52 @@
 // Components
-import { Box, TextField, Autocomplete } from '@mui/material'
+import { Box, TextField, Autocomplete, Select, MenuItem } from "@mui/material";
 
 // Utility
-import { timeStamps } from '../../../utility/constants'
+import { timeStamps } from "../../../utility/constants";
 
 // Types
-import TimeStampObject from '../../../types/interfaces/TimeStampObject'
-import React from 'react';
+import TimeStampObject from "../../../types/interfaces/TimeStampObject";
+import React from "react";
 interface ITimePickerComboBox {
-    label?:string;
-    minTime?:TimeStampObject;
-    value:TimeStampObject;
-    onChange(newTime: TimeStampObject):void;
-    disabled:boolean;
-    error:boolean;
+  label?: string;
+  minTime?: TimeStampObject;
+  value: TimeStampObject;
+  onChange(newTime: number): void;
+  disabled: boolean;
+  error: boolean;
 }
-export default function TimePickerComboBox(props:ITimePickerComboBox) {
-    const { label, minTime, value, onChange, disabled, error } = props;
-    const timeStampsInternal = minTime ? timeStamps.slice(minTime.id + 1) : timeStamps;
+export default function TimePickerComboBox(props: ITimePickerComboBox) {
+  const { label, minTime, value, onChange, disabled, error } = props;
+  const timeStampsInternal = minTime
+    ? timeStamps.slice(minTime.id + 1)
+    : timeStamps;
 
-    return (
-        <Autocomplete
-            id="time-picker-stamps"
-            sx={{ width: "100%" }}
-            value={value}
-            disabled={disabled}
-            options={timeStampsInternal}
-            fullWidth
-            // error={error}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            autoHighlight
-            onInputChange={(newTime: any) => { if (newTime) onChange(newTime.target.value) }}
-            getOptionLabel={(option) => option.label}
-            disableClearable
-            renderOption={(props, option) => (
-                <Box component="li"  {...props} value={option.id}>
-                    {option.label}
-                </Box>
-            )}
-            renderInput={(params) => (
-                <TextField
-                    {...params}
-                    label={label}
-                    size="small"
-                    error={!error}
+  return (
+    <Select
+      labelId="time-picker-label"
+      id="time-picker-select"
+      value={value.id}
+      onChange={(event) => {
+         /* @ts-ignore */
+        onChange(event.target.value);
+      }}
+      fullWidth
+      disabled={disabled}
+      size="small"
+      MenuProps={{
+        style: {
+          maxHeight: 48 * 5,
+        },
+      }}
+    >
+      {timeStampsInternal.map((timeStamp, ind) => {
+        return (
+          <MenuItem key={ind} value={timeStamp.id}>
+            {timeStamp.label}
+          </MenuItem>
+        );
+      })}
+    </Select>
+  );
 
-                    inputProps={{
-                        ...params.inputProps,
-                        autoComplete: 'new-password', // disable autocomplete and autofill
-                    }}
-                />
-            )}
-        />
-    );
 }

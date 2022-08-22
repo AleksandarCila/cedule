@@ -35,6 +35,8 @@ import Calendar from "../../types/interfaces/Calendar";
 import Event from "../../types/interfaces/Event";
 const EventInfoModal = () => {
   // States
+  const [serverError, setServerError] = useState(false);
+
   const {
     state: { calendarState },
     dispatch,
@@ -72,16 +74,24 @@ const EventInfoModal = () => {
     });
   };
   const deleteEvent = async () => {
-    dispatch({
-      type: "DELETE_EVENT",
-      event: event,
-    });
+    setServerError(false);
+
     await fetch("/api/events/deleteEvent", {
       method: "POST",
       body: JSON.stringify(event.id),
       headers: {
         "Content-Type": "application/json",
       },
+    }).then((response) => {
+      if (response.status === 201) {
+        dispatch({
+          type: "DELETE_EVENT",
+          event: event,
+        });
+      } else {
+        setServerError(true);
+        return;
+      }
     });
   };
   return (
@@ -105,13 +115,28 @@ const EventInfoModal = () => {
             }}
           >
             <Typography variant="body1">
-              {event.type.charAt(0).toUpperCase() + event.type.slice(1) + " Details"}
+              {event.type.charAt(0).toUpperCase() +
+                event.type.slice(1) +
+                " Details"}
             </Typography>
             <IconButton onClick={closeModal} disableRipple={true}>
-              <CloseIcon sx={{ fontSize: 30,color: theme.palette.primary.contrastText, }} />
+              <CloseIcon
+                sx={{ fontSize: 30, color: theme.palette.primary.contrastText }}
+              />
             </IconButton>
           </DialogTitle>
           <DialogContent sx={{ p: 1 }}>
+            {serverError && (
+              <Typography
+                color="error"
+                variant="body1"
+                textAlign="center"
+                sx={{ my: 2 }}
+                fontSize="large"
+              >
+                An error occured. Try again!
+              </Typography>
+            )}
             <Box sx={{ width: "100%", p: 2 }}>
               <Typography variant="h5" sx={{}}>
                 {event.name}
@@ -202,6 +227,7 @@ const EventInfoModal = () => {
             >
               Delete
             </Button>
+            <Button onClick={closeModal}>Cancel</Button>
             <ConfirmationDialog
               handleAccept={async () => {
                 await deleteEvent();

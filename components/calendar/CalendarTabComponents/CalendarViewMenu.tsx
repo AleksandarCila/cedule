@@ -111,7 +111,7 @@ const CalendarViewMenu = (props: ICalendarViewMenu) => {
 
                     }}>
                     {tabValue === 3 ? tabNames[0].icon : tabNames[tabValue].icon}
-                    <Typography sx={{ display: { xs: "none", sm: "block" } ,mx:1}}>{tabValue === 3 ? tabNames[0].title : tabNames[tabValue].title}</Typography>
+                    <Typography sx={{ display: { xs: "none", sm: "block" } ,mx:1}}>{tabValue === 3 ? tabNames[0].title : tabNames[tabValue].mobileTitle}</Typography>
                     <KeyboardArrowDownIcon />
                 </IconButton>
                 <Menu
@@ -121,7 +121,7 @@ const CalendarViewMenu = (props: ICalendarViewMenu) => {
                     onClose={handleClose}
                 >
                     {tabNames.map((tab, ind) => {
-                        if (ind !== 1 && ind !== 3)
+                        if (ind !== 3)
                             return <TabMenuButton key={ind} icon={tab.icon} onClick={handleClose} handleTabChange={handleTabChange} selectedTabIndex={tabValue} tabIndex={ind} title={tab.mobileTitle} />
                     })}
                 </Menu>
